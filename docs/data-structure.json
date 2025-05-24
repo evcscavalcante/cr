@@ -1,0 +1,154 @@
+{
+  "schema": {
+    "densidadeInSitu": {
+      "registro": "string",
+      "data": "string",
+      "operador": "string",
+      "responsavelCalculo": "string",
+      "verificador": "string",
+      "material": "string",
+      "origem": "string",
+      "localizacao": {
+        "norte": "string",
+        "este": "string",
+        "cota": "string",
+        "quadrante": "string"
+      },
+      "camadaNumero": "string",
+      "hora": "string",
+      "dispositivos": {
+        "balanca": "string",
+        "estufa": "string"
+      },
+      "cilindro": [
+        {
+          "numero": "string",
+          "moldeSolo": "number",
+          "molde": "number",
+          "solo": "number",
+          "volume": "number",
+          "gamaNat": "number"
+        }
+      ],
+      "teorUmidade": {
+        "topo": [
+          {
+            "capsula": "string",
+            "soloUmidoTara": "number",
+            "soloSecoTara": "number",
+            "tara": "number",
+            "soloSeco": "number",
+            "agua": "number",
+            "umidade": "number"
+          }
+        ],
+        "base": [
+          {
+            "capsula": "string",
+            "soloUmidoTara": "number",
+            "soloSecoTara": "number",
+            "tara": "number",
+            "soloSeco": "number",
+            "agua": "number",
+            "umidade": "number"
+          }
+        ],
+        "umidadeMedia": {
+          "topo": "number",
+          "base": "number"
+        }
+      },
+      "referencias": {
+        "densidadeReal": "string",
+        "densidadeMaxMin": "string"
+      },
+      "resultados": {
+        "gamad": {
+          "topo": "number",
+          "base": "number"
+        },
+        "indiceVazios": {
+          "topo": "number",
+          "base": "number"
+        },
+        "compacidadeRelativa": {
+          "topo": "number",
+          "base": "number"
+        },
+        "status": "string"
+      }
+    },
+    "densidadeReal": {
+      "registro": "string",
+      "data": "string",
+      "operador": "string",
+      "material": "string",
+      "origem": "string",
+      "teorUmidade": [
+        {
+          "capsula": "string",
+          "soloUmidoTara": "number",
+          "soloSecoTara": "number",
+          "tara": "number",
+          "soloSeco": "number",
+          "agua": "number",
+          "umidade": "number"
+        }
+      ],
+      "umidadeMedia": "number",
+      "picnometro": [
+        {
+          "numero": "string",
+          "massa": "number",
+          "massaPicAmostraAgua": "number",
+          "temperatura": "number",
+          "massaPicAgua": "number",
+          "densidadeAgua": "number",
+          "massaSoloUmido": "number",
+          "massaSoloSeco": "number",
+          "densidadeReal": "number"
+        }
+      ],
+      "diferenca": "number",
+      "mediaDensidadeReal": "number"
+    },
+    "densidadeMaxMin": {
+      "registro": "string",
+      "data": "string",
+      "operador": "string",
+      "material": "string",
+      "origem": "string",
+      "densidadeMaxima": [
+        {
+          "determinacao": "number",
+          "moldeSolo": "number",
+          "molde": "number",
+          "solo": "number",
+          "volume": "number",
+          "gamad": "number",
+          "umidade": "number",
+          "gamas": "number"
+        }
+      ],
+      "gamadMax": "number",
+      "densidadeMinima": [
+        {
+          "numeroCilindro": "number",
+          "moldeSolo": "number",
+          "molde": "number",
+          "solo": "number",
+          "volume": "number",
+          "gamad": "number",
+          "umidade": "number",
+          "gamas": "number"
+        }
+      ],
+      "gamadMin": "number"
+    }
+  },
+  "registros": {
+    "densidadeInSitu": [],
+    "densidadeReal": [],
+    "densidadeMaxMin": []
+  }
+}
