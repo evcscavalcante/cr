@@ -784,4 +784,7 @@ footer {
         flex: 0 1 auto;
         min-width: 120px;
     }
+    #lista-ensaios .filtros-container:nth-of-type(n+2) {
+  display: none;
+}
 }
