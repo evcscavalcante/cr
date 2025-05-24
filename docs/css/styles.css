@@ -305,7 +305,6 @@ main {
     gap: 0.8rem;
     align-items: center;
 }
-
 /* —————— Exibe SOMENTE o 1º filtro em Lista de Ensaios —————— */
 #lista-ensaios > .filtros-container:nth-of-type(1) {
   display: flex !important;    /* ou block, conforme seu layout original */
@@ -315,7 +314,6 @@ main {
 #lista-ensaios > .filtros-container:nth-of-type(n+2) {
   display: none !important;
 }
-
 
 
 .filtro-grupo {
@@ -761,7 +759,7 @@ footer {
 }
 
 /* Responsividade */
-@media (max-width: 576px) {
+@media (min-width: 768px) {
     .menu-opcoes {
         flex-direction: row;
         flex-wrap: wrap;
@@ -775,11 +773,6 @@ footer {
         max-width: 300px;
     }
     
-     header {
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
-    }
-    
     .form-group {
         min-width: 200px;
     }
@@ -791,10 +784,7 @@ footer {
     .form-section {
         padding: 0.75rem;
     }
-
-     header h1 {
-    font-size: 1.25rem;
-    }
+    
     .acoes {
         gap: 1rem;
     }
