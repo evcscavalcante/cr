@@ -306,13 +306,16 @@ main {
     align-items: center;
 }
 
-/* —————— Mantém apenas 1 filtro, esconde todas as duplicatas —————— */
-#lista-ensaios .filtros-container {
+/* —————— Exibe SOMENTE o 1º filtro em Lista de Ensaios —————— */
+#lista-ensaios > .filtros-container:nth-of-type(1) {
+  display: flex !important;    /* ou block, conforme seu layout original */
+}
+
+/* Esconde todos os demais irmãos (2º em diante) */
+#lista-ensaios > .filtros-container:nth-of-type(n+2) {
   display: none !important;
 }
-#lista-ensaios .filtros-container:first-of-type {
-  display: flex !important;  /* ou block, dependendo do seu layout */
-}
+
 
 
 .filtro-grupo {
