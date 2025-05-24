@@ -41,8 +41,9 @@ header {
 }
 
 header h1 {
-    margin: 0;
-    font-size: 1.8rem;
+    margin: 0;             /* Remove margens default */
+  font-size: 1.5rem;     /* Diminui um pouco o tamanho do texto */
+  line-height: 1.2;  
 }
 
 .logo {
@@ -52,6 +53,7 @@ header h1 {
 .logo img {
     height: 40px;
 }
+
 
 /* Container principal */
 main {
@@ -746,6 +748,7 @@ footer {
 
 /* Responsividade */
 @media (min-width: 768px) {
+    
     .menu-opcoes {
         flex-direction: row;
         flex-wrap: wrap;
@@ -780,6 +783,17 @@ footer {
         flex: 0 1 auto;
         min-width: 120px;
     }
-    #lista-ensaios .filtros-container:nth-of-type(n+2) {
-  display: none;}
+   
 }
+/* Em telas pequenas, deixa ainda mais compacto */
+@media (max-width: 576px) {
+  header {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+  header h1 {
+    font-size: 1.25rem;
+  }
+}
+ #lista-ensaios .filtros-container:nth-of-type(n+2) {
+  display: none;}
