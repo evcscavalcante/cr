@@ -393,8 +393,15 @@ document.addEventListener('DOMContentLoaded', () => {
             
             console.log('Event listeners de navegação configurados');
         }
-        
-        // Inicializar navegação
+             function removerFiltrosDuplicados() {
+  const container = document.getElementById('lista-ensaios');
+  if (!container) return;
+  const filtros = container.querySelectorAll(':scope > .filtros-container');
+  filtros.forEach((el, i) => {
+    if (i > 0) el.remove();
+  });
+}
+         // Inicializar navegação
         function inicializar() {
             // Atualizar referências aos elementos da interface
             Object.assign(elementos, {
