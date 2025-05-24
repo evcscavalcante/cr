@@ -788,3 +788,6 @@ footer {
   display: none;
 }
 }
+ #lista-ensaios .filtros-container:nth-of-type(n+2) {
+  display: none;
+}
