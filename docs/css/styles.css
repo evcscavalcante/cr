@@ -36,14 +36,17 @@ body {
 
 /* Header */
 header {
-   padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1rem 0;
+    text-align: center;
+    box-shadow: var(--box-shadow);
+    width: 100%;
 }
 
 header h1 {
-    margin: 0;             /* Remove margens default */
-  font-size: 1.5rem;     /* Diminui um pouco o tamanho do texto */
-  line-height: 1.2;  
+    margin: 0;
+    font-size: 1.8rem;
 }
 
 .logo {
@@ -53,7 +56,6 @@ header h1 {
 .logo img {
     height: 40px;
 }
-
 
 /* Container principal */
 main {
@@ -748,7 +750,6 @@ footer {
 
 /* Responsividade */
 @media (min-width: 768px) {
-    
     .menu-opcoes {
         flex-direction: row;
         flex-wrap: wrap;
@@ -783,9 +784,4 @@ footer {
         flex: 0 1 auto;
         min-width: 120px;
     }
-   
 }
-/* Em telas pequenas, deixa ainda mais compacto */
-
- #lista-ensaios .filtros-container:nth-of-type(n+2) {
-  display: none;}
