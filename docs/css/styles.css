@@ -306,9 +306,14 @@ main {
     align-items: center;
 }
 
-#lista-ensaios .filtros-container:nth-of-type(n+2) {
-  display: none;
+/* —————— Mantém apenas 1 filtro, esconde todas as duplicatas —————— */
+#lista-ensaios .filtros-container {
+  display: none !important;
 }
+#lista-ensaios .filtros-container:first-of-type {
+  display: flex !important;  /* ou block, dependendo do seu layout */
+}
+
 
 .filtro-grupo {
     display: flex;
