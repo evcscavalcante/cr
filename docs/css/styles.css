@@ -306,6 +306,10 @@ main {
     align-items: center;
 }
 
+#lista-ensaios .filtros-container:nth-of-type(n+2) {
+  display: none;
+}
+
 .filtro-grupo {
     display: flex;
     align-items: center;
@@ -749,7 +753,7 @@ footer {
 }
 
 /* Responsividade */
-@media (min-width: 768px) {
+@media (max-width: 576px) {
     .menu-opcoes {
         flex-direction: row;
         flex-wrap: wrap;
@@ -763,6 +767,11 @@ footer {
         max-width: 300px;
     }
     
+     header {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    }
+    
     .form-group {
         min-width: 200px;
     }
@@ -774,7 +783,10 @@ footer {
     .form-section {
         padding: 0.75rem;
     }
-    
+
+     header h1 {
+    font-size: 1.25rem;
+    }
     .acoes {
         gap: 1rem;
     }
