@@ -2,12 +2,20 @@
 // Módulo de integração de formulários: fornece API para cálculos automáticos
 window.calculadora = window.calculadora || {};
 window.calculadora.formIntegration = (function() {
-    /**
-     * Templates HTML para cada tipo de formulário devem estar definidos em
-     * window.calculadora.templates, por exemplo:
-     * window.calculadora.templates['in-situ'] = '<form>…</form>';
-     */
-    const templates = window.calculadora.templates || {};
+    // Se você definiu window.calculadora.templates = { 'in-situ': '...', 'real': '...', 'max-min': '...' }
+    // ele será usado. Caso contrário, procuramos um <template id="template-in-situ">, etc.
+    function getTemplateHTML(tipo) {
+        // 1) tentar objeto JS
+        if (window.calculadora.templates && window.calculadora.templates[tipo]) {
+            return window.calculadora.templates[tipo];
+        }
+        // 2) tentar <template> no HTML
+        const tpl = document.getElementById(`template-${tipo}`);
+        if (tpl && tpl.innerHTML) {
+            return tpl.innerHTML;
+        }
+        return null;
+    }
 
     /**
      * Carrega o formulário da calculadora e dispara evento customizado
@@ -19,11 +27,14 @@ window.calculadora.formIntegration = (function() {
             console.error(`Container da calculadora não encontrado para tipo '${tipo}'`);
             return;
         }
-        const html = templates[tipo];
-        if (typeof html !== 'string') {
-            console.error(`Template para tipo '${tipo}' não encontrado em window.calculadora.templates`);
+
+        const html = getTemplateHTML(tipo);
+        if (!html) {
+            console.error(`Template para tipo '${tipo}' não encontrado. ` +
+                          `Defina window.calculadora.templates['${tipo}'] ou adicione <template id="template-${tipo}"> no HTML.`);
             return;
         }
+
         container.innerHTML = html;
 
         const form = container.querySelector('form');
@@ -32,15 +43,13 @@ window.calculadora.formIntegration = (function() {
             return;
         }
 
-        document.dispatchEvent(
-            new CustomEvent('formLoaded', { detail: { form, tipo } })
-        );
+        document.dispatchEvent(new CustomEvent('formLoaded', { detail: { form, tipo } }));
     }
 
     /**
      * Extrai os dados do formulário para cálculo
      * @param {'in-situ'|'real'|'max-min'} tipo
-     * @returns {object|null} dados coletados ou null em caso de erro
+     * @returns {object|null}
      */
     function obterDadosFormulario(tipo) {
         const form = document.querySelector('#calculadora form');
@@ -52,21 +61,21 @@ window.calculadora.formIntegration = (function() {
             const prefix = tipo === 'in-situ' ? '' : `-${tipo}`;
             const dados = {
                 registro: (form.querySelector(`#registro${prefix}`) || {}).value?.trim() || '',
-                data:     (form.querySelector(`#data${prefix}`)   || {}).value?.trim() || '',
-                operador: (form.querySelector(`#operador${prefix}`)|| {}).value?.trim() || '',
-                material: (form.querySelector(`#material${prefix}`)|| {}).value?.trim() || ''
+                data:     (form.querySelector(`#data${prefix}`)     || {}).value?.trim() || '',
+                operador: (form.querySelector(`#operador${prefix}`) || {}).value?.trim() || '',
+                material: (form.querySelector(`#material${prefix}`) || {}).value?.trim() || ''
             };
 
             if (tipo === 'in-situ') {
-                dados.responsavel = (form.querySelector('#responsavel') || {}).value?.trim() || '';
-                dados.verificador = (form.querySelector('#verificador')|| {}).value?.trim() || '';
+                dados.responsavel = (form.querySelector('#responsavel')   || {}).value?.trim() || '';
+                dados.verificador = (form.querySelector('#verificador') || {}).value?.trim() || '';
                 dados.norte       = parseFloat((form.querySelector('#norte')   || {}).value) || 0;
                 dados.este        = parseFloat((form.querySelector('#este')    || {}).value) || 0;
                 dados.cota        = parseFloat((form.querySelector('#cota')    || {}).value) || 0;
                 dados.camada      = parseInt((form.querySelector('#camada')   || {}).value) || 0;
                 dados.hora        =   (form.querySelector('#hora')     || {}).value    || '';
                 dados.cilindro    = {
-                    numero: (form.querySelector('#numero-cilindro')|| {}).value?.trim() || '',
+                    numero: (form.querySelector('#numero-cilindro') || {}).value?.trim() || '',
                     solo:   parseFloat((form.querySelector('#solo')     || {}).value) || 0,
                     volume: parseFloat((form.querySelector('#volume')   || {}).value) || 0
                 };
@@ -79,16 +88,18 @@ window.calculadora.formIntegration = (function() {
                 dados.refMin  = parseFloat(form.dataset.densidadeMin)    || null;
 
             } else if (tipo === 'real') {
-                // TODO: implementar extração real de dados de densidade real
+                // TODO: implementar extração para densidade real
                 dados.determinacoesUmidadeReal = [];
                 dados.determinacoesPicnometro  = [];
+
             } else if (tipo === 'max-min') {
-                // TODO: implementar extração real de dados de densidade máx/min
+                // TODO: implementar extração para densidade máx/min
                 dados.determinacoesMax = [];
                 dados.determinacoesMin = [];
             }
 
             return dados;
+
         } catch (err) {
             console.error('Erro ao obter dados do formulário:', err);
             return null;
@@ -112,61 +123,51 @@ window.calculadora.formIntegration = (function() {
         const form = document.querySelector('#calculadora form');
         if (!form) return;
 
-        try {
-            // Limpa todos os campos marcados com a classe “resultado-campo”
-            form.querySelectorAll('.resultado-campo').forEach(el => { el.value = ''; });
+        // limpa campos
+        form.querySelectorAll('.resultado-campo').forEach(el => el.value = '');
 
-            if (!resultados) return;
+        if (!resultados) return;
 
-            if (tipo === 'in-situ') {
-                // Densidade úmida (gama_d)
-                const gamadTopoEl = form.querySelector('#gamad-topo');
-                if (gamadTopoEl && resultados.gamad) {
-                    gamadTopoEl.value = resultados.gamad.topo.toFixed(3);
-                }
-                const gamadBaseEl = form.querySelector('#gamad-base');
-                if (gamadBaseEl && resultados.gamad) {
-                    gamadBaseEl.value = resultados.gamad.base.toFixed(3);
-                }
+        if (tipo === 'in-situ') {
+            // gama_d topo
+            const topoEl = form.querySelector('#gamad-topo');
+            if (topoEl && resultados.gamad) topoEl.value = resultados.gamad.topo.toFixed(3);
 
-                // Índice de Vazios
-                const ivTopoEl = form.querySelector('#indice-vazios-topo');
-                if (ivTopoEl && resultados.indiceVazios) {
-                    ivTopoEl.value = resultados.indiceVazios.topo.toFixed(3);
-                }
-                const ivBaseEl = form.querySelector('#indice-vazios-base');
-                if (ivBaseEl && resultados.indiceVazios) {
-                    ivBaseEl.value = resultados.indiceVazios.base.toFixed(3);
-                }
+            // gama_d base
+            const baseEl = form.querySelector('#gamad-base');
+            if (baseEl && resultados.gamad) baseEl.value = resultados.gamad.base.toFixed(3);
 
-                // Compacidade Relativa
-                const crTopoEl = form.querySelector('#cr-topo');
-                if (crTopoEl && resultados.compacidadeRelativa) {
-                    crTopoEl.value = resultados.compacidadeRelativa.topo.toFixed(1);
-                }
-                const crBaseEl = form.querySelector('#cr-base');
-                if (crBaseEl && resultados.compacidadeRelativa) {
-                    crBaseEl.value = resultados.compacidadeRelativa.base.toFixed(1);
-                }
+            // índice vazios topo
+            const ivTopo = form.querySelector('#indice-vazios-topo');
+            if (ivTopo && resultados.indiceVazios) ivTopo.value = resultados.indiceVazios.topo.toFixed(3);
 
-            } else if (tipo === 'real') {
-                const mdrEl = form.querySelector('#media-densidade-real');
-                if (mdrEl && resultados.mediaDensidadeReal != null) {
-                    mdrEl.value = resultados.mediaDensidadeReal.toFixed(3);
-                }
+            // índice vazios base
+            const ivBase = form.querySelector('#indice-vazios-base');
+            if (ivBase && resultados.indiceVazios) ivBase.value = resultados.indiceVazios.base.toFixed(3);
 
-            } else if (tipo === 'max-min') {
-                const maxEl = form.querySelector('#gamad-max');
-                if (maxEl && resultados.mediaGamadMax != null) {
-                    maxEl.value = resultados.mediaGamadMax.toFixed(3);
-                }
-                const minEl = form.querySelector('#gamad-min');
-                if (minEl && resultados.mediaGamadMin != null) {
-                    minEl.value = resultados.mediaGamadMin.toFixed(3);
-                }
+            // compacidade relativa topo
+            const crTopo = form.querySelector('#cr-topo');
+            if (crTopo && resultados.compacidadeRelativa) crTopo.value = resultados.compacidadeRelativa.topo.toFixed(1);
+
+            // compacidade relativa base
+            const crBase = form.querySelector('#cr-base');
+            if (crBase && resultados.compacidadeRelativa) crBase.value = resultados.compacidadeRelativa.base.toFixed(1);
+
+        } else if (tipo === 'real') {
+            const mdrEl = form.querySelector('#media-densidade-real');
+            if (mdrEl && resultados.mediaDensidadeReal != null) {
+                mdrEl.value = resultados.mediaDensidadeReal.toFixed(3);
             }
-        } catch (err) {
-            console.error('Erro ao preencher resultados no formulário:', err);
+
+        } else if (tipo === 'max-min') {
+            const maxEl = form.querySelector('#gamad-max');
+            if (maxEl && resultados.mediaGamadMax != null) {
+                maxEl.value = resultados.mediaGamadMax.toFixed(3);
+            }
+            const minEl = form.querySelector('#gamad-min');
+            if (minEl && resultados.mediaGamadMin != null) {
+                minEl.value = resultados.mediaGamadMin.toFixed(3);
+            }
         }
     }
 
