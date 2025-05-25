@@ -16,13 +16,14 @@ window.calculadora.calculos = (() => {
       return typeof value === 'number' && !isNaN(value) && value > 0;
   }
 
-  // *** ADICIONADO: Função auxiliar para validar se um valor é numérico (incluindo zero) ***
+  // Função auxiliar para validar se um valor é numérico (incluindo zero)
   function isValidNumber(value) {
       return typeof value === 'number' && !isNaN(value);
   }
 
   // --- Calcular Densidade In Situ (Sem alterações nesta função) ---
   function calcularDensidadeInSitu(dados) {
+    // ... (código inalterado) ...
     const resultados = {
       determinacoesInSitu: [],
       determinacoesUmidadeTopo: [],
@@ -126,8 +127,9 @@ window.calculadora.calculos = (() => {
     return resultados;
   }
 
-  // --- Calcular Densidade Real (CORRIGIDO) ---
+  // --- Calcular Densidade Real (COM LOGS DETALHADOS) ---
   function calcularDensidadeReal(dados) {
+    console.log('[LOG][calcularDensidadeReal] Iniciando cálculo. Dados recebidos:', JSON.stringify(dados));
     const resultados = {
         determinacoesUmidadeReal: [],
         umidadeMedia: 0,
@@ -136,65 +138,65 @@ window.calculadora.calculos = (() => {
         mediaDensidadeReal: null
     };
 
-    // Cálculos Umidade (Array 'determinacoesUmidadeReal')
+    // Cálculos Umidade
     const umidades = [];
     if (dados.determinacoesUmidadeReal && Array.isArray(dados.determinacoesUmidadeReal)) {
-        dados.determinacoesUmidadeReal.forEach(det => {
+        dados.determinacoesUmidadeReal.forEach((det, index) => {
+            console.log(`[LOG][calcularDensidadeReal] Umidade Det ${index + 1}:`, JSON.stringify(det));
             const soloSeco = isValidNumber(det.soloSecoTara) && isValidNumber(det.tara) ? det.soloSecoTara - det.tara : 0;
             const agua = isValidNumber(det.soloUmidoTara) && isValidNumber(det.soloSecoTara) ? det.soloUmidoTara - det.soloSecoTara : 0;
-            // Permitir cálculo de umidade mesmo se agua for 0, mas soloSeco > 0
             const umidade = isValidPositiveNumber(soloSeco) && isValidNumber(agua) ? (agua / soloSeco) * 100 : 0;
+            console.log(`[LOG][calcularDensidadeReal] Umidade Det ${index + 1} - Calculado: soloSeco=${soloSeco}, agua=${agua}, umidade=${umidade}`);
             resultados.determinacoesUmidadeReal.push({ ...det, soloSeco, agua, umidade });
-            if (isValidNumber(umidade)) umidades.push(umidade); // Considerar 0% na média se ocorrer
+            if (isValidNumber(umidade)) umidades.push(umidade);
         });
     }
-    // Usar média aritmética simples se quisermos incluir 0%
-    // resultados.umidadeMedia = umidades.length > 0 ? umidades.reduce((a, b) => a + b, 0) / umidades.length : 0;
-    // Manter calcularMediaValida se 0% não deve entrar na média
     resultados.umidadeMedia = calcularMediaValida(umidades);
+    console.log(`[LOG][calcularDensidadeReal] Umidade Média Calculada: ${resultados.umidadeMedia}`);
 
-    // Cálculos Picnômetro (Array 'determinacoesPicnometro')
+    // Cálculos Picnômetro
     const densidadesReais = [];
     if (dados.determinacoesPicnometro && Array.isArray(dados.determinacoesPicnometro)) {
-        dados.determinacoesPicnometro.forEach(det => {
+        dados.determinacoesPicnometro.forEach((det, index) => {
+            console.log(`[LOG][calcularDensidadeReal] Picnômetro Det ${index + 1}:`, JSON.stringify(det));
             const densidadeAgua = calcularDensidadeAgua(det.temperatura);
-            // *** CORREÇÃO: Usar isValidNumber para umidadeMedia ***
-            // Se umidadeMedia for 0, massaSoloSeco = massaSoloUmido
+            console.log(`[LOG][calcularDensidadeReal] Picnômetro Det ${index + 1} - Densidade Água (T=${det.temperatura}): ${densidadeAgua}`);
             const massaSoloSeco = isValidPositiveNumber(det.massaSoloUmido) && isValidNumber(resultados.umidadeMedia)
                                   ? det.massaSoloUmido / (1 + resultados.umidadeMedia / 100)
                                   : 0;
+            console.log(`[LOG][calcularDensidadeReal] Picnômetro Det ${index + 1} - Massa Solo Seco Calculada: ${massaSoloSeco} (massaSoloUmido=${det.massaSoloUmido}, umidadeMedia=${resultados.umidadeMedia})`);
             let densidadeReal = 0;
-            // *** CORREÇÃO: Usar isValidNumber para massaSoloSeco ***
             if (isValidNumber(massaSoloSeco) && isValidPositiveNumber(densidadeAgua) && isValidNumber(det.massaPicAgua) && isValidNumber(det.massaPicAmostraAgua)) {
                 const denominador = massaSoloSeco + det.massaPicAgua - det.massaPicAmostraAgua;
-                // Permitir denominador > 0
+                console.log(`[LOG][calcularDensidadeReal] Picnômetro Det ${index + 1} - Denominador Dens. Real: ${denominador} (massaSoloSeco=${massaSoloSeco}, massaPicAgua=${det.massaPicAgua}, massaPicAmostraAgua=${det.massaPicAmostraAgua})`);
                 if (isValidPositiveNumber(denominador)) {
-                    // Permitir massaSoloSeco = 0 (resultará em densidadeReal = 0)
                     densidadeReal = (massaSoloSeco * densidadeAgua) / denominador;
                 }
             }
+            console.log(`[LOG][calcularDensidadeReal] Picnômetro Det ${index + 1} - Densidade Real Calculada: ${densidadeReal}`);
             resultados.determinacoesPicnometro.push({ ...det, densidadeAgua, massaSoloSeco, densidadeReal });
             if (isValidNumber(densidadeReal)) densidadesReais.push(densidadeReal);
         });
     }
 
     // Resultados Finais
-    resultados.mediaDensidadeReal = calcularMediaValida(densidadesReais); // Média ainda ignora zero
+    resultados.mediaDensidadeReal = calcularMediaValida(densidadesReais);
+    console.log(`[LOG][calcularDensidadeReal] Média Densidade Real Calculada: ${resultados.mediaDensidadeReal}`);
     if (densidadesReais.length >= 2) {
         const dr1 = densidadesReais[0];
         const dr2 = densidadesReais[1];
-        // Usar a média como referência para a diferença se houver mais de 2?
-        // Norma geralmente pede diferença entre duas determinações.
-        if (isValidPositiveNumber(dr1)) { // Evitar divisão por zero
+        if (isValidPositiveNumber(dr1)) {
              resultados.diferenca = Math.abs((dr1 - dr2) / dr1) * 100;
         }
     }
-
+    console.log(`[LOG][calcularDensidadeReal] Diferença Calculada: ${resultados.diferenca}`);
+    console.log('[LOG][calcularDensidadeReal] Cálculo finalizado. Resultados:', JSON.stringify(resultados));
     return resultados;
   }
 
-  // --- Calcular Densidade Max/Min (CORRIGIDO) ---
+  // --- Calcular Densidade Max/Min (COM LOGS DETALHADOS) ---
   function calcularDensidadeMaxMin(dados) {
+    console.log('[LOG][calcularDensidadeMaxMin] Iniciando cálculo. Dados recebidos:', JSON.stringify(dados));
      const resultados = {
         determinacoesMax: [],
         mediaGamadMax: null,
@@ -202,45 +204,48 @@ window.calculadora.calculos = (() => {
         mediaGamadMin: null
     };
 
-    // Densidade Máxima (Array 'determinacoesMax')
+    // Densidade Máxima
     const gamadsMax = [];
     if (dados.determinacoesMax && Array.isArray(dados.determinacoesMax)) {
-        dados.determinacoesMax.forEach(det => {
+        dados.determinacoesMax.forEach((det, index) => {
+            console.log(`[LOG][calcularDensidadeMaxMin] Max Det ${index + 1}:`, JSON.stringify(det));
             const solo = isValidNumber(det.moldeSolo) && isValidNumber(det.molde) ? det.moldeSolo - det.molde : 0;
             const gamad = isValidPositiveNumber(solo) && isValidPositiveNumber(det.volume) ? solo / det.volume : 0;
-            // *** CORREÇÃO: Usar isValidNumber para det.w ***
-            // Se w = 0, gamas = gamad
             const gamas = isValidPositiveNumber(gamad) && isValidNumber(det.w)
                           ? gamad * (1 + det.w / 100)
                           : 0;
+            console.log(`[LOG][calcularDensidadeMaxMin] Max Det ${index + 1} - Calculado: solo=${solo}, gamad=${gamad}, gamas=${gamas}`);
             resultados.determinacoesMax.push({ ...det, solo, gamad, gamas });
             if (isValidNumber(gamad)) gamadsMax.push(gamad);
         });
     }
     resultados.mediaGamadMax = calcularMediaValida(gamadsMax);
+    console.log(`[LOG][calcularDensidadeMaxMin] Média Gama_d Máx Calculada: ${resultados.mediaGamadMax}`);
 
-    // Densidade Mínima (Array 'determinacoesMin')
+    // Densidade Mínima
     const gamadsMin = [];
     if (dados.determinacoesMin && Array.isArray(dados.determinacoesMin)) {
-        dados.determinacoesMin.forEach(det => {
+        dados.determinacoesMin.forEach((det, index) => {
+            console.log(`[LOG][calcularDensidadeMaxMin] Min Det ${index + 1}:`, JSON.stringify(det));
             const solo = isValidNumber(det.moldeSolo) && isValidNumber(det.molde) ? det.moldeSolo - det.molde : 0;
             const gamad = isValidPositiveNumber(solo) && isValidPositiveNumber(det.volume) ? solo / det.volume : 0;
-            // *** CORREÇÃO: Usar isValidNumber para det.w ***
-            // Se w = 0, gamas = gamad (gamas não é usado/exibido para Min, mas corrigido por consistência)
             const gamas = isValidPositiveNumber(gamad) && isValidNumber(det.w)
                           ? gamad * (1 + det.w / 100)
                           : 0;
+            console.log(`[LOG][calcularDensidadeMaxMin] Min Det ${index + 1} - Calculado: solo=${solo}, gamad=${gamad}, gamas=${gamas}`);
             resultados.determinacoesMin.push({ ...det, solo, gamad, gamas });
             if (isValidNumber(gamad)) gamadsMin.push(gamad);
         });
     }
     resultados.mediaGamadMin = calcularMediaValida(gamadsMin);
-
+    console.log(`[LOG][calcularDensidadeMaxMin] Média Gama_d Mín Calculada: ${resultados.mediaGamadMin}`);
+    console.log('[LOG][calcularDensidadeMaxMin] Cálculo finalizado. Resultados:', JSON.stringify(resultados));
     return resultados;
   }
 
   // --- Função calcularDensidadeAgua permanece a mesma ---
    function calcularDensidadeAgua(temperatura) {
+    // ... (código inalterado) ...
     if (typeof temperatura !== 'number' || isNaN(temperatura)) return 0.9970; // Default a 25°C se inválido
     const tabela = [
       { temp:15, dens:0.9991 },{ temp:16, dens:0.9989 },
@@ -263,7 +268,7 @@ window.calculadora.calculos = (() => {
 
   // --- Funções de configuração e cálculo automático ---
   function configurarCalculosAutomaticos() {
-    // Usar delegação de eventos no container da calculadora para performance
+    // ... (código inalterado) ...
     const calculadoraContainer = document.getElementById('calculadora');
     if (!calculadoraContainer) return;
 
@@ -301,18 +306,24 @@ window.calculadora.calculos = (() => {
   function calcularResultados(tipo, dados) {
       if (!dados) return null;
       let resultados = null;
-      switch (tipo) {
-          case 'in-situ':
-              resultados = calcularDensidadeInSitu(dados);
-              break;
-          case 'real':
-              resultados = calcularDensidadeReal(dados);
-              break;
-          case 'max-min':
-              resultados = calcularDensidadeMaxMin(dados);
-              break;
-          default:
-              console.error(`Tipo de cálculo desconhecido: ${tipo}`);
+      try {
+          switch (tipo) {
+              case 'in-situ':
+                  resultados = calcularDensidadeInSitu(dados);
+                  break;
+              case 'real':
+                  resultados = calcularDensidadeReal(dados);
+                  break;
+              case 'max-min':
+                  resultados = calcularDensidadeMaxMin(dados);
+                  break;
+              default:
+                  console.error(`Tipo de cálculo desconhecido: ${tipo}`);
+          }
+      } catch (error) {
+          console.error(`Erro ao executar cálculo para ${tipo}:`, error);
+          // Retornar null ou um objeto de erro para indicar falha
+          return null;
       }
       return resultados;
   }
@@ -324,26 +335,21 @@ window.calculadora.calculos = (() => {
         return;
     }
     const dados = window.calculadora.formIntegration.obterDadosFormulario(tipo);
+    // Não calcular se obterDadosFormulario retornar null (erro já notificado)
     if (!dados) {
-        // Se dados for null, obterDadosFormulario já deve ter notificado o erro
-        // Podemos limpar os resultados ou mostrar um estado de erro
         window.calculadora.formIntegration.setUltimosResultados(tipo, null); // Limpa estado
         window.calculadora.formIntegration.preencherResultados(tipo, null); // Limpa resultados na UI
         return;
     }
 
-    try {
-        const resultados = calcularResultados(tipo, dados);
-        // *** MUDANÇA: Armazenar resultados no estado antes de preencher a UI ***
-        window.calculadora.formIntegration.setUltimosResultados(tipo, resultados);
-        window.calculadora.formIntegration.preencherResultados(tipo, resultados);
-    } catch (error) {
-        console.error(`Erro no cálculo automático para ${tipo}:`, error);
-        window.calculadora.formIntegration.exibirNotificacao(`Erro durante o cálculo: ${error.message}`, 'error');
-        // Limpar estado e resultados em caso de erro no cálculo
-        window.calculadora.formIntegration.setUltimosResultados(tipo, null);
-        window.calculadora.formIntegration.preencherResultados(tipo, null);
-    }
+    // O bloco try...catch foi movido para dentro de calcularResultados
+    const resultados = calcularResultados(tipo, dados);
+
+    // Armazenar e preencher mesmo se resultados for null (indicando erro no cálculo)
+    window.calculadora.formIntegration.setUltimosResultados(tipo, resultados);
+    window.calculadora.formIntegration.preencherResultados(tipo, resultados);
+
+    // Não precisamos mais do try...catch aqui, pois ele está em calcularResultados
   }
 
   function init() {
@@ -360,7 +366,6 @@ window.calculadora.calculos = (() => {
   return {
       calcularResultados, // Expor a função centralizada
       calcularAutomaticamente // Manter se for chamada externamente
-      // Não precisa expor as funções específicas de cálculo (InSitu, Real, MaxMin)
   };
 })();
 
