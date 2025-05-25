@@ -192,6 +192,7 @@
                               <th></th>
                               <th>Determinação 1</th>
                               <th>Determinação 2</th>
+                              <th>Determinação 3</th>
                           </tr>
                       </thead>
                       <tbody>
@@ -375,35 +376,33 @@
           <!-- Resultados -->
           <div class="form-section">
               <h3>Resultados</h3>
-              <div class="form-row">
-                  <div class="form-group">
-                      <label for="gamadTopo">γd Topo (g/cm³):</label>
-                      <input type="number" id="gamad-topo" step="0.001" placeholder="0.000" readonly>
-                  </div>
-                  <div class="form-group">
-                      <label for="gamadBase">γd Base (g/cm³):</label>
-                      <input type="number" id="gamad-base" step="0.001" placeholder="0.000" readonly>
-                  </div>
-              </div>
-              <div class="form-row">
-                  <div class="form-group">
-                      <label for="indiceVaziosTopo">Índice de Vazios Topo:</label>
-                      <input type="number" id="indice-vazios-topo" step="0.01" placeholder="0.00" readonly>
-                  </div>
-                  <div class="form-group">
-                      <label for="indiceVaziosBase">Índice de Vazios Base:</label>
-                      <input type="number" id="indice-vazios-base" step="0.01" placeholder="0.00" readonly>
-                  </div>
-              </div>
-              <div class="form-row">
-                  <div class="form-group">
-                      <label for="crTopo">CR Topo (%):</label>
-                      <input type="number" id="cr-topo" step="0.1" placeholder="0.0" readonly>
-                  </div>
-                  <div class="form-group">
-                      <label for="crBase">CR Base (%):</label>
-                      <input type="number" id="cr-base" step="0.1" placeholder="0.0" readonly>
-                  </div>
+              <div class="table-responsive">
+                  <table class="data-table">
+                      <thead>
+                          <tr>
+                              <th></th>
+                              <th>Topo</th>
+                              <th>Base</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr>
+                              <td>γd Topo (g/cm³)</td>
+                              <td><input type="number" id="gamad-topo" step="0.001" placeholder="0.000" readonly></td>
+                              <td><input type="number" id="gamad-base" step="0.001" placeholder="0.000" readonly></td>
+                          </tr>
+                          <tr>
+                              <td>indiceVazios</td>
+                              <td><input type="number" id="indice-vazios-topo" step="0.01" placeholder="0.00" readonly></td>
+                              <td><input type="number" id="indice-vazios-base" step="0.01" placeholder="0.00" readonly></td>
+                          </tr>
+                          <tr>
+                              <td>Compacidade Relativa</td>
+                              <td><input type="number" id="cr-topo" step="0.1" placeholder="0.0" readonly></td>
+                              <td><input type="number" id="cr-base" step="0.1" placeholder="0.0" readonly></td>
+                          </tr>
+                      </tbody>
+                  </table>
               </div>
               <div class="form-row">
                   <div class="status-container">
