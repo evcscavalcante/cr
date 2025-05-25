@@ -611,205 +611,197 @@
 
   <!-- DENSIDADE MÁXIMA E MÍNIMA -->
   <template id="template-densidade-max-min">
-    <div class="calculadora-container">
-      <h2>Densidade Máxima e Mínima</h2>
-      <!-- Informações Gerais -->
-      <div class="form-section">
-        <h3>Informações Gerais</h3>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="registro-max-min">Número do Registro:</label>
-            <input type="text" id="registro-max-min" placeholder="Informe o número do registro">
-          </div>
-          <div class="form-group">
-            <label for="data-max-min">Data:</label>
-            <input type="date" id="data-max-min">
-          </div>
+  <div class="calculadora-container">
+    <h2>Densidade Máxima e Mínima</h2>
+
+    <!-- Informações Gerais -->
+    <div class="form-section">
+      <h3>Informações Gerais</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="registro-max-min">Número do Registro:</label>
+          <input type="text" id="registro-max-min" placeholder="Informe o número do registro">
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="operador-max-min">Operador:</label>
-            <input type="text" id="operador-max-min" placeholder="Nome do operador">
-          </div>
-          <div class="form-group">
-            <label for="material-max-min">Material:</label>
-            <input type="text" id="material-max-min" placeholder="Descrição do material">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="origem-max-min">Origem:</label>
-            <input type="text" id="origem-max-min" placeholder="Origem do material">
-          </div>
+        <div class="form-group">
+          <label for="data-max-min">Data:</label>
+          <input type="date" id="data-max-min">
         </div>
       </div>
-      <!-- Densidade Máxima -->
-      <div class="form-section">
-        <h3>Densidade Máxima</h3>
-        <div class="table-responsive">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th></th>
-                <th>Determinação 1</th>
-                <th>Determinação 2</th>
-                <th>Determinação 3</th>
-              </tr>
-            </thead>
-            <tbody>
-               <tr>
-                <td>Número do Cilindro</td>
-                <td><input type="text" id="numero-cilindro-min-1" placeholder="Nº"></td>
-                <td><input type="text" id="numero-cilindro-min-2" placeholder="Nº"></td>
-                <td><input type="text" id="numero-cilindro-min-3" placeholder="Nº"></td>
-              </tr>
-              <tr>
-                <td>Molde + Solo (g)</td>
-                <td><input type="number" id="molde-solo-max-1" step="0.01" placeholder="0.00"></td>
-                <td><input type="number" id="molde-solo-max-2" step="0.01" placeholder="0.00"></td>
-                <td><input type="number" id="molde-solo-max-3" step="0.01" placeholder="0.00"></td>
-              </tr>
-              <tr>
-                <td>Molde (g)</td>
-                <td><input type="number" id="molde-max-1" step="0.01" placeholder="0.00"></td>
-                <td><input type="number" id="molde-max-2" step="0.01" placeholder="0.00"></td>
-                <td><input type="number" id="molde-max-3" step="0.01" placeholder="0.00"></td>
-              </tr>
-              <tr>
-                <td>Solo (g)</td>
-                <td><input type="number" id="solo-max-1" step="0.01" placeholder="0.00" readonly></td>
-                <td><input type="number" id="solo-max-2" step="0.01" placeholder="0.00" readonly></td>
-                <td><input type="number" id="solo-max-3" step="0.01" placeholder="0.00" readonly></td>
-              </tr>
-              <tr>
-                <td>Volume (cm³)</td>
-                <td><input type="number" id="volume-max-1" step="0.01" placeholder="0.00"></td>
-                <td><input type="number" id="volume-max-2" step="0.01" placeholder="0.00"></td>
-                <td><input type="number" id="volume-max-3" step="0.01" placeholder="0.00"></td>
-              </tr>
-              <tr>
-                <td>γd (g/cm³)</td>
-                <td><input type="number" id="gamad-max-1" step="0.001" placeholder="0.000" readonly></td>
-                <td><input type="number" id="gamad-max-2" step="0.001" placeholder="0.000" readonly></td>
-                <td><input type="number" id="gamad-max-3" step="0.001" placeholder="0.000" readonly></td>
-              </tr>
-              <tr>
-                <td>w (%)</td>
-                <td><input type="number" id="w-max-1" step="0.1" placeholder="0.0"></td>
-                <td><input type="number" id="w-max-2" step="0.1" placeholder="0.0"></td>
-                <td><input type="number" id="w-max-3" step="0.1" placeholder="0.0"></td>
-              </tr>
-              <tr>
-                <td>γs (g/cm³)</td>
-                <td><input type="number" id="gamas-max-1" step="0.001" placeholder="0.000" readonly></td>
-                <td><input type="number" id="gamas-max-2" step="0.001" placeholder="0.000" readonly></td>
-                <td><input type="number" id="gamas-max-3" step="0.001" placeholder="0.000" readonly></td>
-              </tr>
-            </tbody>
-          </table>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="operador-max-min">Operador:</label>
+          <input type="text" id="operador-max-min" placeholder="Nome do operador">
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="gamad-max">γd máx (g/cm³):</label>
-            <input type="number" id="gamad-max" step="0.001" placeholder="0.000" readonly>
-          </div>
+        <div class="form-group">
+          <label for="material-max-min">Material:</label>
+          <input type="text" id="material-max-min" placeholder="Descrição do material">
         </div>
       </div>
-      <!-- Densidade Mínima -->
-      <div class="form-section">
-        <h3>Densidade Mínima</h3>
-        <div class="table-responsive">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th></th>
-                <th>Determinação 1</th>
-                <th>Determinação 2</th>
-                <th>Determinação 3</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Número do Cilindro</td>
-                <td><input type="text" id="numero-cilindro-min-1" placeholder="Nº"></td>
-                <td><input type="text" id="numero-cilindro-min-2" placeholder="Nº"></td>
-                <td><input type="text" id="numero-cilindro-min-3" placeholder="Nº"></td>
-              </tr>
-              <tr>
-                <td>Molde + Solo (g)</td>
-                <td><input type="number" id="molde-solo-min-1" step="0.01" placeholder="0.00"></td>
-                <td><input type="number" id="molde-solo-min-2" step="0.01" placeholder="0.00"></td>
-                <td><input type="number" id="molde-solo-min-3" step="0.01" placeholder="0.00"></td>
-              </tr>
-              <tr>
-                <td>Molde (g)</td>
-                <td><input type="number" id="molde-min-1" step="0.01" placeholder="0.00"></td>
-                <td><input type="number" id="molde-min-2" step="0.01" placeholder="0.00"></td>
-                <td><input type="number" id="molde-min-3" step="0.01" placeholder="0.00"></td>
-              </tr>
-              <tr>
-                <td>Solo (g)</td>
-                <td><input type="number" id="solo-min-1" step="0.01" placeholder="0.00" readonly></td>
-                <td><input type="number" id="solo-min-2" step="0.01" placeholder="0.00" readonly></td>
-                <td><input type="number" id="solo-min-3" step="0.01" placeholder="0.00" readonly></td>
-              </tr>
-              <tr>
-                <td>Volume (cm³)</td>
-                <td><input type="number" id="volume-min-1" step="0.01" placeholder="0.00"></td>
-                <td><input type="number" id="volume-min-2" step="0.01" placeholder="0.00"></td>
-                <td><input type="number" id="volume-min-3" step="0.01" placeholder="0.00"></td>
-              </tr>
-              <tr>
-                <td>γd (g/cm³)</td>
-                <td><input type="number" id="gamad-min-1" step="0.001" placeholder="0.000" readonly></td>
-                <td><input type="number" id="gamad-min-2" step="0.001" placeholder="0.000" readonly></td>
-                <td><input type="number" id="gamad-min-3" step="0.001" placeholder="0.000" readonly></td>
-              </tr>
-              <tr>
-                <td>w (%)</td>
-                <td><input type="number" id="w-min-1" step="0.1" placeholder="0.0"></td>
-                <td><input type="number" id="w-min-2" step="0.1" placeholder="0.0"></td>
-                <td><input type="number" id="w-min-3" step="0.1" placeholder="0.0"></td>
-              </tr>
-              <tr>
-                <td>γs (g/cm³)</td>
-                <td><input type="number" id="gamas-min-1" step="0.001" placeholder="0.000" readonly></td>
-                <td><input type="number" id="gamas-min-2" step="0.001" placeholder="0.000" readonly></td>
-                <td><input type="number" id="gamas-min-3" step="0.001" placeholder="0.000" readonly></td>
-              </tr>
-            </tbody>
-          </table>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="origem-max-min">Origem:</label>
+          <input type="text" id="origem-max-min" placeholder="Origem do material">
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="gamad-min">γd mín (g/cm³):</label>
-            <input type="number" id="gamad-min" step="0.001" placeholder="0.000" readonly>
-          </div>
-        </div>
-      </div>
-      <!-- Ações -->
-      <div class="acoes">
-        <button class="btn-calcular">Calcular</button>
-        <button class="btn-salvar">Salvar</button>
-        <button class="btn-gerar-pdf">Gerar PDF</button>
-        <button class="btn-limpar">Limpar</button>
       </div>
     </div>
-  </template>
+
+    <!-- Densidade Máxima -->
+    <div class="form-section">
+      <h3>Densidade Máxima</h3>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Determinação 1</th>
+              <th>Determinação 2</th>
+              <th>Determinação 3</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Número do Cilindro</td>
+              <td><input type="text" id="numero-cilindro-max-1" placeholder="Nº"></td>
+              <td><input type="text" id="numero-cilindro-max-2" placeholder="Nº"></td>
+              <td><input type="text" id="numero-cilindro-max-3" placeholder="Nº"></td>
+            </tr>
+            <tr>
+              <td>Molde + Solo (g)</td>
+              <td><input type="number" id="molde-solo-max-1" step="0.01" placeholder="0.00"></td>
+              <td><input type="number" id="molde-solo-max-2" step="0.01" placeholder="0.00"></td>
+              <td><input type="number" id="molde-solo-max-3" step="0.01" placeholder="0.00"></td>
+            </tr>
+            <tr>
+              <td>Molde (g)</td>
+              <td><input type="number" id="molde-max-1" step="0.01" placeholder="0.00"></td>
+              <td><input type="number" id="molde-max-2" step="0.01" placeholder="0.00"></td>
+              <td><input type="number" id="molde-max-3" step="0.01" placeholder="0.00"></td>
+            </tr>
+            <tr>
+              <td>Solo (g)</td>
+              <td><input type="number" id="solo-max-1" step="0.01" placeholder="0.00" readonly></td>
+              <td><input type="number" id="solo-max-2" step="0.01" placeholder="0.00" readonly></td>
+              <td><input type="number" id="solo-max-3" step="0.01" placeholder="0.00" readonly></td>
+            </tr>
+            <tr>
+              <td>Volume (cm³)</td>
+              <td><input type="number" id="volume-max-1" step="0.01" placeholder="0.00"></td>
+              <td><input type="number" id="volume-max-2" step="0.01" placeholder="0.00"></td>
+              <td><input type="number" id="volume-max-3" step="0.01" placeholder="0.00"></td>
+            </tr>
+            <tr>
+              <td>γd (g/cm³)</td>
+              <td><input type="number" id="gamad-max-1" step="0.001" placeholder="0.000" readonly></td>
+              <td><input type="number" id="gamad-max-2" step="0.001" placeholder="0.000" readonly></td>
+              <td><input type="number" id="gamad-max-3" step="0.001" placeholder="0.000" readonly></td>
+            </tr>
+            <tr>
+              <td>w (%)</td>
+              <td><input type="number" id="w-max-1" step="0.1" placeholder="0.0"></td>
+              <td><input type="number" id="w-max-2" step="0.1" placeholder="0.0"></td>
+              <td><input type="number" id="w-max-3" step="0.1" placeholder="0.0"></td>
+            </tr>
+            <tr>
+              <td>γs (g/cm³)</td>
+              <td><input type="number" id="gamas-max-1" step="0.001" placeholder="0.000" readonly></td>
+              <td><input type="number" id="gamas-max-2" step="0.001" placeholder="0.000" readonly></td>
+              <td><input type="number" id="gamas-max-3" step="0.001" placeholder="0.000" readonly></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="gamad-max">γd máx (g/cm³):</label>
+          <input type="number" id="gamad-max" step="0.001" placeholder="0.000" readonly>
+        </div>
+      </div>
+    </div>
+
+    <!-- Densidade Mínima -->
+    <div class="form-section">
+      <h3>Densidade Mínima</h3>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Determinação 1</th>
+              <th>Determinação 2</th>
+              <th>Determinação 3</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Número do Cilindro</td>
+              <td><input type="text" id="numero-cilindro-min-1" placeholder="Nº"></td>
+              <td><input type="text" id="numero-cilindro-min-2" placeholder="Nº"></td>
+              <td><input type="text" id="numero-cilindro-min-3" placeholder="Nº"></td>
+            </tr>
+            <tr>
+              <td>Molde + Solo (g)</td>
+              <td><input type="number" id="molde-solo-min-1" step="0.01" placeholder="0.00"></td>
+              <td><input type="number" id="molde-solo-min-2" step="0.01" placeholder="0.00"></td>
+              <td><input type="number" id="molde-solo-min-3" step="0.01" placeholder="0.00"></td>
+            </tr>
+            <tr>
+              <td>Molde (g)</td>
+              <td><input type="number" id="molde-min-1" step="0.01" placeholder="0.00"></td>
+              <td><input type="number" id="molde-min-2" step="0.01" placeholder="0.00"></td>
+              <td><input type="number" id="molde-min-3" step="0.01" placeholder="0.00"></td>
+            </tr>
+            <tr>
+              <td>Solo (g)</td>
+              <td><input type="number" id="solo-min-1" step="0.01" placeholder="0.00" readonly></td>
+              <td><input type="number" id="solo-min-2" step="0.01" placeholder="0.00" readonly></td>
+              <td><input type="number" id="solo-min-3" step="0.01" placeholder="0.00" readonly></td>
+            </tr>
+            <tr>
+              <td>Volume (cm³)</td>
+              <td><input type="number" id="volume-min-1" step="0.01" placeholder="0.00"></td>
+              <td><input type="number" id="volume-min-2" step="0.01" placeholder="0.00"></td>
+              <td><input type="number" id="volume-min-3" step="0.01" placeholder="0.00"></td>
+            </tr>
+            <tr>
+              <td>γd (g/cm³)</td>
+              <td><input type="number" id="gamad-min-1" step="0.001" placeholder="0.000" readonly></td>
+              <td><input type="number" id="gamad-min-2" step="0.001" placeholder="0.000" readonly></td>
+              <td><input type="number" id="gamad-min-3" step="0.001" placeholder="0.000" readonly></td>
+            </tr>
+            <tr>
+              <td>w (%)</td>
+              <td><input type="number" id="w-min-1" step="0.1" placeholder="0.0"></td>
+              <td><input type="number" id="w-min-2" step="0.1" placeholder="0.0"></td>
+              <td><input type="number" id="w-min-3" step="0.1" placeholder="0.0"></td>
+            </tr>
+            <tr>
+              <td>γs (g/cm³)</td>
+              <td><input type="number" id="gamas-min-1" step="0.001" placeholder="0.000" readonly></td>
+              <td><input type="number" id="gamas-min-2" step="0.001" placeholder="0.000" readonly></td>
+              <td><input type="number" id="gamas-min-3" step="0.001" placeholder="0.000" readonly></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="gamad-min">γd mín (g/cm³):</label>
+          <input type="number" id="gamad-min" step="0.001" placeholder="0.000" readonly>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ações -->
+    <div class="acoes">
+      <button class="btn-calcular">Calcular</button>
+      <button class="btn-salvar">Salvar</button>
+      <button class="btn-gerar-pdf">Gerar PDF</button>
+      <button class="btn-limpar">Limpar</button>
+    </div>
+  </div>
+</template>
+
  <!-- DENSIDADE IN SITU -->
-  <template id="template-densidade-in-situ">
-    <!-- SEU MARCUP DO FORMULÁRIO IN-SITU AQUI -->
-  </template>
-
-  <!-- DENSIDADE REAL -->
-  <template id="template-densidade-real">
-    <!-- SEU MARCUP DO FORMULÁRIO REAL AQUI -->
-  </template>
-
-  <!-- DENSIDADE MÁXIMA E MÍNIMA -->
-  <template id="template-densidade-max-min">
-    <!-- SEU MARCUP DO FORMULÁRIO MÁX-MÍN AQUI -->
-  </template>
 
   <!-- Inicializa o objeto de templates antes dos seus scripts JS -->
   <script>
