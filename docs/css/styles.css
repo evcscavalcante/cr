@@ -53,10 +53,16 @@ header h1 {
     margin-bottom: 0.5rem;
 }
 
-.logo img {
-    height: 40px;
+header .logo img {
+  height: 60px;            /* altura da logo; width: auto mantém proporção */
+  width: auto;
 }
 
+/* se quiser controlar também o h1 */
+header h1 {
+  margin-left: 16px;
+  font-size: 1.5rem;
+}
 /* Container principal */
 main {
     width: 100%;
