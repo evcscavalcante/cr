@@ -7,7 +7,7 @@ window.calculadora.formIntegration = (() => {
      * @param {string} tipo - 'in-situ', 'real' ou 'max-min'
      */
     function carregarFormulario(tipo) {
-        const container = document.getElementById('calculadora'));
+        const container = document.getElementById('calculadora');
         if (!container) {
             console.error(`Container da calculadora não encontrado para tipo '${tipo}'`);
             return;
@@ -15,6 +15,10 @@ window.calculadora.formIntegration = (() => {
         // Insere o template HTML do formulário
         container.innerHTML = window.calculadora.templates[tipo] || '';
         const form = container.querySelector('form');
+        if (!form) {
+            console.error(`Formulário não encontrado após carregar template para tipo '${tipo}'`);
+            return;
+        }
         // Dispara evento indicando que o formulário foi carregado
         document.dispatchEvent(new CustomEvent('formLoaded', { detail: { form, tipo } }));
     }
@@ -25,7 +29,7 @@ window.calculadora.formIntegration = (() => {
      * @returns {object|null} dados coletados ou null em caso de erro
      */
     function obterDadosFormulario(tipo) {
-        const form = document.querySelector('#calculadora form'));
+        const form = document.querySelector('#calculadora form');
         if (!form) {
             console.error(`Formulário '${tipo}' não encontrado`);
             return null;
@@ -81,7 +85,7 @@ window.calculadora.formIntegration = (() => {
      * @param {object} resultados
      */
     function preencherResultados(tipo, resultados) {
-        const form = document.querySelector('#calculadora form'));
+        const form = document.querySelector('#calculadora form');
         if (!form) return;
         try {
             // Limpa todos os campos de resultado
