@@ -46,7 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Carregar registros para referência cruzada
             if (tipo === "in-situ") {
-                // A função original foi removida ou renomeada em db.js, usar a nova estrutura se disponível
                  if (window.calculadora.referenceSystem && typeof window.calculadora.referenceSystem.atualizarSeletoresReferencia === 'function') {
                     window.calculadora.referenceSystem.atualizarSeletoresReferencia();
                  } else {
@@ -68,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Configurar botões do formulário
         function configurarBotoes(tipo) {
-            // Botão de calcular (Removido pois o cálculo é automático)
+            // Botão de calcular (agora automático)
             // const btnCalcular = document.querySelector(".btn-calcular");
             // if (btnCalcular) {
             //     btnCalcular.addEventListener("click", () => calcular(tipo));
@@ -93,12 +92,13 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // Calcular resultados (agora chamado automaticamente)
+        // Calcular resultados (chamado automaticamente)
         function calcular(tipo) {
              if (!window.calculadora.calculos) {
                 console.error("Módulo de cálculos não disponível");
                 return;
             }
+             // A função calcularAutomaticamente deve obter os dados e preencher os resultados
              window.calculadora.calculos.calcularAutomaticamente(tipo);
         }
 
@@ -113,12 +113,11 @@ document.addEventListener("DOMContentLoaded", () => {
             try {
                 // Obter dados do formulário (já estruturados para múltiplas determinações)
                 const dados = obterDadosFormulario(tipo);
-                if (!dados) return;
+                if (!dados) return; // Erro ao obter dados já notificado
 
                 // Validar registro
                 if (!dados.registro) {
                     exibirNotificacao("Informe o número de registro", "warning");
-                    // Focar no campo de registro
                     const registroInput = document.querySelector(`#registro${tipo === 'in-situ' ? '' : `-${tipo}`}`);
                     if (registroInput) registroInput.focus();
                     return;
@@ -132,6 +131,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         // Atualizar listas de referência se necessário
                         if ((tipo === "real" || tipo === "max-min") && window.calculadora.referenceSystem && typeof window.calculadora.referenceSystem.atualizarSeletoresReferencia === 'function') {
                            window.calculadora.referenceSystem.atualizarSeletoresReferencia();
+                        }
+                        // Atualizar lista de ensaios da aba atual
+                        if (window.calculadora.app && typeof window.calculadora.app.atualizarListaEnsaios === 'function') {
+                            window.calculadora.app.atualizarListaEnsaios(tipo);
                         }
                     })
                     .catch(error => {
@@ -165,11 +168,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
+                // Obter resultados calculados para incluir no PDF
+                // É importante que os cálculos estejam atualizados
+                const resultados = window.calculadora.calculos ? window.calculadora.calculos.calcularResultados(tipo, dados) : {};
+                const dadosCompletos = { ...dados, ...resultados }; // Combina dados de entrada e resultados
+
                 // Gerar PDF
-                window.calculadora.pdfGenerator.gerarPDF(tipo, dados)
+                window.calculadora.pdfGenerator.gerarPDF(tipo, dadosCompletos)
                     .then(() => {
-                        // A notificação de sucesso é geralmente tratada dentro do pdfGenerator
-                        // exibirNotificacao("PDF gerado com sucesso", "success");
+                        // Notificação geralmente tratada dentro do pdfGenerator
                     })
                     .catch(error => {
                         console.error("Erro ao gerar PDF:", error);
@@ -192,10 +199,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 input.value = "";
             });
 
-            // Limpar campos calculados
+            // Limpar campos calculados (readonly)
             const calculados = form.querySelectorAll("input[readonly]");
             calculados.forEach(input => {
-                // Definir como vazio ou placeholder padrão se houver
                 input.value = input.placeholder === "0.0" || input.placeholder === "0.00" || input.placeholder === "0.000" || input.placeholder === "0.0000" ? input.placeholder : "";
             });
 
@@ -214,171 +220,180 @@ document.addEventListener("DOMContentLoaded", () => {
 
             exibirNotificacao("Formulário limpo", "info");
             // Recalcular após limpar para zerar os campos dependentes
-            setTimeout(() => calcular(tipo), 100);
+            // Usar um pequeno timeout para garantir que o DOM está pronto
+            setTimeout(() => calcular(tipo), 50);
         }
 
         // Função auxiliar para obter valor float de um campo
         function getFloatValue(selector) {
             const element = document.querySelector(selector);
-            return parseFloat(element ? element.value.replace(',', '.') : 0) || 0; // Trata vírgula como decimal e retorna 0 se inválido/vazio
+            // Trata vírgula como decimal, remove espaços e retorna 0 se inválido/vazio
+            return parseFloat(element ? element.value.replace(/\s/g, '').replace(',', '.') : 0) || 0;
         }
 
         // Função auxiliar para obter valor string de um campo
         function getStringValue(selector) {
             const element = document.querySelector(selector);
-            return element ? element.value : "";
+            return element ? element.value.trim() : "";
         }
 
-        // Obter dados do formulário (Atualizado para múltiplas determinações)
+        // Obter dados do formulário (REESCRITO para estrutura com arrays)
         function obterDadosFormulario(tipo) {
             const form = document.querySelector(".calculadora-container");
-            if (!form) return null;
-
-            const dados = {};
-
-            // Obter valores comuns
-            dados.registro = getStringValue(`#registro${tipo === 'in-situ' ? '' : `-${tipo}`}`);
-            dados.data = getStringValue(`#data${tipo === 'in-situ' ? '' : `-${tipo}`}`);
-            dados.operador = getStringValue(`#operador${tipo === 'in-situ' ? '' : `-${tipo}`}`);
-            dados.material = getStringValue(`#material${tipo === 'in-situ' ? '' : `-${tipo}`}`);
-            dados.origem = getStringValue(`#origem${tipo === 'in-situ' ? '' : `-${tipo}`}`);
-
-            // Obter valores específicos por tipo
-            switch (tipo) {
-                case "in-situ":
-                    // Informações gerais
-                    dados.responsavel = getStringValue("#responsavel");
-                    dados.verificador = getStringValue("#verificador");
-                    dados.norte = getStringValue("#norte");
-                    dados.este = getStringValue("#este");
-                    dados.cota = getStringValue("#cota");
-                    dados.quadrante = getStringValue("#quadrante");
-                    dados.camada = getStringValue("#camada");
-                    dados.hora = getStringValue("#hora");
-
-                    // Dispositivos
-                    dados.balanca = getStringValue("#balanca");
-                    dados.estufa = getStringValue("#estufa");
-
-                    // Referências
-                    dados.registroDensidadeReal = getStringValue("#registro-densidade-real");
-                    dados.registroDensidadeMaxMin = getStringValue("#registro-densidade-max-min");
-
-                    // Densidade in situ (2 Determinações)
-                    for (let i = 1; i <= 2; i++) {
-                        dados[`numeroCilindro-${i}`] = getStringValue(`#numero-cilindro-${i}`);
-                        dados[`moldeSolo-${i}`] = getFloatValue(`#molde-solo-${i}`);
-                        dados[`molde-${i}`] = getFloatValue(`#molde-${i}`);
-                        // Solo, Volume, GamaNat são calculados, não lidos diretamente do input (a menos que sejam editáveis)
-                        // Se forem campos readonly preenchidos pelo cálculo, não precisam ser lidos aqui.
-                        // Se forem inputs editáveis, descomente as linhas abaixo:
-                        // dados[`solo-${i}`] = getFloatValue(`#solo-${i}`);
-                        // dados[`volume-${i}`] = getFloatValue(`#volume-${i}`);
-                        // dados[`gamaNat-${i}`] = getFloatValue(`#gama-nat-${i}`);
-                    }
-
-                    // Umidade - Topo (3 Determinações)
-                    for (let i = 1; i <= 3; i++) {
-                        dados[`capsulaTopo-${i}`] = getStringValue(`#capsula-topo-${i}`);
-                        dados[`soloUmidoTaraTopo-${i}`] = getFloatValue(`#solo-umido-tara-topo-${i}`);
-                        dados[`soloSecoTaraTopo-${i}`] = getFloatValue(`#solo-seco-tara-topo-${i}`);
-                        dados[`taraTopo-${i}`] = getFloatValue(`#tara-topo-${i}`);
-                         // SoloSeco, Agua, Umidade são calculados
-                        // dados[`soloSecoTopo-${i}`] = getFloatValue(`#solo-seco-topo-${i}`);
-                        // dados[`aguaTopo-${i}`] = getFloatValue(`#agua-topo-${i}`);
-                        // dados[`umidadeTopo-${i}`] = getFloatValue(`#umidade-topo-${i}`);
-                    }
-                    // Umidade Média Topo é calculada
-                    // dados.umidadeMediaTopo = getFloatValue("#umidade-media-topo");
-
-                    // Umidade - Base (3 Determinações)
-                    for (let i = 1; i <= 3; i++) {
-                        dados[`capsulaBase-${i}`] = getStringValue(`#capsula-base-${i}`);
-                        dados[`soloUmidoTaraBase-${i}`] = getFloatValue(`#solo-umido-tara-base-${i}`);
-                        dados[`soloSecoTaraBase-${i}`] = getFloatValue(`#solo-seco-tara-base-${i}`);
-                        dados[`taraBase-${i}`] = getFloatValue(`#tara-base-${i}`);
-                         // SoloSeco, Agua, Umidade são calculados
-                        // dados[`soloSecoBase-${i}`] = getFloatValue(`#solo-seco-base-${i}`);
-                        // dados[`aguaBase-${i}`] = getFloatValue(`#agua-base-${i}`);
-                        // dados[`umidadeBase-${i}`] = getFloatValue(`#umidade-base-${i}`);
-                    }
-                     // Umidade Média Base é calculada
-                    // dados.umidadeMediaBase = getFloatValue("#umidade-media-base");
-
-                    // Resultados (Gamad, Indice Vazios, CR, Status são calculados)
-                    // Não é necessário ler os campos de resultado aqui, eles são preenchidos por preencherResultados
-
-                    // Obter valores de referência do sistema de referência (se existir)
-                    if (window.calculadora.referenceSystem) {
-                         if (dados.registroDensidadeReal) {
-                            dados.densidadeReal = window.calculadora.referenceSystem.getDensidadeReal(dados.registroDensidadeReal);
-                         }
-                         if (dados.registroDensidadeMaxMin) {
-                            const refMaxMin = window.calculadora.referenceSystem.getDensidadeMaxMin(dados.registroDensidadeMaxMin);
-                            if (refMaxMin) {
-                                dados.gamadMax = refMaxMin.gamadMax;
-                                dados.gamadMin = refMaxMin.gamadMin;
-                            }
-                         }
-                    } else {
-                        console.warn("Módulo referenceSystem não encontrado para obter dados de referência.");
-                    }
-                    break;
-
-                case "real": // Manter lógica original, pois não foi mencionada alteração
-                    // Umidade
-                    for (let i = 1; i <= 3; i++) {
-                        dados[`capsulaReal${i}`] = getStringValue(`#capsula-real-${i}`);
-                        dados[`soloUmidoTaraReal${i}`] = getFloatValue(`#solo-umido-tara-real-${i}`);
-                        dados[`soloSecoTaraReal${i}`] = getFloatValue(`#solo-seco-tara-real-${i}`);
-                        dados[`taraReal${i}`] = getFloatValue(`#tara-real-${i}`);
-                        // Calculados: soloSecoReal, aguaReal, umidadeReal
-                    }
-                    // Calculado: umidadeMediaReal
-
-                    // Picnômetro (apenas 2 determinações)
-                    for (let i = 1; i <= 2; i++) {
-                        dados[`picnometro${i}`] = getStringValue(`#picnometro-${i}`);
-                        dados[`massaPic${i}`] = getFloatValue(`#massa-pic-${i}`);
-                        dados[`massaPicAmostraAgua${i}`] = getFloatValue(`#massa-pic-amostra-agua-${i}`);
-                        dados[`temperatura${i}`] = getFloatValue(`#temperatura-${i}`);
-                        dados[`massaPicAgua${i}`] = getFloatValue(`#massa-pic-agua-${i}`);
-                        dados[`massaSoloUmido${i}`] = getFloatValue(`#massa-solo-umido-${i}`);
-                         // Calculados: densidadeAgua, massaSoloSeco, densidadeReal
-                    }
-
-                    // Resultados (Calculados: diferencaReal, mediaDensidadeReal)
-                    break;
-
-                case "max-min": // Manter lógica original, pois não foi mencionada alteração
-                    // Densidade máxima
-                    for (let i = 1; i <= 3; i++) {
-                        dados[`moldeSoloMax${i}`] = getFloatValue(`#molde-solo-max-${i}`);
-                        dados[`moldeMax${i}`] = getFloatValue(`#molde-max-${i}`);
-                        dados[`volumeMax${i}`] = getFloatValue(`#volume-max-${i}`);
-                        dados[`wMax${i}`] = getFloatValue(`#w-max-${i}`);
-                         // Calculados: soloMax, gamadMax, gamasMax
-                    }
-                    // Calculado: gamadMax (média)
-
-                    // Densidade mínima
-                    for (let i = 1; i <= 3; i++) {
-                        dados[`numeroCilindroMin${i}`] = getStringValue(`#numero-cilindro-min-${i}`);
-                        dados[`moldeSoloMin${i}`] = getFloatValue(`#molde-solo-min-${i}`);
-                        dados[`moldeMin${i}`] = getFloatValue(`#molde-min-${i}`);
-                        dados[`volumeMin${i}`] = getFloatValue(`#volume-min-${i}`);
-                        dados[`wMin${i}`] = getFloatValue(`#w-min-${i}`);
-                        // Calculados: soloMin, gamadMin, gamasMin
-                    }
-                    // Calculado: gamadMin (média)
-                    break;
-
-                default:
-                    console.error(`Tipo de ensaio inválido: ${tipo}`);
-                    return null;
+            if (!form) {
+                console.error("Container do formulário não encontrado.");
+                exibirNotificacao("Erro interno: Formulário não encontrado.", "error");
+                return null;
             }
 
-            return dados;
+            const dados = {};
+            try {
+                // Obter valores comuns
+                const idSuffix = tipo === 'in-situ' ? '' : `-${tipo}`;
+                dados.registro = getStringValue(`#registro${idSuffix}`);
+                dados.data = getStringValue(`#data${idSuffix}`);
+                dados.operador = getStringValue(`#operador${idSuffix}`);
+                dados.material = getStringValue(`#material${idSuffix}`);
+                dados.origem = getStringValue(`#origem${idSuffix}`);
+
+                // Obter valores específicos por tipo
+                switch (tipo) {
+                    case "in-situ":
+                        // Informações gerais
+                        dados.responsavel = getStringValue("#responsavel");
+                        dados.verificador = getStringValue("#verificador");
+                        dados.norte = getStringValue("#norte");
+                        dados.este = getStringValue("#este");
+                        dados.cota = getStringValue("#cota");
+                        dados.quadrante = getStringValue("#quadrante");
+                        dados.camada = getStringValue("#camada");
+                        dados.hora = getStringValue("#hora");
+
+                        // Dispositivos
+                        dados.balanca = getStringValue("#balanca");
+                        dados.estufa = getStringValue("#estufa");
+
+                        // Referências
+                        dados.registroDensidadeReal = getStringValue("#registro-densidade-real");
+                        dados.registroDensidadeMaxMin = getStringValue("#registro-densidade-max-min");
+
+                        // Densidade in situ (2 Determinações)
+                        dados.determinacoesInSitu = [];
+                        for (let i = 1; i <= 2; i++) {
+                            dados.determinacoesInSitu.push({
+                                numeroCilindro: getStringValue(`#numero-cilindro-${i}`),
+                                moldeSolo: getFloatValue(`#molde-solo-${i}`),
+                                molde: getFloatValue(`#molde-${i}`),
+                                volume: getFloatValue(`#volume-${i}`) // Volume é input
+                                // solo e gamaNat são calculados
+                            });
+                        }
+
+                        // Umidade - Topo (3 Determinações)
+                        dados.determinacoesUmidadeTopo = [];
+                        for (let i = 1; i <= 3; i++) {
+                            dados.determinacoesUmidadeTopo.push({
+                                capsula: getStringValue(`#capsula-numero-topo-${i}`), // ID corrigido
+                                soloUmidoTara: getFloatValue(`#solo-umido-tara-topo-${i}`),
+                                soloSecoTara: getFloatValue(`#solo-seco-tara-topo-${i}`),
+                                tara: getFloatValue(`#tara-topo-${i}`)
+                                // soloSeco, agua, umidade são calculados
+                            });
+                        }
+
+                        // Umidade - Base (3 Determinações)
+                        dados.determinacoesUmidadeBase = [];
+                        for (let i = 1; i <= 3; i++) {
+                            dados.determinacoesUmidadeBase.push({
+                                capsula: getStringValue(`#capsula-numero-base-${i}`), // ID corrigido
+                                soloUmidoTara: getFloatValue(`#solo-umido-tara-base-${i}`),
+                                soloSecoTara: getFloatValue(`#solo-seco-tara-base-${i}`),
+                                tara: getFloatValue(`#tara-base-${i}`)
+                                // soloSeco, agua, umidade são calculados
+                            });
+                        }
+
+                        // Obter valores de referência (serão usados nos cálculos)
+                        if (window.calculadora.referenceSystem) {
+                             if (dados.registroDensidadeReal) {
+                                const refReal = window.calculadora.referenceSystem.getDensidadeReal(dados.registroDensidadeReal);
+                                dados.densidadeRealRef = refReal ? refReal.mediaDensidadeReal : null;
+                             }
+                             if (dados.registroDensidadeMaxMin) {
+                                const refMaxMin = window.calculadora.referenceSystem.getDensidadeMaxMin(dados.registroDensidadeMaxMin);
+                                if (refMaxMin) {
+                                    dados.gamadMaxRef = refMaxMin.mediaGamadMax;
+                                    dados.gamadMinRef = refMaxMin.mediaGamadMin;
+                                }
+                             }
+                        } else {
+                            console.warn("Módulo referenceSystem não encontrado para obter dados de referência.");
+                        }
+                        break;
+
+                    case "real":
+                        // Umidade (3 Determinações)
+                        dados.determinacoesUmidadeReal = [];
+                        for (let i = 1; i <= 3; i++) {
+                            dados.determinacoesUmidadeReal.push({
+                                capsula: getStringValue(`#capsula-real-${i}`),
+                                soloUmidoTara: getFloatValue(`#solo-umido-tara-real-${i}`),
+                                soloSecoTara: getFloatValue(`#solo-seco-tara-real-${i}`),
+                                tara: getFloatValue(`#tara-real-${i}`)
+                            });
+                        }
+
+                        // Picnômetro (2 Determinações)
+                        dados.determinacoesPicnometro = [];
+                        for (let i = 1; i <= 2; i++) {
+                            dados.determinacoesPicnometro.push({
+                                picnometro: getStringValue(`#picnometro-${i}`),
+                                massaPic: getFloatValue(`#massa-pic-${i}`),
+                                massaPicAmostraAgua: getFloatValue(`#massa-pic-amostra-agua-${i}`),
+                                temperatura: getFloatValue(`#temperatura-${i}`),
+                                massaPicAgua: getFloatValue(`#massa-pic-agua-${i}`),
+                                massaSoloUmido: getFloatValue(`#massa-solo-umido-${i}`)
+                            });
+                        }
+                        break;
+
+                    case "max-min":
+                        // Densidade máxima (3 Determinações)
+                        dados.determinacoesMax = [];
+                        for (let i = 1; i <= 3; i++) {
+                            dados.determinacoesMax.push({
+                                moldeSolo: getFloatValue(`#molde-solo-max-${i}`),
+                                molde: getFloatValue(`#molde-max-${i}`),
+                                volume: getFloatValue(`#volume-max-${i}`),
+                                w: getFloatValue(`#w-max-${i}`)
+                            });
+                        }
+
+                        // Densidade mínima (3 Determinações)
+                        dados.determinacoesMin = [];
+                        for (let i = 1; i <= 3; i++) {
+                            dados.determinacoesMin.push({
+                                numeroCilindro: getStringValue(`#numero-cilindro-min-${i}`),
+                                moldeSolo: getFloatValue(`#molde-solo-min-${i}`),
+                                molde: getFloatValue(`#molde-min-${i}`),
+                                volume: getFloatValue(`#volume-min-${i}`),
+                                w: getFloatValue(`#w-min-${i}`)
+                            });
+                        }
+                        break;
+
+                    default:
+                        console.error(`Tipo de ensaio inválido ao obter dados: ${tipo}`);
+                        exibirNotificacao(`Erro interno: Tipo de ensaio desconhecido (${tipo}).`, "error");
+                        return null;
+                }
+                return dados;
+
+            } catch (error) {
+                console.error(`Erro crítico ao obter dados do formulário ${tipo}:`, error);
+                exibirNotificacao("Erro ao ler dados do formulário. Verifique o console para detalhes.", "error");
+                return null;
+            }
         }
 
         // Função auxiliar para definir valor em um campo
@@ -387,125 +402,136 @@ document.addEventListener("DOMContentLoaded", () => {
             if (element) {
                 let formattedValue = value;
                 if (typeof value === 'number' && !isNaN(value) && precision !== null) {
+                    // Arredonda para a precisão especificada e formata para string
                     formattedValue = value.toFixed(precision);
                 } else if (value === null || value === undefined || (typeof value === 'number' && isNaN(value))) {
                     // Se o valor for nulo, indefinido ou NaN, limpar o campo ou usar placeholder
                     formattedValue = element.placeholder === "0.0" || element.placeholder === "0.00" || element.placeholder === "0.000" || element.placeholder === "0.0000" ? element.placeholder : "";
                 }
                 element.value = formattedValue;
+            } else {
+                // console.warn(`Elemento não encontrado para setFieldValue: ${selector}`);
             }
         }
 
-        // Preencher resultados no formulário (Atualizado para múltiplas determinações)
+        // Preencher resultados no formulário (ATUALIZADO para estrutura com arrays)
         function preencherResultados(tipo, resultados) {
-            if (!resultados) return;
+            if (!resultados) {
+                console.warn("preencherResultados chamado sem dados de resultados.");
+                return;
+            }
 
             const form = document.querySelector(".calculadora-container");
             if (!form) return;
 
-            switch (tipo) {
-                case "in-situ":
-                    // Densidade in situ (2 Determinações)
-                    resultados.determinacoesInSitu.forEach((det, index) => {
-                        const i = index + 1;
-                        setFieldValue(`#solo-${i}`, det.solo, 2);
-                        setFieldValue(`#gama-nat-${i}`, det.gamaNat, 3);
-                        // Preencher outros campos da determinação se necessário (ex: numeroCilindro, moldeSolo, molde, volume)
-                        // setFieldValue(`#numero-cilindro-${i}`, det.numeroCilindro);
-                        // setFieldValue(`#molde-solo-${i}`, det.moldeSolo, 2);
-                        // setFieldValue(`#molde-${i}`, det.molde, 2);
-                        // setFieldValue(`#volume-${i}`, det.volume, 2);
-                    });
+            try {
+                switch (tipo) {
+                    case "in-situ":
+                        // Densidade in situ (Array 'determinacoesInSitu')
+                        if (resultados.determinacoesInSitu && Array.isArray(resultados.determinacoesInSitu)) {
+                            resultados.determinacoesInSitu.forEach((det, index) => {
+                                const i = index + 1;
+                                setFieldValue(`#solo-${i}`, det.solo, 2);
+                                setFieldValue(`#gama-nat-${i}`, det.gamaNat, 3);
+                                // Preencher outros campos se necessário (ex: volume, se for calculado)
+                            });
+                        }
 
-                    // Umidade - Topo (3 Determinações)
-                    resultados.determinacoesUmidadeTopo.forEach((det, index) => {
-                        const i = index + 1;
-                        setFieldValue(`#solo-seco-topo-${i}`, det.soloSeco, 2);
-                        setFieldValue(`#agua-topo-${i}`, det.agua, 2);
-                        setFieldValue(`#umidade-topo-${i}`, det.umidade, 1);
-                         // Preencher outros campos da determinação se necessário (ex: capsula, soloUmidoTara, soloSecoTara, tara)
-                        // setFieldValue(`#capsula-topo-${i}`, det.capsula);
-                        // setFieldValue(`#solo-umido-tara-topo-${i}`, det.soloUmidoTara, 2);
-                        // setFieldValue(`#solo-seco-tara-topo-${i}`, det.soloSecoTara, 2);
-                        // setFieldValue(`#tara-topo-${i}`, det.tara, 2);
-                    });
-                    setFieldValue("#umidade-media-topo", resultados.umidadeMediaTopo, 1);
+                        // Umidade - Topo (Array 'determinacoesUmidadeTopo')
+                        if (resultados.determinacoesUmidadeTopo && Array.isArray(resultados.determinacoesUmidadeTopo)) {
+                            resultados.determinacoesUmidadeTopo.forEach((det, index) => {
+                                const i = index + 1;
+                                setFieldValue(`#solo-seco-topo-${i}`, det.soloSeco, 2);
+                                setFieldValue(`#agua-topo-${i}`, det.agua, 2);
+                                setFieldValue(`#umidade-topo-${i}`, det.umidade, 1);
+                            });
+                        }
+                        setFieldValue("#umidade-media-topo", resultados.umidadeMediaTopo, 1);
 
-                    // Umidade - Base (3 Determinações)
-                    resultados.determinacoesUmidadeBase.forEach((det, index) => {
-                        const i = index + 1;
-                        setFieldValue(`#solo-seco-base-${i}`, det.soloSeco, 2);
-                        setFieldValue(`#agua-base-${i}`, det.agua, 2);
-                        setFieldValue(`#umidade-base-${i}`, det.umidade, 1);
-                        // Preencher outros campos da determinação se necessário
-                        // setFieldValue(`#capsula-base-${i}`, det.capsula);
-                        // setFieldValue(`#solo-umido-tara-base-${i}`, det.soloUmidoTara, 2);
-                        // setFieldValue(`#solo-seco-tara-base-${i}`, det.soloSecoTara, 2);
-                        // setFieldValue(`#tara-base-${i}`, det.tara, 2);
-                    });
-                    setFieldValue("#umidade-media-base", resultados.umidadeMediaBase, 1);
+                        // Umidade - Base (Array 'determinacoesUmidadeBase')
+                        if (resultados.determinacoesUmidadeBase && Array.isArray(resultados.determinacoesUmidadeBase)) {
+                            resultados.determinacoesUmidadeBase.forEach((det, index) => {
+                                const i = index + 1;
+                                setFieldValue(`#solo-seco-base-${i}`, det.soloSeco, 2);
+                                setFieldValue(`#agua-base-${i}`, det.agua, 2);
+                                setFieldValue(`#umidade-base-${i}`, det.umidade, 1);
+                            });
+                        }
+                        setFieldValue("#umidade-media-base", resultados.umidadeMediaBase, 1);
 
-                    // Resultados Finais
-                    setFieldValue("#gamad-topo", resultados.gamadTopo, 3);
-                    setFieldValue("#gamad-base", resultados.gamadBase, 3);
-                    setFieldValue("#indice-vazios-topo", resultados.indiceVaziosTopo, 2);
-                    setFieldValue("#indice-vazios-base", resultados.indiceVaziosBase, 2);
-                    setFieldValue("#cr-topo", resultados.crTopo, 1);
-                    setFieldValue("#cr-base", resultados.crBase, 1);
+                        // Resultados Finais
+                        setFieldValue("#gamad-topo", resultados.gamadTopo, 3);
+                        setFieldValue("#gamad-base", resultados.gamadBase, 3);
+                        setFieldValue("#indice-vazios-topo", resultados.indiceVaziosTopo, 2);
+                        setFieldValue("#indice-vazios-base", resultados.indiceVaziosBase, 2);
+                        setFieldValue("#cr-topo", resultados.crTopo, 1);
+                        setFieldValue("#cr-base", resultados.crBase, 1);
 
-                    // Status
-                    const statusEnsaio = form.querySelector("#status-ensaio");
-                    if (statusEnsaio && resultados.status) {
-                        statusEnsaio.textContent = resultados.status;
-                        statusEnsaio.className = `status-ensaio status-${resultados.status.toLowerCase().replace(/ /g, '-')}`;
-                    }
-                    break;
+                        // Status
+                        const statusEnsaio = form.querySelector("#status-ensaio");
+                        if (statusEnsaio && resultados.status) {
+                            statusEnsaio.textContent = resultados.status;
+                            statusEnsaio.className = `status-ensaio status-${resultados.status.toLowerCase().replace(/[ /]/g, '-')}`;
+                        }
+                        break;
 
-                case "real": // Manter lógica original
-                     // Umidade
-                    for (let i = 0; i < 3; i++) {
-                        const idx = i + 1;
-                        setFieldValue(`#solo-seco-real-${idx}`, resultados.soloSeco[i], 2);
-                        setFieldValue(`#agua-real-${idx}`, resultados.agua[i], 2);
-                        setFieldValue(`#umidade-real-${idx}`, resultados.umidade[i], 1);
-                    }
-                    setFieldValue("#umidade-media-real", resultados.umidadeMedia, 1);
+                    case "real":
+                        // Umidade (Array 'determinacoesUmidadeReal')
+                        if (resultados.determinacoesUmidadeReal && Array.isArray(resultados.determinacoesUmidadeReal)) {
+                            resultados.determinacoesUmidadeReal.forEach((det, index) => {
+                                const i = index + 1;
+                                setFieldValue(`#solo-seco-real-${i}`, det.soloSeco, 2);
+                                setFieldValue(`#agua-real-${i}`, det.agua, 2);
+                                setFieldValue(`#umidade-real-${i}`, det.umidade, 1);
+                            });
+                        }
+                        setFieldValue("#umidade-media-real", resultados.umidadeMedia, 1);
 
-                    // Picnômetro (apenas 2 determinações)
-                    for (let i = 0; i < 2; i++) {
-                        const idx = i + 1;
-                        setFieldValue(`#densidade-agua-${idx}`, resultados.densidadeAgua[i], 4);
-                        setFieldValue(`#massa-solo-seco-${idx}`, resultados.massaSoloSeco[i], 2);
-                        setFieldValue(`#densidade-real-${idx}`, resultados.densidadeReal[i], 3);
-                    }
+                        // Picnômetro (Array 'determinacoesPicnometro')
+                        if (resultados.determinacoesPicnometro && Array.isArray(resultados.determinacoesPicnometro)) {
+                            resultados.determinacoesPicnometro.forEach((det, index) => {
+                                const i = index + 1;
+                                setFieldValue(`#densidade-agua-${i}`, det.densidadeAgua, 4);
+                                setFieldValue(`#massa-solo-seco-${i}`, det.massaSoloSeco, 2);
+                                setFieldValue(`#densidade-real-${i}`, det.densidadeReal, 3);
+                            });
+                        }
 
-                    // Resultados
-                    setFieldValue("#diferenca-real", resultados.diferenca, 1);
-                    setFieldValue("#media-densidade-real", resultados.mediaDensidadeReal, 3);
-                    break;
+                        // Resultados
+                        setFieldValue("#diferenca-real", resultados.diferenca, 1);
+                        setFieldValue("#media-densidade-real", resultados.mediaDensidadeReal, 3);
+                        break;
 
-                case "max-min": // Manter lógica original
-                    // Densidade máxima
-                    for (let i = 0; i < 3; i++) {
-                        const idx = i + 1;
-                        setFieldValue(`#solo-max-${idx}`, resultados.soloMax[i], 2);
-                        setFieldValue(`#gamad-max-${idx}`, resultados.gamadMax[i], 3);
-                        setFieldValue(`#gamas-max-${idx}`, resultados.gamasMax[i], 3);
-                    }
-                    setFieldValue("#gamad-max", resultados.mediaGamadMax, 3);
+                    case "max-min":
+                        // Densidade máxima (Array 'determinacoesMax')
+                        if (resultados.determinacoesMax && Array.isArray(resultados.determinacoesMax)) {
+                            resultados.determinacoesMax.forEach((det, index) => {
+                                const i = index + 1;
+                                setFieldValue(`#solo-max-${i}`, det.solo, 2);
+                                setFieldValue(`#gamad-max-${i}`, det.gamad, 3);
+                                setFieldValue(`#gamas-max-${i}`, det.gamas, 3);
+                            });
+                        }
+                        setFieldValue("#gamad-max", resultados.mediaGamadMax, 3);
 
-                    // Densidade mínima
-                    for (let i = 0; i < 3; i++) {
-                        const idx = i + 1;
-                        setFieldValue(`#solo-min-${idx}`, resultados.soloMin[i], 2);
-                        setFieldValue(`#gamad-min-${idx}`, resultados.gamadMin[i], 3);
-                        setFieldValue(`#gamas-min-${idx}`, resultados.gamasMin[i], 3);
-                    }
-                    setFieldValue("#gamad-min", resultados.mediaGamadMin, 3);
-                    break;
+                        // Densidade mínima (Array 'determinacoesMin')
+                        if (resultados.determinacoesMin && Array.isArray(resultados.determinacoesMin)) {
+                            resultados.determinacoesMin.forEach((det, index) => {
+                                const i = index + 1;
+                                setFieldValue(`#solo-min-${i}`, det.solo, 2);
+                                setFieldValue(`#gamad-min-${i}`, det.gamad, 3);
+                                setFieldValue(`#gamas-min-${i}`, det.gamas, 3);
+                            });
+                        }
+                        setFieldValue("#gamad-min", resultados.mediaGamadMin, 3);
+                        break;
 
-                default:
-                    console.error(`Tipo de ensaio inválido: ${tipo}`);
+                    default:
+                        console.error(`Tipo de ensaio inválido ao preencher resultados: ${tipo}`);
+                }
+            } catch (error) {
+                console.error(`Erro ao preencher resultados para ${tipo}:`, error);
+                exibirNotificacao("Erro ao exibir resultados. Verifique o console.", "error");
             }
         }
 
@@ -532,7 +558,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 </div>
             `;
-            
+
             // Adicionar toast ao container
             toastContainer.insertAdjacentHTML('beforeend', toastHTML);
 
@@ -548,6 +574,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                  // Fallback se Bootstrap JS não estiver carregado
                  console.warn("Bootstrap Toast JS não encontrado. Exibindo notificação simples.");
+                 toastElement.style.display = 'block'; // Make it visible
                  toastElement.style.opacity = 1;
                  setTimeout(() => {
                      toastElement.style.transition = 'opacity 0.5s ease-out';
@@ -557,7 +584,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // Carregar registro para edição (Atualizado para múltiplas determinações)
+        // Carregar registro para edição (ATUALIZADO para estrutura com arrays)
         function carregarRegistroParaEdicao(tipo, registroId) {
             if (!window.calculadora.db) {
                 console.error("Módulo de banco de dados não disponível");
@@ -577,13 +604,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     // Aguardar um pouco para garantir que o DOM foi atualizado
                     setTimeout(() => {
-                        // Preencher dados no formulário
-                        preencherDadosFormulario(tipo, dados);
+                        try {
+                            // Preencher dados no formulário
+                            preencherDadosFormulario(tipo, dados);
 
-                        // Calcular resultados com base nos dados carregados
-                        calcular(tipo);
+                            // Calcular resultados com base nos dados carregados
+                            calcular(tipo);
 
-                        exibirNotificacao("Registro carregado para edição", "info");
+                            exibirNotificacao("Registro carregado para edição", "info");
+                        } catch (error) {
+                             console.error("Erro ao preencher ou calcular após carregar registro:", error);
+                             exibirNotificacao("Erro ao carregar dados do registro no formulário.", "error");
+                        }
                     }, 200); // Pequeno delay
                 })
                 .catch(error => {
@@ -592,17 +624,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
         }
 
-        // Preencher dados do formulário ao carregar para edição (Atualizado)
+        // Preencher dados do formulário ao carregar para edição (ATUALIZADO para estrutura com arrays)
         function preencherDadosFormulario(tipo, dados) {
             const form = document.querySelector(".calculadora-container");
             if (!form || !dados) return;
 
             // Preencher campos comuns
-            setFieldValue(`#registro${tipo === 'in-situ' ? '' : `-${tipo}`}`, dados.registro);
-            setFieldValue(`#data${tipo === 'in-situ' ? '' : `-${tipo}`}`, dados.data);
-            setFieldValue(`#operador${tipo === 'in-situ' ? '' : `-${tipo}`}`, dados.operador);
-            setFieldValue(`#material${tipo === 'in-situ' ? '' : `-${tipo}`}`, dados.material);
-            setFieldValue(`#origem${tipo === 'in-situ' ? '' : `-${tipo}`}`, dados.origem);
+            const idSuffix = tipo === 'in-situ' ? '' : `-${tipo}`;
+            setFieldValue(`#registro${idSuffix}`, dados.registro);
+            setFieldValue(`#data${idSuffix}`, dados.data);
+            setFieldValue(`#operador${idSuffix}`, dados.operador);
+            setFieldValue(`#material${idSuffix}`, dados.material);
+            setFieldValue(`#origem${idSuffix}`, dados.origem);
 
             switch (tipo) {
                 case "in-situ":
@@ -626,80 +659,95 @@ document.addEventListener("DOMContentLoaded", () => {
                     const selectMaxMin = form.querySelector("#registro-densidade-max-min");
                     if (selectMaxMin) selectMaxMin.value = dados.registroDensidadeMaxMin || "";
 
-                    // Densidade in situ (2 Determinações)
-                    for (let i = 1; i <= 2; i++) {
-                        setFieldValue(`#numero-cilindro-${i}`, dados[`numeroCilindro-${i}`]);
-                        setFieldValue(`#molde-solo-${i}`, dados[`moldeSolo-${i}`], 2);
-                        setFieldValue(`#molde-${i}`, dados[`molde-${i}`], 2);
-                        // Campos calculados (solo, volume, gamaNat) serão preenchidos por preencherResultados
+                    // Densidade in situ (Array 'determinacoesInSitu')
+                    if (dados.determinacoesInSitu && Array.isArray(dados.determinacoesInSitu)) {
+                        dados.determinacoesInSitu.forEach((det, index) => {
+                            const i = index + 1;
+                            setFieldValue(`#numero-cilindro-${i}`, det.numeroCilindro);
+                            setFieldValue(`#molde-solo-${i}`, det.moldeSolo, 2);
+                            setFieldValue(`#molde-${i}`, det.molde, 2);
+                            setFieldValue(`#volume-${i}`, det.volume, 2); // Preencher volume
+                        });
                     }
 
-                    // Umidade - Topo (3 Determinações)
-                    for (let i = 1; i <= 3; i++) {
-                        setFieldValue(`#capsula-topo-${i}`, dados[`capsulaTopo-${i}`]);
-                        setFieldValue(`#solo-umido-tara-topo-${i}`, dados[`soloUmidoTaraTopo-${i}`], 2);
-                        setFieldValue(`#solo-seco-tara-topo-${i}`, dados[`soloSecoTaraTopo-${i}`], 2);
-                        setFieldValue(`#tara-topo-${i}`, dados[`taraTopo-${i}`], 2);
-                         // Campos calculados (soloSeco, agua, umidade) serão preenchidos por preencherResultados
+                    // Umidade - Topo (Array 'determinacoesUmidadeTopo')
+                    if (dados.determinacoesUmidadeTopo && Array.isArray(dados.determinacoesUmidadeTopo)) {
+                        dados.determinacoesUmidadeTopo.forEach((det, index) => {
+                            const i = index + 1;
+                            setFieldValue(`#capsula-numero-topo-${i}`, det.capsula);
+                            setFieldValue(`#solo-umido-tara-topo-${i}`, det.soloUmidoTara, 2);
+                            setFieldValue(`#solo-seco-tara-topo-${i}`, det.soloSecoTara, 2);
+                            setFieldValue(`#tara-topo-${i}`, det.tara, 2);
+                        });
                     }
 
-                    // Umidade - Base (3 Determinações)
-                    for (let i = 1; i <= 3; i++) {
-                        setFieldValue(`#capsula-base-${i}`, dados[`capsulaBase-${i}`]);
-                        setFieldValue(`#solo-umido-tara-base-${i}`, dados[`soloUmidoTaraBase-${i}`], 2);
-                        setFieldValue(`#solo-seco-tara-base-${i}`, dados[`soloSecoTaraBase-${i}`], 2);
-                        setFieldValue(`#tara-base-${i}`, dados[`taraBase-${i}`], 2);
-                        // Campos calculados (soloSeco, agua, umidade) serão preenchidos por preencherResultados
+                    // Umidade - Base (Array 'determinacoesUmidadeBase')
+                    if (dados.determinacoesUmidadeBase && Array.isArray(dados.determinacoesUmidadeBase)) {
+                        dados.determinacoesUmidadeBase.forEach((det, index) => {
+                            const i = index + 1;
+                            setFieldValue(`#capsula-numero-base-${i}`, det.capsula);
+                            setFieldValue(`#solo-umido-tara-base-${i}`, det.soloUmidoTara, 2);
+                            setFieldValue(`#solo-seco-tara-base-${i}`, det.soloSecoTara, 2);
+                            setFieldValue(`#tara-base-${i}`, det.tara, 2);
+                        });
                     }
-                    // Campos de resultado (médias, gamad, indice, cr, status) serão preenchidos por preencherResultados
+                    // Campos de resultado serão preenchidos por preencherResultados após cálculo
                     break;
 
-                 case "real": // Manter lógica original
-                    // Umidade
-                    for (let i = 1; i <= 3; i++) {
-                        setFieldValue(`#capsula-real-${i}`, dados[`capsulaReal${i}`]);
-                        setFieldValue(`#solo-umido-tara-real-${i}`, dados[`soloUmidoTaraReal${i}`], 2);
-                        setFieldValue(`#solo-seco-tara-real-${i}`, dados[`soloSecoTaraReal${i}`], 2);
-                        setFieldValue(`#tara-real-${i}`, dados[`taraReal${i}`], 2);
+                 case "real":
+                    // Umidade (Array 'determinacoesUmidadeReal')
+                    if (dados.determinacoesUmidadeReal && Array.isArray(dados.determinacoesUmidadeReal)) {
+                        dados.determinacoesUmidadeReal.forEach((det, index) => {
+                            const i = index + 1;
+                            setFieldValue(`#capsula-real-${i}`, det.capsula);
+                            setFieldValue(`#solo-umido-tara-real-${i}`, det.soloUmidoTara, 2);
+                            setFieldValue(`#solo-seco-tara-real-${i}`, det.soloSecoTara, 2);
+                            setFieldValue(`#tara-real-${i}`, det.tara, 2);
+                        });
                     }
-                    // Picnômetro
-                    for (let i = 1; i <= 2; i++) {
-                        setFieldValue(`#picnometro-${i}`, dados[`picnometro${i}`]);
-                        setFieldValue(`#massa-pic-${i}`, dados[`massaPic${i}`], 2);
-                        setFieldValue(`#massa-pic-amostra-agua-${i}`, dados[`massaPicAmostraAgua${i}`], 2);
-                        setFieldValue(`#temperatura-${i}`, dados[`temperatura${i}`], 1);
-                        setFieldValue(`#massa-pic-agua-${i}`, dados[`massaPicAgua${i}`], 2);
-                        setFieldValue(`#massa-solo-umido-${i}`, dados[`massaSoloUmido${i}`], 2);
+                    // Picnômetro (Array 'determinacoesPicnometro')
+                    if (dados.determinacoesPicnometro && Array.isArray(dados.determinacoesPicnometro)) {
+                        dados.determinacoesPicnometro.forEach((det, index) => {
+                            const i = index + 1;
+                            setFieldValue(`#picnometro-${i}`, det.picnometro);
+                            setFieldValue(`#massa-pic-${i}`, det.massaPic, 2);
+                            setFieldValue(`#massa-pic-amostra-agua-${i}`, det.massaPicAmostraAgua, 2);
+                            setFieldValue(`#temperatura-${i}`, det.temperatura, 1);
+                            setFieldValue(`#massa-pic-agua-${i}`, det.massaPicAgua, 2);
+                            setFieldValue(`#massa-solo-umido-${i}`, det.massaSoloUmido, 2);
+                        });
                     }
                     break;
 
-                case "max-min": // Manter lógica original
-                     // Densidade máxima
-                    for (let i = 1; i <= 3; i++) {
-                        setFieldValue(`#molde-solo-max-${i}`, dados[`moldeSoloMax${i}`], 2);
-                        setFieldValue(`#molde-max-${i}`, dados[`moldeMax${i}`], 2);
-                        setFieldValue(`#volume-max-${i}`, dados[`volumeMax${i}`], 2);
-                        setFieldValue(`#w-max-${i}`, dados[`wMax${i}`], 1);
+                case "max-min":
+                     // Densidade máxima (Array 'determinacoesMax')
+                    if (dados.determinacoesMax && Array.isArray(dados.determinacoesMax)) {
+                        dados.determinacoesMax.forEach((det, index) => {
+                            const i = index + 1;
+                            setFieldValue(`#molde-solo-max-${i}`, det.moldeSolo, 2);
+                            setFieldValue(`#molde-max-${i}`, det.molde, 2);
+                            setFieldValue(`#volume-max-${i}`, det.volume, 2);
+                            setFieldValue(`#w-max-${i}`, det.w, 1);
+                        });
                     }
-                    // Densidade mínima
-                    for (let i = 1; i <= 3; i++) {
-                        setFieldValue(`#numero-cilindro-min-${i}`, dados[`numeroCilindroMin${i}`]);
-                        setFieldValue(`#molde-solo-min-${i}`, dados[`moldeSoloMin${i}`], 2);
-                        setFieldValue(`#molde-min-${i}`, dados[`moldeMin${i}`], 2);
-                        setFieldValue(`#volume-min-${i}`, dados[`volumeMin${i}`], 2);
-                        setFieldValue(`#w-min-${i}`, dados[`wMin${i}`], 1);
+                    // Densidade mínima (Array 'determinacoesMin')
+                    if (dados.determinacoesMin && Array.isArray(dados.determinacoesMin)) {
+                        dados.determinacoesMin.forEach((det, index) => {
+                            const i = index + 1;
+                            setFieldValue(`#numero-cilindro-min-${i}`, det.numeroCilindro);
+                            setFieldValue(`#molde-solo-min-${i}`, det.moldeSolo, 2);
+                            setFieldValue(`#molde-min-${i}`, det.molde, 2);
+                            setFieldValue(`#volume-min-${i}`, det.volume, 2);
+                            setFieldValue(`#w-min-${i}`, det.w, 1);
+                        });
                     }
                     break;
             }
-             // Após preencher os dados base, chamar preencherResultados para popular os campos calculados
-             // Isso requer que 'obterDadosFormulario' seja chamado novamente ou que os resultados sejam recalculados
-             // A chamada a 'calcular(tipo)' dentro de 'carregarRegistroParaEdicao' já cuida disso.
         }
 
-        // Inicialização
+        // Inicialização (pode ser chamada pelo app.js)
         function init() {
-            // A configuração dos cálculos automáticos já é feita no módulo de cálculos
-            // A configuração dos botões é feita ao carregar o formulário
+            // Configurações iniciais, se houver
         }
 
         // Expor funções públicas
@@ -711,12 +759,12 @@ document.addEventListener("DOMContentLoaded", () => {
             gerarPDF,
             limpar,
             exibirNotificacao,
-            carregarRegistroParaEdicao
-            // Não precisa expor calcular, preencherDadosFormulario, configurarBotoes, etc.
+            carregarRegistroParaEdicao,
+            init
         };
     })();
 
-    // Inicializar integração se necessário (pode ser feito pelo app.js)
+    // Inicializar integração se necessário (geralmente feito pelo app.js)
     // window.calculadora.formIntegration.init();
 });
 
