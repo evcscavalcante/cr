@@ -16,7 +16,12 @@ window.calculadora.calculos = (() => {
       return typeof value === 'number' && !isNaN(value) && value > 0;
   }
 
-  // --- Calcular Densidade In Situ (ATUALIZADO para arrays) ---
+  // *** ADICIONADO: Função auxiliar para validar se um valor é numérico (incluindo zero) ***
+  function isValidNumber(value) {
+      return typeof value === 'number' && !isNaN(value);
+  }
+
+  // --- Calcular Densidade In Situ (Sem alterações nesta função) ---
   function calcularDensidadeInSitu(dados) {
     const resultados = {
       determinacoesInSitu: [],
@@ -33,25 +38,14 @@ window.calculadora.calculos = (() => {
       status: 'AGUARDANDO DADOS'
     };
 
-    // --- Cálculos Densidade In Situ (Array 'determinacoesInSitu') ---
+    // --- Cálculos Densidade In Situ ---
     let gamaNatTotal = 0;
     let countGamaNat = 0;
     if (dados.determinacoesInSitu && Array.isArray(dados.determinacoesInSitu)) {
         dados.determinacoesInSitu.forEach(det => {
-            const solo = isValidPositiveNumber(det.moldeSolo) && isValidPositiveNumber(det.molde) ? det.moldeSolo - det.molde : 0;
+            const solo = isValidNumber(det.moldeSolo) && isValidNumber(det.molde) ? det.moldeSolo - det.molde : 0;
             const gamaNat = isValidPositiveNumber(solo) && isValidPositiveNumber(det.volume) ? solo / det.volume : 0;
-
-            resultados.determinacoesInSitu.push({
-                // Preservar dados de entrada para preenchimento se necessário
-                numeroCilindro: det.numeroCilindro,
-                moldeSolo: det.moldeSolo,
-                molde: det.molde,
-                volume: det.volume,
-                // Resultados calculados da determinação
-                solo: solo,
-                gamaNat: gamaNat
-            });
-
+            resultados.determinacoesInSitu.push({ ...det, solo, gamaNat });
             if (isValidPositiveNumber(gamaNat)) {
                 gamaNatTotal += gamaNat;
                 countGamaNat++;
@@ -60,63 +54,41 @@ window.calculadora.calculos = (() => {
     }
     const gamaNatMedio = countGamaNat > 0 ? gamaNatTotal / countGamaNat : 0;
 
-    // --- Cálculos Umidade Topo (Array 'determinacoesUmidadeTopo') ---
+    // --- Cálculos Umidade Topo ---
     const umidadesTopo = [];
     if (dados.determinacoesUmidadeTopo && Array.isArray(dados.determinacoesUmidadeTopo)) {
         dados.determinacoesUmidadeTopo.forEach(det => {
-            const soloSeco = isValidPositiveNumber(det.soloSecoTara) && isValidPositiveNumber(det.tara) ? det.soloSecoTara - det.tara : 0;
-            const agua = isValidPositiveNumber(det.soloUmidoTara) && isValidPositiveNumber(det.soloSecoTara) ? det.soloUmidoTara - det.soloSecoTara : 0;
-            const umidade = isValidPositiveNumber(soloSeco) && isValidPositiveNumber(agua) ? (agua / soloSeco) * 100 : 0;
-
-            resultados.determinacoesUmidadeTopo.push({
-                // Preservar dados de entrada
-                capsula: det.capsula,
-                soloUmidoTara: det.soloUmidoTara,
-                soloSecoTara: det.soloSecoTara,
-                tara: det.tara,
-                // Resultados calculados
-                soloSeco: soloSeco,
-                agua: agua,
-                umidade: umidade
-            });
-            if (isValidPositiveNumber(umidade)) umidadesTopo.push(umidade);
+            const soloSeco = isValidNumber(det.soloSecoTara) && isValidNumber(det.tara) ? det.soloSecoTara - det.tara : 0;
+            const agua = isValidNumber(det.soloUmidoTara) && isValidNumber(det.soloSecoTara) ? det.soloUmidoTara - det.soloSecoTara : 0;
+            const umidade = isValidPositiveNumber(soloSeco) && isValidNumber(agua) ? (agua / soloSeco) * 100 : 0;
+            resultados.determinacoesUmidadeTopo.push({ ...det, soloSeco, agua, umidade });
+            if (isValidNumber(umidade)) umidadesTopo.push(umidade); // Usar isValidNumber para média
         });
     }
-    resultados.umidadeMediaTopo = calcularMediaValida(umidadesTopo);
+    resultados.umidadeMediaTopo = calcularMediaValida(umidadesTopo); // Média ainda ignora zero
 
-    // --- Cálculos Umidade Base (Array 'determinacoesUmidadeBase') ---
+    // --- Cálculos Umidade Base ---
     const umidadesBase = [];
     if (dados.determinacoesUmidadeBase && Array.isArray(dados.determinacoesUmidadeBase)) {
         dados.determinacoesUmidadeBase.forEach(det => {
-            const soloSeco = isValidPositiveNumber(det.soloSecoTara) && isValidPositiveNumber(det.tara) ? det.soloSecoTara - det.tara : 0;
-            const agua = isValidPositiveNumber(det.soloUmidoTara) && isValidPositiveNumber(det.soloSecoTara) ? det.soloUmidoTara - det.soloSecoTara : 0;
-            const umidade = isValidPositiveNumber(soloSeco) && isValidPositiveNumber(agua) ? (agua / soloSeco) * 100 : 0;
-
-            resultados.determinacoesUmidadeBase.push({
-                // Preservar dados de entrada
-                capsula: det.capsula,
-                soloUmidoTara: det.soloUmidoTara,
-                soloSecoTara: det.soloSecoTara,
-                tara: det.tara,
-                // Resultados calculados
-                soloSeco: soloSeco,
-                agua: agua,
-                umidade: umidade
-            });
-            if (isValidPositiveNumber(umidade)) umidadesBase.push(umidade);
+            const soloSeco = isValidNumber(det.soloSecoTara) && isValidNumber(det.tara) ? det.soloSecoTara - det.tara : 0;
+            const agua = isValidNumber(det.soloUmidoTara) && isValidNumber(det.soloSecoTara) ? det.soloUmidoTara - det.soloSecoTara : 0;
+            const umidade = isValidPositiveNumber(soloSeco) && isValidNumber(agua) ? (agua / soloSeco) * 100 : 0;
+            resultados.determinacoesUmidadeBase.push({ ...det, soloSeco, agua, umidade });
+            if (isValidNumber(umidade)) umidadesBase.push(umidade); // Usar isValidNumber para média
         });
     }
-    resultados.umidadeMediaBase = calcularMediaValida(umidadesBase);
+    resultados.umidadeMediaBase = calcularMediaValida(umidadesBase); // Média ainda ignora zero
 
     // --- Cálculos Finais (usando médias e referências) ---
     const densidadeRealRef = dados.densidadeRealRef;
     const gamadMaxRef = dados.gamadMaxRef;
     const gamadMinRef = dados.gamadMinRef;
 
-    if (isValidPositiveNumber(gamaNatMedio) && isValidPositiveNumber(resultados.umidadeMediaTopo)) {
+    if (isValidPositiveNumber(gamaNatMedio) && isValidNumber(resultados.umidadeMediaTopo)) {
         resultados.gamadTopo = gamaNatMedio / (1 + resultados.umidadeMediaTopo / 100);
     }
-    if (isValidPositiveNumber(gamaNatMedio) && isValidPositiveNumber(resultados.umidadeMediaBase)) {
+    if (isValidPositiveNumber(gamaNatMedio) && isValidNumber(resultados.umidadeMediaBase)) {
         resultados.gamadBase = gamaNatMedio / (1 + resultados.umidadeMediaBase / 100);
     }
 
@@ -127,27 +99,23 @@ window.calculadora.calculos = (() => {
 
       if (isValidPositiveNumber(resultados.gamadTopo)) {
         resultados.indiceVaziosTopo = (densidadeRealRef / resultados.gamadTopo) - 1;
-        if (eMax !== eMin && isValidPositiveNumber(resultados.indiceVaziosTopo)) { // Evitar divisão por zero e IV inválido
+        if (eMax !== eMin && isValidNumber(resultados.indiceVaziosTopo)) { // Permitir IV >= 0
              resultados.crTopo = ((eMax - resultados.indiceVaziosTopo) / (eMax - eMin)) * 100;
         }
       }
 
       if (isValidPositiveNumber(resultados.gamadBase)) {
         resultados.indiceVaziosBase = (densidadeRealRef / resultados.gamadBase) - 1;
-         if (eMax !== eMin && isValidPositiveNumber(resultados.indiceVaziosBase)) { // Evitar divisão por zero e IV inválido
+         if (eMax !== eMin && isValidNumber(resultados.indiceVaziosBase)) { // Permitir IV >= 0
             resultados.crBase = ((eMax - resultados.indiceVaziosBase) / (eMax - eMin)) * 100;
          }
       }
 
-      // Determinar Status com base na média do CR ou no menor valor (usando média aqui)
-      const crValidos = [resultados.crTopo, resultados.crBase].filter(isValidPositiveNumber);
+      // Determinar Status
+      const crValidos = [resultados.crTopo, resultados.crBase].filter(isValidNumber);
       if (crValidos.length > 0) {
           const crMedio = calcularMediaValida(crValidos);
-          // A lógica de aprovação/reprovação pode variar. Usando 95% como exemplo.
-          // Considerar validação do Índice de Vazios (>= 0.74) se aplicável
-          const ivValidos = [resultados.indiceVaziosTopo, resultados.indiceVaziosBase].filter(iv => isValidPositiveNumber(iv) && iv >= 0.74);
-          // Status depende dos critérios: CR >= 95% E IV >= 0.74 ?
-          resultados.status = crMedio >= 95 ? 'APROVADO' : 'REPROVADO';
+          resultados.status = crMedio >= 95 ? 'APROVADO' : 'REPROVADO'; // Exemplo de critério
       } else {
           resultados.status = 'DADOS INSUFICIENTES';
       }
@@ -158,7 +126,7 @@ window.calculadora.calculos = (() => {
     return resultados;
   }
 
-  // --- Calcular Densidade Real (ATUALIZADO para arrays) ---
+  // --- Calcular Densidade Real (CORRIGIDO) ---
   function calcularDensidadeReal(dados) {
     const resultados = {
         determinacoesUmidadeReal: [],
@@ -172,13 +140,17 @@ window.calculadora.calculos = (() => {
     const umidades = [];
     if (dados.determinacoesUmidadeReal && Array.isArray(dados.determinacoesUmidadeReal)) {
         dados.determinacoesUmidadeReal.forEach(det => {
-            const soloSeco = isValidPositiveNumber(det.soloSecoTara) && isValidPositiveNumber(det.tara) ? det.soloSecoTara - det.tara : 0;
-            const agua = isValidPositiveNumber(det.soloUmidoTara) && isValidPositiveNumber(det.soloSecoTara) ? det.soloUmidoTara - det.soloSecoTara : 0;
-            const umidade = isValidPositiveNumber(soloSeco) && isValidPositiveNumber(agua) ? (agua / soloSeco) * 100 : 0;
+            const soloSeco = isValidNumber(det.soloSecoTara) && isValidNumber(det.tara) ? det.soloSecoTara - det.tara : 0;
+            const agua = isValidNumber(det.soloUmidoTara) && isValidNumber(det.soloSecoTara) ? det.soloUmidoTara - det.soloSecoTara : 0;
+            // Permitir cálculo de umidade mesmo se agua for 0, mas soloSeco > 0
+            const umidade = isValidPositiveNumber(soloSeco) && isValidNumber(agua) ? (agua / soloSeco) * 100 : 0;
             resultados.determinacoesUmidadeReal.push({ ...det, soloSeco, agua, umidade });
-            if (isValidPositiveNumber(umidade)) umidades.push(umidade);
+            if (isValidNumber(umidade)) umidades.push(umidade); // Considerar 0% na média se ocorrer
         });
     }
+    // Usar média aritmética simples se quisermos incluir 0%
+    // resultados.umidadeMedia = umidades.length > 0 ? umidades.reduce((a, b) => a + b, 0) / umidades.length : 0;
+    // Manter calcularMediaValida se 0% não deve entrar na média
     resultados.umidadeMedia = calcularMediaValida(umidades);
 
     // Cálculos Picnômetro (Array 'determinacoesPicnometro')
@@ -186,24 +158,33 @@ window.calculadora.calculos = (() => {
     if (dados.determinacoesPicnometro && Array.isArray(dados.determinacoesPicnometro)) {
         dados.determinacoesPicnometro.forEach(det => {
             const densidadeAgua = calcularDensidadeAgua(det.temperatura);
-            const massaSoloSeco = isValidPositiveNumber(det.massaSoloUmido) && isValidPositiveNumber(resultados.umidadeMedia) ? det.massaSoloUmido / (1 + resultados.umidadeMedia / 100) : 0;
+            // *** CORREÇÃO: Usar isValidNumber para umidadeMedia ***
+            // Se umidadeMedia for 0, massaSoloSeco = massaSoloUmido
+            const massaSoloSeco = isValidPositiveNumber(det.massaSoloUmido) && isValidNumber(resultados.umidadeMedia)
+                                  ? det.massaSoloUmido / (1 + resultados.umidadeMedia / 100)
+                                  : 0;
             let densidadeReal = 0;
-            if (isValidPositiveNumber(massaSoloSeco) && isValidPositiveNumber(densidadeAgua) && isValidPositiveNumber(det.massaPicAgua) && isValidPositiveNumber(det.massaPicAmostraAgua)) {
+            // *** CORREÇÃO: Usar isValidNumber para massaSoloSeco ***
+            if (isValidNumber(massaSoloSeco) && isValidPositiveNumber(densidadeAgua) && isValidNumber(det.massaPicAgua) && isValidNumber(det.massaPicAmostraAgua)) {
                 const denominador = massaSoloSeco + det.massaPicAgua - det.massaPicAmostraAgua;
+                // Permitir denominador > 0
                 if (isValidPositiveNumber(denominador)) {
+                    // Permitir massaSoloSeco = 0 (resultará em densidadeReal = 0)
                     densidadeReal = (massaSoloSeco * densidadeAgua) / denominador;
                 }
             }
             resultados.determinacoesPicnometro.push({ ...det, densidadeAgua, massaSoloSeco, densidadeReal });
-            if (isValidPositiveNumber(densidadeReal)) densidadesReais.push(densidadeReal);
+            if (isValidNumber(densidadeReal)) densidadesReais.push(densidadeReal);
         });
     }
 
     // Resultados Finais
-    resultados.mediaDensidadeReal = calcularMediaValida(densidadesReais);
-    if (densidadesReais.length === 2) {
+    resultados.mediaDensidadeReal = calcularMediaValida(densidadesReais); // Média ainda ignora zero
+    if (densidadesReais.length >= 2) {
         const dr1 = densidadesReais[0];
         const dr2 = densidadesReais[1];
+        // Usar a média como referência para a diferença se houver mais de 2?
+        // Norma geralmente pede diferença entre duas determinações.
         if (isValidPositiveNumber(dr1)) { // Evitar divisão por zero
              resultados.diferenca = Math.abs((dr1 - dr2) / dr1) * 100;
         }
@@ -212,7 +193,7 @@ window.calculadora.calculos = (() => {
     return resultados;
   }
 
-  // --- Calcular Densidade Max/Min (ATUALIZADO para arrays) ---
+  // --- Calcular Densidade Max/Min (CORRIGIDO) ---
   function calcularDensidadeMaxMin(dados) {
      const resultados = {
         determinacoesMax: [],
@@ -225,11 +206,15 @@ window.calculadora.calculos = (() => {
     const gamadsMax = [];
     if (dados.determinacoesMax && Array.isArray(dados.determinacoesMax)) {
         dados.determinacoesMax.forEach(det => {
-            const solo = isValidPositiveNumber(det.moldeSolo) && isValidPositiveNumber(det.molde) ? det.moldeSolo - det.molde : 0;
+            const solo = isValidNumber(det.moldeSolo) && isValidNumber(det.molde) ? det.moldeSolo - det.molde : 0;
             const gamad = isValidPositiveNumber(solo) && isValidPositiveNumber(det.volume) ? solo / det.volume : 0;
-            const gamas = isValidPositiveNumber(gamad) && isValidPositiveNumber(det.w) ? gamad * (1 + det.w / 100) : 0;
+            // *** CORREÇÃO: Usar isValidNumber para det.w ***
+            // Se w = 0, gamas = gamad
+            const gamas = isValidPositiveNumber(gamad) && isValidNumber(det.w)
+                          ? gamad * (1 + det.w / 100)
+                          : 0;
             resultados.determinacoesMax.push({ ...det, solo, gamad, gamas });
-            if (isValidPositiveNumber(gamad)) gamadsMax.push(gamad);
+            if (isValidNumber(gamad)) gamadsMax.push(gamad);
         });
     }
     resultados.mediaGamadMax = calcularMediaValida(gamadsMax);
@@ -238,11 +223,15 @@ window.calculadora.calculos = (() => {
     const gamadsMin = [];
     if (dados.determinacoesMin && Array.isArray(dados.determinacoesMin)) {
         dados.determinacoesMin.forEach(det => {
-            const solo = isValidPositiveNumber(det.moldeSolo) && isValidPositiveNumber(det.molde) ? det.moldeSolo - det.molde : 0;
+            const solo = isValidNumber(det.moldeSolo) && isValidNumber(det.molde) ? det.moldeSolo - det.molde : 0;
             const gamad = isValidPositiveNumber(solo) && isValidPositiveNumber(det.volume) ? solo / det.volume : 0;
-            const gamas = isValidPositiveNumber(gamad) && isValidPositiveNumber(det.w) ? gamad * (1 + det.w / 100) : 0;
+            // *** CORREÇÃO: Usar isValidNumber para det.w ***
+            // Se w = 0, gamas = gamad (gamas não é usado/exibido para Min, mas corrigido por consistência)
+            const gamas = isValidPositiveNumber(gamad) && isValidNumber(det.w)
+                          ? gamad * (1 + det.w / 100)
+                          : 0;
             resultados.determinacoesMin.push({ ...det, solo, gamad, gamas });
-            if (isValidPositiveNumber(gamad)) gamadsMin.push(gamad);
+            if (isValidNumber(gamad)) gamadsMin.push(gamad);
         });
     }
     resultados.mediaGamadMin = calcularMediaValida(gamadsMin);
@@ -338,17 +327,21 @@ window.calculadora.calculos = (() => {
     if (!dados) {
         // Se dados for null, obterDadosFormulario já deve ter notificado o erro
         // Podemos limpar os resultados ou mostrar um estado de erro
-        window.calculadora.formIntegration.preencherResultados(tipo, null); // Limpa resultados
+        window.calculadora.formIntegration.setUltimosResultados(tipo, null); // Limpa estado
+        window.calculadora.formIntegration.preencherResultados(tipo, null); // Limpa resultados na UI
         return;
     }
 
     try {
         const resultados = calcularResultados(tipo, dados);
+        // *** MUDANÇA: Armazenar resultados no estado antes de preencher a UI ***
+        window.calculadora.formIntegration.setUltimosResultados(tipo, resultados);
         window.calculadora.formIntegration.preencherResultados(tipo, resultados);
     } catch (error) {
         console.error(`Erro no cálculo automático para ${tipo}:`, error);
         window.calculadora.formIntegration.exibirNotificacao(`Erro durante o cálculo: ${error.message}`, 'error');
-        // Limpar resultados em caso de erro no cálculo
+        // Limpar estado e resultados em caso de erro no cálculo
+        window.calculadora.formIntegration.setUltimosResultados(tipo, null);
         window.calculadora.formIntegration.preencherResultados(tipo, null);
     }
   }
