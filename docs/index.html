@@ -78,326 +78,349 @@
 
   <!-- DENSIDADE IN SITU -->
   <template id="template-densidade-in-situ">
-    <div class="calculadora-container">
-      <h2>Densidade In Situ</h2>
-      <!-- Informações Gerais -->
-      <div class="form-section">
-        <h3>Informações Gerais</h3>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="registro">Número do Registro:</label>
-            <input type="text" id="registro" placeholder="Informe o número do registro">
-          </div>
-          <div class="form-group">
-            <label for="data">Data:</label>
-            <input type="date" id="data">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="operador">Operador:</label>
-            <input type="text" id="operador" placeholder="Nome do operador">
-          </div>
-          <div class="form-group">
-            <label for="responsavel">Responsável:</label>
-            <input type="text" id="responsavel" placeholder="Nome do responsável">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="verificador">Verificador:</label>
-            <input type="text" id="verificador" placeholder="Nome do verificador">
-          </div>
-          <div class="form-group">
-            <label for="material">Material:</label>
-            <input type="text" id="material" placeholder="Descrição do material">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="origem">Origem:</label>
-            <input type="text" id="origem" placeholder="Origem do material">
-          </div>
-          <div class="form-group">
-            <label for="norte">Norte:</label>
-            <input type="text" id="norte" placeholder="Coordenada Norte">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="este">Este:</label>
-            <input type="text" id="este" placeholder="Coordenada Este">
-          </div>
-          <div class="form-group">
-            <label for="cota">Cota:</label>
-            <input type="text" id="cota" placeholder="Cota">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="quadrante">Quadrante:</label>
-            <input type="text" id="quadrante" placeholder="Quadrante">
-          </div>
-          <div class="form-group">
-            <label for="camada">Camada:</label>
-            <input type="text" id="camada" placeholder="Camada">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="hora">Hora:</label>
-            <input type="time" id="hora">
-          </div>
-        </div>
-      </div>
-      <!-- Dispositivos -->
-      <div class="form-section">
-        <h3>Dispositivos</h3>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="balanca">Balança:</label>
-            <input type="text" id="balanca" placeholder="Identificação da balança">
-          </div>
-          <div class="form-group">
-            <label for="estufa">Estufa:</label>
-            <input type="text" id="estufa" placeholder="Identificação da estufa">
-          </div>
-        </div>
-      </div>
-      <!-- Referências -->
-      <div class="form-section">
-        <h3>Referências</h3>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="registro-densidade-real">Registro de Densidade Real:</label>
-            <select id="registro-densidade-real">
-              <option value="">Selecione um registro</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="registro-densidade-max-min">Registro de Densidade Máx/Mín:</label>
-            <select id="registro-densidade-max-min">
-              <option value="">Selecione um registro</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <!-- Densidade In Situ -->
-      <div class="form-section">
-        <h3>Densidade In Situ</h3>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="numero-cilindro">Número do Cilindro:</label>
-            <input type="text" id="numero-cilindro" placeholder="Número do cilindro">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="molde-solo">Molde + Solo (g):</label>
-            <input type="number" id="molde-solo" step="0.01" placeholder="0.00">
-          </div>
-          <div class="form-group">
-            <label for="molde">Molde (g):</label>
-            <input type="number" id="molde" step="0.01" placeholder="0.00">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="solo">Solo (g):</label>
-            <input type="number" id="solo" step="0.01" placeholder="0.00" readonly>
-          </div>
-          <div class="form-group">
-            <label for="volume">Volume (cm³):</label>
-            <input type="number" id="volume" step="0.01" placeholder="0.00">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="gama-nat">γ nat (g/cm³):</label>
-            <input type="number" id="gama-nat" step="0.001" placeholder="0.000" readonly>
-          </div>
-        </div>
-      </div>
-      <!-- Umidade Topo -->
-      <div class="form-section">
-          <h3>Teor de Umidade Topo</h3>
-          <div class="table-responsive">
-              <table class="data-table">
-                  <thead>
-                      <tr>
-                          <th></th>
-                          <th>Determinação 1</th>
-                          <th>Determinação 2</th>
-                          <th>Determinação 3</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      <tr>
-                          <td>Cápsula Nº</td>
-                          <td><input type="text" id="capsula-topo-1" placeholder="Nº"></td>
-                          <td><input type="text" id="capsula-topo-2" placeholder="Nº"></td>
-                          <td><input type="text" id="capsula-topo-3" placeholder="Nº"></td>
-                      </tr>
-                      <tr>
-                          <td>Solo Úmido + Tara (g)</td>
-                          <td><input type="number" id="solo-umido-tara-topo-1" step="0.01" placeholder="0.00"></td>
-                          <td><input type="number" id="solo-umido-tara-topo-2" step="0.01" placeholder="0.00"></td>
-                          <td><input type="number" id="solo-umido-tara-topo-3" step="0.01" placeholder="0.00"></td>
-                      </tr>
-                      <tr>
-                          <td>Solo Seco + Tara (g)</td>
-                          <td><input type="number" id="solo-seco-tara-topo-1" step="0.01" placeholder="0.00"></td>
-                          <td><input type="number" id="solo-seco-tara-topo-2" step="0.01" placeholder="0.00"></td>
-                          <td><input type="number" id="solo-seco-tara-topo-3" step="0.01" placeholder="0.00"></td>
-                      </tr>
-                      <tr>
-                          <td>Tara (g)</td>
-                          <td><input type="number" id="tara-topo-1" step="0.01" placeholder="0.00"></td>
-                          <td><input type="number" id="tara-topo-2" step="0.01" placeholder="0.00"></td>
-                          <td><input type="number" id="tara-topo-3" step="0.01" placeholder="0.00"></td>
-                      </tr>
-                      <tr>
-                          <td>Solo Seco (g)</td>
-                          <td><input type="number" id="solo-seco-topo-1" step="0.01" placeholder="0.00" readonly></td>
-                          <td><input type="number" id="solo-seco-topo-2" step="0.01" placeholder="0.00" readonly></td>
-                          <td><input type="number" id="solo-seco-topo-3" step="0.01" placeholder="0.00" readonly></td>
-                      </tr>
-                      <tr>
-                          <td>Água (g)</td>
-                          <td><input type="number" id="agua-topo-1" step="0.01" placeholder="0.00" readonly></td>
-                          <td><input type="number" id="agua-topo-2" step="0.01" placeholder="0.00" readonly></td>
-                          <td><input type="number" id="agua-topo-3" step="0.01" placeholder="0.00" readonly></td>
-                      </tr>
-                      <tr>
-                          <td>Umidade (%)</td>
-                          <td><input type="number" id="umidade-topo-1" step="0.1" placeholder="0.0" readonly></td>
-                          <td><input type="number" id="umidade-topo-2" step="0.1" placeholder="0.0" readonly></td>
-                          <td><input type="number" id="umidade-topo-3" step="0.1" placeholder="0.0" readonly></td>
-                      </tr>
-                  </tbody>
-              </table>
-          </div>
-          <div class="form-row">
-              <div class="form-group">
-                  <label for="umidade-media-real">Umidade Média (%):</label>
-                  <input type="number" id="umidade-media-topo" step="0.1" placeholder="0.0" readonly>
+      <div class="calculadora-container">
+          <h2>Densidade In Situ</h2>
+          <!-- Informações Gerais -->
+          <div class="form-section">
+              <h3>Informações Gerais</h3>
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="registro">Número do Registro:</label>
+                      <input type="text" id="registro" placeholder="Informe o número do registro">
+                  </div>
+                  <div class="form-group">
+                      <label for="data">Data:</label>
+                      <input type="date" id="data">
+                  </div>
+              </div>
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="operador">Operador:</label>
+                      <input type="text" id="operador" placeholder="Nome do operador">
+                  </div>
+                  <div class="form-group">
+                      <label for="responsavel">Responsável:</label>
+                      <input type="text" id="responsavel" placeholder="Nome do responsável">
+                  </div>
+              </div>
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="verificador">Verificador:</label>
+                      <input type="text" id="verificador" placeholder="Nome do verificador">
+                  </div>
+                  <div class="form-group">
+                      <label for="material">Material:</label>
+                      <input type="text" id="material" placeholder="Descrição do material">
+                  </div>
+              </div>
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="origem">Origem:</label>
+                      <input type="text" id="origem" placeholder="Origem do material">
+                  </div>
+                  <div class="form-group">
+                      <label for="norte">Norte:</label>
+                      <input type="text" id="norte" placeholder="Coordenada Norte">
+                  </div>
+              </div>
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="este">Este:</label>
+                      <input type="text" id="este" placeholder="Coordenada Este">
+                  </div>
+                  <div class="form-group">
+                      <label for="cota">Cota:</label>
+                      <input type="text" id="cota" placeholder="Cota">
+                  </div>
+              </div>
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="quadrante">Quadrante:</label>
+                      <input type="text" id="quadrante" placeholder="Quadrante">
+                  </div>
+                  <div class="form-group">
+                      <label for="camada">Camada:</label>
+                      <input type="text" id="camada" placeholder="Camada">
+                  </div>
+              </div>
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="hora">Hora:</label>
+                      <input type="time" id="hora">
+                  </div>
               </div>
           </div>
-      </div>
-      <!-- Umidade Base -->
-      <div class="form-section">
-          <h3>Teor de Umidade Base</h3>
-          <div class="table-responsive">
-              <table class="data-table">
-                  <thead>
-                      <tr>
-                          <th></th>
-                          <th>Determinação 1</th>
-                          <th>Determinação 2</th>
-                          <th>Determinação 3</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      <tr>
-                          <td>Cápsula Nº</td>
-                          <td><input type="text" id="capsula-base-1" placeholder="Nº"></td>
-                          <td><input type="text" id="capsula-base-2" placeholder="Nº"></td>
-                          <td><input type="text" id="capsula-base-3" placeholder="Nº"></td>
-                      </tr>
-                      <tr>
-                          <td>Solo Úmido + Tara (g)</td>
-                          <td><input type="number" id="solo-umido-tara-base-1" step="0.01" placeholder="0.00"></td>
-                          <td><input type="number" id="solo-umido-tara-base-2" step="0.01" placeholder="0.00"></td>
-                          <td><input type="number" id="solo-umido-tara-base-3" step="0.01" placeholder="0.00"></td>
-                      </tr>
-                      <tr>
-                          <td>Solo Seco + Tara (g)</td>
-                          <td><input type="number" id="solo-seco-tara-base-1" step="0.01" placeholder="0.00"></td>
-                          <td><input type="number" id="solo-seco-tara-base-2" step="0.01" placeholder="0.00"></td>
-                          <td><input type="number" id="solo-seco-tara-base-3" step="0.01" placeholder="0.00"></td>
-                      </tr>
-                      <tr>
-                          <td>Tara (g)</td>
-                          <td><input type="number" id="tara-base-1" step="0.01" placeholder="0.00"></td>
-                          <td><input type="number" id="tara-base-2" step="0.01" placeholder="0.00"></td>
-                          <td><input type="number" id="tara-base-3" step="0.01" placeholder="0.00"></td>
-                      </tr>
-                      <tr>
-                          <td>Solo Seco (g)</td>
-                          <td><input type="number" id="solo-seco-base-1" step="0.01" placeholder="0.00" readonly></td>
-                          <td><input type="number" id="solo-seco-base-2" step="0.01" placeholder="0.00" readonly></td>
-                          <td><input type="number" id="solo-seco-base-3" step="0.01" placeholder="0.00" readonly></td>
-                      </tr>
-                      <tr>
-                          <td>Água (g)</td>
-                          <td><input type="number" id="agua-base-1" step="0.01" placeholder="0.00" readonly></td>
-                          <td><input type="number" id="agua-base-2" step="0.01" placeholder="0.00" readonly></td>
-                          <td><input type="number" id="agua-base-3" step="0.01" placeholder="0.00" readonly></td>
-                      </tr>
-                      <tr>
-                          <td>Umidade (%)</td>
-                          <td><input type="number" id="umidade-base-1" step="0.1" placeholder="0.0" readonly></td>
-                          <td><input type="number" id="umidade-base-2" step="0.1" placeholder="0.0" readonly></td>
-                          <td><input type="number" id="umidade-base-3" step="0.1" placeholder="0.0" readonly></td>
-                      </tr>
-                  </tbody>
-              </table>
-          </div>
-          <div class="form-row">
-              <div class="form-group">
-                  <label for="umidade-media-real">Umidade Média (%):</label>
-                  <input type="number" id="umidade-media-base" step="0.1" placeholder="0.0" readonly>
+          <!-- Dispositivos -->
+          <div class="form-section">
+              <h3>Dispositivos</h3>
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="balanca">Balança:</label>
+                      <input type="text" id="balanca" placeholder="Identificação da balança">
+                  </div>
+                  <div class="form-group">
+                      <label for="estufa">Estufa:</label>
+                      <input type="text" id="estufa" placeholder="Identificação da estufa">
+                  </div>
               </div>
           </div>
+          <!-- Referências -->
+          <div class="form-section">
+              <h3>Referências</h3>
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="registro-densidade-real">Registro de Densidade Real:</label>
+                      <select id="registro-densidade-real">
+                          <option value="">Selecione um registro</option>
+                      </select>
+                  </div>
+                  <div class="form-group">
+                      <label for="registro-densidade-max-min">Registro de Densidade Máx/Mín:</label>
+                      <select id="registro-densidade-max-min">
+                          <option value="">Selecione um registro</option>
+                      </select>
+                  </div>
+              </div>
+          </div>
+          <!-- Densidade In Situ -->
+          <div class="form-section">
+              <h3>Densidade In Situ</h3>
+              <div class="table-responsive">
+                  <table class="data-table">
+                      <thead>
+                          <tr>
+                              <th></th>
+                              <th>Determinação 1</th>
+                              <th>Determinação 2</th>
+                              <th>Determinação 3</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr>
+                              <td>Número do Cilindro</td>
+                              <td><input type="text" id="numero-cilindro-1" placeholder="Nº"></td>
+                              <td><input type="text" id="numero-cilindro-2" placeholder="Nº"></td>
+                          </tr>
+                          <tr>
+                              <td>Molde + Solo (g)</td>
+                              <td><input type="number" id="molde-solo-1" step="0.01" placeholder="0.00"></td>
+                              <td><input type="number" id="molde-solo-2" step="0.01" placeholder="0.00"></td>
+                          </tr>
+                          <tr>
+                              <td>Molde (g)</td>
+                              <td><input type="number" id="molde-1" step="0.01" placeholder="0.00"></td>
+                              <td><input type="number" id="molde-2" step="0.01" placeholder="0.00"></td>
+                          </tr>
+                          <tr>
+                              <td>Solo (g)</td>
+                              <td><input type="number" id="solo-1" step="0.01" placeholder="0.00" readonly></td>
+                              <td><input type="number" id="solo-2" step="0.01" placeholder="0.00" readonly></td>
+                          </tr>
+                          <tr>
+                              <td>Volume (cm³)</td>
+                              <td><input type="number" id="volume-1" step="0.01" placeholder="0.00"></td>
+                              <td><input type="number" id="volume-2" step="0.01" placeholder="0.00"></td>
+                          </tr>
+                          <tr>
+                              <td>γd (g/cm³)</td>
+                              <td><input type="number" id="gama-nat-um-1" step="0.001" placeholder="0.000" readonly></td>
+                              <td><input type="number" id="gama-nat-um-2" step="0.001" placeholder="0.000" readonly></td>
+                          </tr>
+                          <tr>
+                              <td>γs (g/cm³)</td>
+                              <td><input type="number" id="gama-nat-1" step="0.001" placeholder="0.000" readonly></td>
+                              <td><input type="number" id="gama-nat-2" step="0.001" placeholder="0.000" readonly></td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="gama-nat">γd mín (g/cm³):</label>
+                      <input type="number" id="gama-nat" step="0.001" placeholder="0.000" readonly>
+                  </div>
+              </div>
+          </div>
+          <!-- Umidade Topo -->
+          <div class="form-section">
+              <h3>Teor de Umidade Topo</h3>
+              <div class="table-responsive">
+                  <table class="data-table">
+                      <thead>
+                          <tr>
+                              <th></th>
+                              <th>Determinação 1</th>
+                              <th>Determinação 2</th>
+                              <th>Determinação 3</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr>
+                              <td>Cápsula Nº</td>
+                              <td><input type="text" id="capsula-topo-1" placeholder="Nº"></td>
+                              <td><input type="text" id="capsula-topo-2" placeholder="Nº"></td>
+                              <td><input type="text" id="capsula-topo-3" placeholder="Nº"></td>
+                          </tr>
+                          <tr>
+                              <td>Solo Úmido + Tara (g)</td>
+                              <td><input type="number" id="solo-umido-tara-topo-1" step="0.01" placeholder="0.00"></td>
+                              <td><input type="number" id="solo-umido-tara-topo-2" step="0.01" placeholder="0.00"></td>
+                              <td><input type="number" id="solo-umido-tara-topo-3" step="0.01" placeholder="0.00"></td>
+                          </tr>
+                          <tr>
+                              <td>Solo Seco + Tara (g)</td>
+                              <td><input type="number" id="solo-seco-tara-topo-1" step="0.01" placeholder="0.00"></td>
+                              <td><input type="number" id="solo-seco-tara-topo-2" step="0.01" placeholder="0.00"></td>
+                              <td><input type="number" id="solo-seco-tara-topo-3" step="0.01" placeholder="0.00"></td>
+                          </tr>
+                          <tr>
+                              <td>Tara (g)</td>
+                              <td><input type="number" id="tara-topo-1" step="0.01" placeholder="0.00"></td>
+                              <td><input type="number" id="tara-topo-2" step="0.01" placeholder="0.00"></td>
+                              <td><input type="number" id="tara-topo-3" step="0.01" placeholder="0.00"></td>
+                          </tr>
+                          <tr>
+                              <td>Solo Seco (g)</td>
+                              <td><input type="number" id="solo-seco-topo-1" step="0.01" placeholder="0.00" readonly></td>
+                              <td><input type="number" id="solo-seco-topo-2" step="0.01" placeholder="0.00" readonly></td>
+                              <td><input type="number" id="solo-seco-topo-3" step="0.01" placeholder="0.00" readonly></td>
+                          </tr>
+                          <tr>
+                              <td>Água (g)</td>
+                              <td><input type="number" id="agua-topo-1" step="0.01" placeholder="0.00" readonly></td>
+                              <td><input type="number" id="agua-topo-2" step="0.01" placeholder="0.00" readonly></td>
+                              <td><input type="number" id="agua-topo-3" step="0.01" placeholder="0.00" readonly></td>
+                          </tr>
+                          <tr>
+                              <td>Umidade (%)</td>
+                              <td><input type="number" id="umidade-topo-1" step="0.1" placeholder="0.0" readonly></td>
+                              <td><input type="number" id="umidade-topo-2" step="0.1" placeholder="0.0" readonly></td>
+                              <td><input type="number" id="umidade-topo-3" step="0.1" placeholder="0.0" readonly></td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="umidade-media-real">Umidade Média (%):</label>
+                      <input type="number" id="umidade-media-topo" step="0.1" placeholder="0.0" readonly>
+                  </div>
+              </div>
+          </div>
+          <!-- Umidade Base -->
+          <div class="form-section">
+              <h3>Teor de Umidade Base</h3>
+              <div class="table-responsive">
+                  <table class="data-table">
+                      <thead>
+                          <tr>
+                              <th></th>
+                              <th>Determinação 1</th>
+                              <th>Determinação 2</th>
+                              <th>Determinação 3</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr>
+                              <td>Cápsula Nº</td>
+                              <td><input type="text" id="capsula-base-1" placeholder="Nº"></td>
+                              <td><input type="text" id="capsula-base-2" placeholder="Nº"></td>
+                              <td><input type="text" id="capsula-base-3" placeholder="Nº"></td>
+                          </tr>
+                          <tr>
+                              <td>Solo Úmido + Tara (g)</td>
+                              <td><input type="number" id="solo-umido-tara-base-1" step="0.01" placeholder="0.00"></td>
+                              <td><input type="number" id="solo-umido-tara-base-2" step="0.01" placeholder="0.00"></td>
+                              <td><input type="number" id="solo-umido-tara-base-3" step="0.01" placeholder="0.00"></td>
+                          </tr>
+                          <tr>
+                              <td>Solo Seco + Tara (g)</td>
+                              <td><input type="number" id="solo-seco-tara-base-1" step="0.01" placeholder="0.00"></td>
+                              <td><input type="number" id="solo-seco-tara-base-2" step="0.01" placeholder="0.00"></td>
+                              <td><input type="number" id="solo-seco-tara-base-3" step="0.01" placeholder="0.00"></td>
+                          </tr>
+                          <tr>
+                              <td>Tara (g)</td>
+                              <td><input type="number" id="tara-base-1" step="0.01" placeholder="0.00"></td>
+                              <td><input type="number" id="tara-base-2" step="0.01" placeholder="0.00"></td>
+                              <td><input type="number" id="tara-base-3" step="0.01" placeholder="0.00"></td>
+                          </tr>
+                          <tr>
+                              <td>Solo Seco (g)</td>
+                              <td><input type="number" id="solo-seco-base-1" step="0.01" placeholder="0.00" readonly></td>
+                              <td><input type="number" id="solo-seco-base-2" step="0.01" placeholder="0.00" readonly></td>
+                              <td><input type="number" id="solo-seco-base-3" step="0.01" placeholder="0.00" readonly></td>
+                          </tr>
+                          <tr>
+                              <td>Água (g)</td>
+                              <td><input type="number" id="agua-base-1" step="0.01" placeholder="0.00" readonly></td>
+                              <td><input type="number" id="agua-base-2" step="0.01" placeholder="0.00" readonly></td>
+                              <td><input type="number" id="agua-base-3" step="0.01" placeholder="0.00" readonly></td>
+                          </tr>
+                          <tr>
+                              <td>Umidade (%)</td>
+                              <td><input type="number" id="umidade-base-1" step="0.1" placeholder="0.0" readonly></td>
+                              <td><input type="number" id="umidade-base-2" step="0.1" placeholder="0.0" readonly></td>
+                              <td><input type="number" id="umidade-base-3" step="0.1" placeholder="0.0" readonly></td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="umidade-media-real">Umidade Média (%):</label>
+                      <input type="number" id="umidade-media-base" step="0.1" placeholder="0.0" readonly>
+                  </div>
+              </div>
+          </div>
+          <!-- Resultados -->
+          <div class="form-section">
+              <h3>Resultados</h3>
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="gamadTopo">γd Topo (g/cm³):</label>
+                      <input type="number" id="gamad-topo" step="0.001" placeholder="0.000" readonly>
+                  </div>
+                  <div class="form-group">
+                      <label for="gamadBase">γd Base (g/cm³):</label>
+                      <input type="number" id="gamad-base" step="0.001" placeholder="0.000" readonly>
+                  </div>
+              </div>
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="indiceVaziosTopo">Índice de Vazios Topo:</label>
+                      <input type="number" id="indice-vazios-topo" step="0.01" placeholder="0.00" readonly>
+                  </div>
+                  <div class="form-group">
+                      <label for="indiceVaziosBase">Índice de Vazios Base:</label>
+                      <input type="number" id="indice-vazios-base" step="0.01" placeholder="0.00" readonly>
+                  </div>
+              </div>
+              <div class="form-row">
+                  <div class="form-group">
+                      <label for="crTopo">CR Topo (%):</label>
+                      <input type="number" id="cr-topo" step="0.1" placeholder="0.0" readonly>
+                  </div>
+                  <div class="form-group">
+                      <label for="crBase">CR Base (%):</label>
+                      <input type="number" id="cr-base" step="0.1" placeholder="0.0" readonly>
+                  </div>
+              </div>
+              <div class="form-row">
+                  <div class="status-container">
+                      <label>Status:</label>
+                      <div id="status-ensaio" class="status-ensaio">AGUARDANDO CÁLCULO</div>
+                  </div>
+              </div>
+          </div>
+          <!-- Ações -->
+          <div class="acoes">
+              <button class="btn-calcular">Calcular</button>
+              <button class="btn-salvar">Salvar</button>
+              <button class="btn-gerar-pdf">Gerar PDF</button>
+              <button class="btn-limpar">Limpar</button>
+          </div>
       </div>
-      <!-- Resultados -->
-      <div class="form-section">
-        <h3>Resultados</h3>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="gamadTopo">γd Topo (g/cm³):</label>
-            <input type="number" id="gamad-topo" step="0.001" placeholder="0.000" readonly>
-          </div>
-          <div class="form-group">
-            <label for="gamadBase">γd Base (g/cm³):</label>
-            <input type="number" id="gamad-base" step="0.001" placeholder="0.000" readonly>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="indiceVaziosTopo">Índice de Vazios Topo:</label>
-            <input type="number" id="indice-vazios-topo" step="0.01" placeholder="0.00" readonly>
-          </div>
-          <div class="form-group">
-            <label for="indiceVaziosBase">Índice de Vazios Base:</label>
-            <input type="number" id="indice-vazios-base" step="0.01" placeholder="0.00" readonly>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="crTopo">CR Topo (%):</label>
-            <input type="number" id="cr-topo" step="0.1" placeholder="0.0" readonly>
-          </div>
-          <div class="form-group">
-            <label for="crBase">CR Base (%):</label>
-            <input type="number" id="cr-base" step="0.1" placeholder="0.0" readonly>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="status-container">
-            <label>Status:</label>
-            <div id="status-ensaio" class="status-ensaio">AGUARDANDO CÁLCULO</div>
-          </div>
-        </div>
-      </div>
-      <!-- Ações -->
-      <div class="acoes">
-        <button class="btn-calcular">Calcular</button>
-        <button class="btn-salvar">Salvar</button>
-        <button class="btn-gerar-pdf">Gerar PDF</button>
-        <button class="btn-limpar">Limpar</button>
-      </div>
-    </div>
   </template>
 
   <!-- DENSIDADE REAL -->
