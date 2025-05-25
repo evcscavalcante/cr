@@ -796,14 +796,30 @@
       </div>
     </div>
   </template>
-<script>
-window.calculadora = window.calculadora || {};
-window.calculadora.templates = {
-  'in-situ': document.getElementById('template-in-situ').innerHTML,
-  'real':    document.getElementById('template-real').innerHTML,
-  'max-min': document.getElementById('template-max-min').innerHTML
-};
-</script>
+ <!-- DENSIDADE IN SITU -->
+  <template id="template-densidade-in-situ">
+    <!-- SEU MARCUP DO FORMULÁRIO IN-SITU AQUI -->
+  </template>
+
+  <!-- DENSIDADE REAL -->
+  <template id="template-densidade-real">
+    <!-- SEU MARCUP DO FORMULÁRIO REAL AQUI -->
+  </template>
+
+  <!-- DENSIDADE MÁXIMA E MÍNIMA -->
+  <template id="template-densidade-max-min">
+    <!-- SEU MARCUP DO FORMULÁRIO MÁX-MÍN AQUI -->
+  </template>
+
+  <!-- Inicializa o objeto de templates antes dos seus scripts JS -->
+  <script>
+    window.calculadora = window.calculadora || {};
+    window.calculadora.templates = {
+      'in-situ':    document.getElementById('template-densidade-in-situ').innerHTML,
+      'real':       document.getElementById('template-densidade-real').innerHTML,
+      'max-min':    document.getElementById('template-densidade-max-min').innerHTML
+    };
+  </script>
 
 
   <!-- Scripts -->
