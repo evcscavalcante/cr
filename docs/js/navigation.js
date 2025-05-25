@@ -1,93 +1,112 @@
 // js/navigation.js
-// Módulo de navegação para a Calculadora de Compacidade
-// Implementa navegação consistente entre telas, botão voltar e limpa filtros duplicados
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Namespace para navegação
-    window.calculadora = window.calculadora || {};
-    
-    // Módulo de navegação
-    window.calculadora.navegacao = (() => {
-        const historico = [];
-        let estadoAtual = { tela: 'menu', tipo: null, aba: null };
-        
-        const elementos = {
-            menuPrincipal: () => document.querySelector('.menu-principal'),
-            secaoListaEnsaios: () => document.querySelector('#secao-lista-ensaios'),
-            calculadoraContent: () => document.querySelector('#calculadora'),
-            listaEnsaiosContent: () => document.querySelector('#lista-ensaios'),
-            tabs: () => document.querySelectorAll('.tab-btn'),
-            tabContents: () => document.querySelectorAll('.tab-content')
-        };
-        
-        function removerFiltrosDuplicados() {
-            const container = elementos.listaEnsaiosContent();
-            if (!container) return;
-            const filtros = container.querySelectorAll(':scope > .filtros-container');
-            filtros.forEach((el, i) => {
-                if (i > 0) el.remove();
-            });
+  window.calculadora = window.calculadora || {};
+
+  window.calculadora.navegacao = (() => {
+    const historico = [];
+    let estadoAtual = { tela: 'menu', tipo: null, aba: null };
+
+    const elementos = {
+      menuPrincipal:       () => document.querySelector('.menu-principal'),
+      secaoListaEnsaios:   () => document.querySelector('#secao-lista-ensaios'),
+      calculadoraContent:  () => document.querySelector('#calculadora'),
+      listaEnsaiosContent: () => document.querySelector('#lista-ensaios'),
+      tabs:                () => document.querySelectorAll('.tab-btn'),
+      tabContents:         () => document.querySelectorAll('.tab-content')
+    };
+
+    function removerFiltrosDuplicados() {
+      const container = elementos.listaEnsaiosContent();
+      if (!container) return;
+      const filtros = container.querySelectorAll(':scope > .filtros-container');
+      filtros.forEach((el, i) => {
+        if (i > 0) el.remove();
+      });
+    }
+
+    function navegarParaMenu() {
+      if (estadoAtual.tela !== 'menu') historico.push({ ...estadoAtual });
+      estadoAtual = { tela: 'menu', tipo: null, aba: null };
+
+      const menu = elementos.menuPrincipal();
+      if (menu) menu.style.display = 'block';
+
+      const secao = elementos.secaoListaEnsaios();
+      if (secao) secao.style.display = 'none';
+
+      const calc = elementos.calculadoraContent();
+      if (calc) calc.innerHTML = '';
+    }
+
+    function navegarParaLista(tipo) {
+      if (!['in-situ','real','max-min'].includes(tipo)) {
+        return console.error('Tipo inválido:', tipo);
+      }
+      historico.push({ ...estadoAtual });
+      estadoAtual = { tela: 'lista', tipo, aba: 'lista-ensaios' };
+
+      const menu = elementos.menuPrincipal();
+      if (menu) menu.style.display = 'none';
+
+      const secao = elementos.secaoListaEnsaios();
+      if (secao) secao.style.display = 'block';
+
+      const calc = elementos.calculadoraContent();
+      if (calc) calc.innerHTML = '';
+
+      ativarAba('lista-ensaios');
+      removerFiltrosDuplicados();
+      carregarListaEnsaios(tipo);
+      adicionarBotaoVoltarMenuPrincipal();
+    }
+
+    function navegarParaCalculadora(tipo, ensaio = null) {
+      if (!['in-situ','real','max-min'].includes(tipo)) {
+        return console.error('Tipo inválido:', tipo);
+      }
+      historico.push({ ...estadoAtual });
+      estadoAtual = { tela: 'calculadora', tipo, aba: 'calculadora', ensaio };
+
+      const menu = elementos.menuPrincipal();
+      if (menu) menu.style.display = 'none';
+
+      const secao = elementos.secaoListaEnsaios();
+      if (secao) secao.style.display = 'block';
+
+      ativarAba('calculadora');
+      carregarFormularioCalculadora(tipo, ensaio);
+      adicionarBotaoVoltarMenuPrincipal();
+    }
+
+    function voltar() {
+      if (!historico.length) {
+        return navegarParaMenu();
+      }
+      const ultimo = historico.pop();
+      estadoAtual = { ...ultimo };
+
+      const menu = elementos.menuPrincipal();
+      const secao = elementos.secaoListaEnsaios();
+      const calc  = elementos.calculadoraContent();
+
+      if (estadoAtual.tela === 'menu') {
+        if (menu) menu.style.display = 'block';
+        if (secao) secao.style.display = 'none';
+        if (calc) calc.innerHTML = '';
+      } else {
+        if (menu) menu.style.display = 'none';
+        if (secao) secao.style.display = 'block';
+
+        ativarAba(estadoAtual.aba);
+        if (estadoAtual.tela === 'lista') {
+          removerFiltrosDuplicados();
+          carregarListaEnsaios(estadoAtual.tipo);
+        } else {
+          carregarFormularioCalculadora(estadoAtual.tipo, estadoAtual.ensaio);
         }
-        
-        function navegarParaMenu() {
-            if (estadoAtual.tela !== 'menu') historico.push({ ...estadoAtual });
-            estadoAtual = { tela: 'menu', tipo: null, aba: null };
-            elementos.menuPrincipal()?.style.display = 'block';
-            elementos.secaoListaEnsaios()?.style.display = 'none';
-            elementos.calculadoraContent().innerHTML = '';
-        }
-        
-        function navegarParaLista(tipo) {
-            if (!['in-situ','real','max-min'].includes(tipo)) return console.error('Tipo inválido:', tipo);
-            historico.push({ ...estadoAtual });
-            estadoAtual = { tela: 'lista', tipo, aba: 'lista-ensaios' };
-            
-            elementos.menuPrincipal()?.style.display = 'none';
-            elementos.secaoListaEnsaios()?.style.display = 'block';
-            elementos.calculadoraContent().innerHTML = '';
-            
-            ativarAba('lista-ensaios');
-            removerFiltrosDuplicados();
-            carregarListaEnsaios(tipo);
-            adicionarBotaoVoltarMenuPrincipal();
-        }
-        
-        function navegarParaCalculadora(tipo, ensaio = null) {
-            if (!['in-situ','real','max-min'].includes(tipo)) return console.error('Tipo inválido:', tipo);
-            historico.push({ ...estadoAtual });
-            estadoAtual = { tela: 'calculadora', tipo, aba: 'calculadora', ensaio };
-            
-            elementos.menuPrincipal()?.style.display = 'none';
-            elementos.secaoListaEnsaios()?.style.display = 'block';
-            
-            ativarAba('calculadora');
-            carregarFormularioCalculadora(tipo, ensaio);
-            adicionarBotaoVoltarMenuPrincipal();
-        }
-        
-        function voltar() {
-            if (!historico.length) return navegarParaMenu();
-            const ultimo = historico.pop();
-            estadoAtual = { ...ultimo };
-            
-            if (estadoAtual.tela === 'menu') {
-                elementos.menuPrincipal()?.style.display = 'block';
-                elementos.secaoListaEnsaios()?.style.display = 'none';
-                elementos.calculadoraContent().innerHTML = '';
-            } else {
-                elementos.menuPrincipal()?.style.display = 'none';
-                elementos.secaoListaEnsaios()?.style.display = 'block';
-                ativarAba(estadoAtual.aba);
-                if (estadoAtual.tela === 'lista') {
-                    removerFiltrosDuplicados();
-                    carregarListaEnsaios(estadoAtual.tipo);
-                } else {
-                    carregarFormularioCalculadora(estadoAtual.tipo, estadoAtual.ensaio);
-                }
-                adicionarBotaoVoltarMenuPrincipal();
-            }
-        }
-        
+        adicionarBotaoVoltarMenuPrincipal();
+      }
+    }
         function adicionarBotaoVoltarMenuPrincipal() {
             if (document.querySelector('.btn-voltar-menu-principal')) return;
             const btn = document.createElement('button');
