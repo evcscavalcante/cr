@@ -600,7 +600,7 @@ document.addEventListener('DOMContentLoaded', () => {
             referenceCrossSystem.configurarEventListenersSeletores(form);
         }
     }
-});
+
 
             // Adicionar controles de filtro
             filterSystem.adicionarControlesFiltro(container, tipo);
