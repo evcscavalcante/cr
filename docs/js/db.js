@@ -335,6 +335,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // API pública
+               // Alias para carregar todos os ensaios (utilizado em form-integration.js)
+        function carregarTodosEnsaios(tipo) {
+            return listarRegistros(tipo);
+        }
+
+        // API pública
         return {
             init,
             salvarRegistro,
@@ -344,7 +350,8 @@ document.addEventListener('DOMContentLoaded', () => {
             exportarDados,
             importarDados,
             recuperarBackup,
-            verificarDisponibilidade
+            verificarDisponibilidade,
+            carregarTodosEnsaios // ✅ agora incluída aqui
         };
     })();
     
