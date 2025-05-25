@@ -617,8 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         listaRegistros.innerHTML = '<p class="lista-vazia">Erro ao carregar ensaios.</p>';
                     });
             }
-        });
-    }
+      
     
     // Exportar funções para uso global
     window.calculadora.referenceCrossSystem = referenceCrossSystem;
