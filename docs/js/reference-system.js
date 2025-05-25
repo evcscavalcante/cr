@@ -584,9 +584,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         // Adicionar event listener para quando a lista de ensaios for carregada
-        document.addEventListener('listaEnsaiosLoaded', (event) => {
-            const { container, tipo } = event.detail;
-            
+        
+            document.addEventListener('formLoaded', async (event) => {
+    const { form, tipo } = event.detail;
+    if (tipo === 'in-situ') {
+        // Aguarda banco se necessário
+        if (!window.calculadora?.db?.carregarTodosEnsaios) {
+            console.warn('[referência cruzada] db ainda não está pronto. Aguardando dbReady...');
+            document.addEventListener('dbReady', () => {
+                referenceCrossSystem.atualizarSeletoresReferencia(form, tipo);
+                referenceCrossSystem.configurarEventListenersSeletores(form);
+            }, { once: true });
+        } else {
+            referenceCrossSystem.atualizarSeletoresReferencia(form, tipo);
+            referenceCrossSystem.configurarEventListenersSeletores(form);
+        }
+    }
+});
+
             // Adicionar controles de filtro
             filterSystem.adicionarControlesFiltro(container, tipo);
             
