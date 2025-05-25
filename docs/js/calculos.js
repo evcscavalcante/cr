@@ -104,7 +104,7 @@ window.calculadora.calculos = (() => {
         topo: eMax !== eMin ? ((eMax - resultados.indiceVaziosTopo) / (eMax - eMin)) * 100 : null,
         base: eMax !== eMin ? ((eMax - resultados.indiceVaziosBase) / (eMax - eMin)) * 100 : null
       };
-      const crValidos = [resultados.compacidadeRelativa.topo, resultados.compacidadeRelativa.base] .filter(isValidNumber);
+      const crValidos = [resultados.compacidadeRelativa.topo, resultados.compacidadeRelativa.base].filter(isValidNumber);
       if (crValidos.length > 0) {
         const crMedio = calcularMediaValida(crValidos);
         resultados.status = crMedio >= 95 ? 'APROVADO' : 'REPROVADO';
@@ -214,8 +214,7 @@ window.calculadora.calculos = (() => {
     fi.preencherResultados?.(tipo, resultados);
   }
 
-  // configuração de listeners para inputs/selects e evento formLoaded
-    // --- Densidade da Água ---
+  // --- Densidade da Água ---
   function calcularDensidadeAgua(temperatura) {
     const tabela = [
       { temp: 15, dens: 0.9991 }, { temp: 16, dens: 0.9989 },
@@ -266,3 +265,6 @@ window.calculadora.calculos = (() => {
 
   return { calcularResultados, calcularAutomaticamente };
 })();
+
+// Alias para compatibilidade
+window.calculadora.calcularAutomaticamente = window.calculadora.calculos.calcularAutomaticamente;
