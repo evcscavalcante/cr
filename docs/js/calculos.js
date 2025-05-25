@@ -18,8 +18,7 @@ window.calculadora.calculos = (() => {
 
     const gamadTopo = gamaNat / (1 + umidadeTopo/100);
     const gamadBase = gamaNat / (1 + umidadeBase/100);
-    const indiceVazios-Topo = (dados.densidadeReal / gamadTopo) - 1;
-    const indiceVazios-Base = (dados.densidadeReal / gamadBase) - 1;
+   
   
 
     let indiceVaziosTopo = null,
