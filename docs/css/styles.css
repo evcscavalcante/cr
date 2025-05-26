@@ -596,6 +596,7 @@ main {
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
     animation: slideIn 0.3s ease;
     max-width: 300px;
+    opacity: 1;
 }
 
 .toast-info {
@@ -608,10 +609,6 @@ main {
 
 .toast-error {
     background-color: var(--error-color);
-}
-
-.toast-warning {
-    background-color: var(--warning-color);
 }
 
 .toast-hide {
