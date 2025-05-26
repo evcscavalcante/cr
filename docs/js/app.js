@@ -1,383 +1,361 @@
 // Módulo de aplicação principal para a Calculadora de Compacidade
-// Implementa a inicialização e controle geral da aplicação
+// Implementa a inicialização, controle geral da aplicação e handlers de botões
 
 document.addEventListener('DOMContentLoaded', () => {
     // Namespace para calculadora
     window.calculadora = window.calculadora || {};
-    
-    // Inicializar aplicação
+
+    // --- Função para exibir Notificações Toast ---
+    window.showToast = function(message, type = 'info', duration = 3000) {
+        const container = document.getElementById('toast-container') || createToastContainer();
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        container.appendChild(toast);
+
+        // Trigger reflow to enable animation
+        toast.offsetHeight;
+
+        toast.classList.add('show');
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+            // Remove o toast do DOM após a animação de saída
+            toast.addEventListener('transitionend', () => {
+                if (toast.parentNode === container) {
+                     container.removeChild(toast);
+                }
+                 // Remove o container se estiver vazio
+                 if (container.children.length === 0 && container.parentNode === document.body) {
+                    document.body.removeChild(container);
+                 }
+            });
+        }, duration);
+    }
+
+    function createToastContainer() {
+        let container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            container.className = 'toast-container';
+            document.body.appendChild(container);
+        }
+        return container;
+    }
+    // Garante que a função esteja disponível globalmente
+    window.calculadora.exibirNotificacao = window.showToast;
+    // Atualiza a referência em formIntegration se já carregado
+    if (window.calculadora.formIntegration) {
+        window.calculadora.formIntegration.exibirNotificacao = window.showToast;
+    }
+
+    // --- Inicialização da Aplicação ---
     inicializarApp();
-    
-    // Função de inicialização
+
     function inicializarApp() {
         console.log('Inicializando aplicação...');
-        
-        // Configurar navegação do menu principal
         configurarMenuPrincipal();
-        
-        // Configurar navegação de tabs
         configurarTabs();
-        
-        // Configurar botões de voltar
-        configurarBotoesVoltar();
-        
-        // Inicializar módulo de banco de dados
-        if (window.calculadora.db) {
-            window.calculadora.db.init()
-                .then(() => {
-                    console.log('Banco de dados inicializado');
-                    carregarListaEnsaios();
-                })
-                .catch(error => {
-                    console.error('Erro ao inicializar banco de dados:', error);
-                });
-        } else {
-            console.error('Módulo de banco de dados não disponível');
-        }
-        
-        // Verificar se há um hash na URL para navegação direta
-        if (window.location.hash) {
-            const hash = window.location.hash.substring(1);
-            if (hash === 'in-situ' || hash === 'real' || hash === 'max-min') {
-                carregarEnsaio(hash);
-            }
-        }
-        
+        configurarBotoesGlobais(); // Configura listeners para botões de ação e voltar
+        inicializarBancoDeDados();
+        verificarHashNavegacao();
         console.log('Aplicação inicializada');
     }
-    
-    // Configurar menu principal
+
     function configurarMenuPrincipal() {
-        const btnDensidadeInSitu = document.getElementById('btn-densidade-in-situ');
-        const btnDensidadeReal = document.getElementById('btn-densidade-real');
-        const btnDensidadeMaxMin = document.getElementById('btn-densidade-max-min');
-        
-        if (btnDensidadeInSitu) {
-            btnDensidadeInSitu.addEventListener('click', () => carregarEnsaio('in-situ'));
-        }
-        
-        if (btnDensidadeReal) {
-            btnDensidadeReal.addEventListener('click', () => carregarEnsaio('real'));
-        }
-        
-        if (btnDensidadeMaxMin) {
-            btnDensidadeMaxMin.addEventListener('click', () => carregarEnsaio('max-min'));
-        }
+        document.getElementById('btn-densidade-in-situ')?.addEventListener('click', () => carregarEnsaio('in-situ'));
+        document.getElementById('btn-densidade-real')?.addEventListener('click', () => carregarEnsaio('real'));
+        document.getElementById('btn-densidade-max-min')?.addEventListener('click', () => carregarEnsaio('max-min'));
     }
-    
-    // Carregar ensaio
+
     function carregarEnsaio(tipo) {
-        // Atualizar hash da URL
         window.location.hash = tipo;
-        
-        // Esconder menu principal
-        const menuPrincipal = document.querySelector('.menu-principal');
-        if (menuPrincipal) {
-            menuPrincipal.style.display = 'none';
-        }
-        
-        // Mostrar seção de lista de ensaios
+        document.querySelector('.menu-principal')?.style.setProperty('display', 'none');
         const secaoListaEnsaios = document.getElementById('secao-lista-ensaios');
         if (secaoListaEnsaios) {
             secaoListaEnsaios.style.display = 'block';
-            
-            // Adicionar botão de voltar ao menu principal
             if (!secaoListaEnsaios.querySelector('.btn-voltar-menu-principal')) {
                 const btnVoltar = document.createElement('button');
                 btnVoltar.className = 'btn-voltar-menu-principal';
                 btnVoltar.innerHTML = '<i class="fas fa-home"></i> Menu Principal';
                 btnVoltar.addEventListener('click', voltarMenuPrincipal);
-                secaoListaEnsaios.appendChild(btnVoltar);
+                // Insere antes do primeiro filho (tabs)
+                secaoListaEnsaios.insertBefore(btnVoltar, secaoListaEnsaios.firstChild);
             }
         }
-        
-        // Carregar lista de ensaios
         carregarListaEnsaios(tipo);
-        
-        // Carregar formulário da calculadora
         if (window.calculadora.formIntegration) {
             window.calculadora.formIntegration.carregarFormulario(tipo);
         } else {
             console.error('Módulo de integração de formulários não disponível');
         }
-        
-        // Ativar tab de lista de ensaios
-        const tabBtn = document.querySelector('.tab-btn[data-tab="lista-ensaios"]');
-        if (tabBtn) {
-            tabBtn.click();
-        }
+        // Ativa a tab da lista por padrão ao carregar um ensaio
+        document.querySelector('.tab-btn[data-tab="lista-ensaios"]')?.click();
     }
-    
-    // Voltar ao menu principal
+
     function voltarMenuPrincipal() {
-        // Limpar hash da URL
         window.location.hash = '';
-        
-        // Mostrar menu principal
-        const menuPrincipal = document.querySelector('.menu-principal');
-        if (menuPrincipal) {
-            menuPrincipal.style.display = 'block';
-        }
-        
-        // Esconder seção de lista de ensaios
-        const secaoListaEnsaios = document.getElementById('secao-lista-ensaios');
-        if (secaoListaEnsaios) {
-            secaoListaEnsaios.style.display = 'none';
-        }
+        document.querySelector('.menu-principal')?.style.setProperty('display', 'block');
+        document.getElementById('secao-lista-ensaios')?.style.setProperty('display', 'none');
     }
-    
-    // Configurar navegação de tabs
+
     function configurarTabs() {
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Remover classe active de todos os botões
-                tabBtns.forEach(b => b.classList.remove('active'));
-                
-                // Adicionar classe active ao botão clicado
-                btn.classList.add('active');
-                
-                // Obter tab alvo
-                const tabAlvo = btn.getAttribute('data-tab');
-                
-                // Esconder todos os conteúdos de tab
-                const tabContents = document.querySelectorAll('.tab-content');
-                tabContents.forEach(content => content.classList.remove('active'));
-                
-                // Mostrar conteúdo da tab alvo
-                const tabContent = document.getElementById(tabAlvo);
-                if (tabContent) {
-                    tabContent.classList.add('active');
-                }
-            });
-        });
-    }
-    
-    // Configurar botões de voltar
-    function configurarBotoesVoltar() {
-        document.addEventListener('click', (event) => {
-            if (event.target.closest('.btn-voltar')) {
-                const tabBtn = document.querySelector('.tab-btn[data-tab="lista-ensaios"]');
-                if (tabBtn) {
-                    tabBtn.click();
-                }
+        const tabsContainer = document.querySelector('.tabs');
+        tabsContainer?.addEventListener('click', (event) => {
+            if (event.target.classList.contains('tab-btn')) {
+                const tabAlvo = event.target.getAttribute('data-tab');
+                tabsContainer.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                event.target.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.getElementById(tabAlvo)?.classList.add('active');
             }
         });
     }
-    
-    // Carregar lista de ensaios
-    function carregarListaEnsaios(tipo) {
-        if (!window.calculadora.db) {
-            console.error('Módulo de banco de dados não disponível');
-            return;
-        }
-        
-        const listaRegistros = document.querySelector('.lista-registros');
-        if (!listaRegistros) return;
-        
-        // Limpar lista
-        listaRegistros.innerHTML = '';
-        
-        // Obter tipo atual se não for especificado
-        if (!tipo) {
-            const hash = window.location.hash.substring(1);
-            tipo = hash === 'in-situ' || hash === 'real' || hash === 'max-min' ? hash : 'in-situ';
-        }
-        
-        // Atualizar título da lista
-        const tituloLista = document.querySelector('.lista-header h2');
-        if (tituloLista) {
-            let titulo = '';
-            switch (tipo) {
-                case 'in-situ':
-                    titulo = 'Densidade In Situ';
-                    break;
-                case 'real':
-                    titulo = 'Densidade Real';
-                    break;
-                case 'max-min':
-                    titulo = 'Densidade Máxima e Mínima';
-                    break;
-            }
-            tituloLista.textContent = `Lista de Ensaios - ${titulo}`;
-        }
-        
-        // Configurar botão de novo ensaio
-        const btnNovoEnsaio = document.querySelector('.btn-novo-ensaio');
-        if (btnNovoEnsaio) {
-            btnNovoEnsaio.onclick = () => {
-                // Carregar formulário vazio
-                if (window.calculadora.formIntegration) {
-                    window.calculadora.formIntegration.carregarFormulario(tipo);
-                    
-                    // Ativar tab de calculadora
-                    const tabBtn = document.querySelector('.tab-btn[data-tab="calculadora"]');
-                    if (tabBtn) {
-                        tabBtn.click();
+
+    // Configura listeners para botões que podem aparecer dinamicamente (Calcular, Salvar, PDF, Limpar, Voltar)
+    function configurarBotoesGlobais() {
+        document.body.addEventListener('click', async (event) => {
+            const target = event.target;
+            const calculadoraContainer = target.closest('#calculadora');
+            const listaEnsaiosContainer = target.closest('#secao-lista-ensaios');
+
+            // Botões dentro da Calculadora
+            if (calculadoraContainer) {
+                const tipo = window.calculadora.formIntegration?.getTipoFormularioAtual();
+                if (!tipo) return; // Sai se não conseguir determinar o tipo
+
+                if (target.classList.contains('btn-calcular')) {
+                    console.log('Botão Calcular clicado');
+                    if (window.calculadora.calculos?.calcularAutomaticamente) {
+                         window.calculadora.calculos.calcularAutomaticamente(tipo);
+                         window.showToast('Cálculos realizados com sucesso!', 'success');
+                    } else {
+                         window.showToast('Erro: Módulo de cálculos não encontrado.', 'error');
                     }
                 }
-            };
-        }
-        
-        // Carregar registros
-        window.calculadora.db.listarRegistros(tipo)
-            .then(registros => {
-                if (registros.length === 0) {
-                    // Exibir mensagem de lista vazia
-                    const mensagemVazia = document.createElement('div');
-                    mensagemVazia.className = 'lista-vazia';
-                    mensagemVazia.textContent = 'Nenhum registro encontrado';
-                    listaRegistros.appendChild(mensagemVazia);
-                    return;
+                 else if (target.classList.contains('btn-salvar')) {
+                    console.log('Botão Salvar clicado');
+                    const dados = window.calculadora.formIntegration?.obterDadosFormulario(tipo);
+                    if (dados && dados.registro && window.calculadora.db?.salvarRegistro) {
+                        try {
+                            await window.calculadora.db.salvarRegistro(tipo, dados);
+                            window.showToast(`Registro '${dados.registro}' salvo com sucesso!`, 'success');
+                            carregarListaEnsaios(tipo); // Atualiza a lista após salvar
+                        } catch (error) {
+                            console.error('Erro ao salvar registro:', error);
+                            window.showToast(`Erro ao salvar registro: ${error.message}`, 'error');
+                        }
+                    } else if (!dados?.registro) {
+                         window.showToast('Erro: Número do Registro é obrigatório para salvar.', 'error');
+                    } else {
+                        window.showToast('Erro ao obter dados ou salvar registro.', 'error');
+                    }
                 }
-                
-                // Ordenar registros por data (mais recentes primeiro)
-                registros.sort((a, b) => {
-                    const dataA = a.timestamp || 0;
-                    const dataB = b.timestamp || 0;
-                    return dataB - dataA;
+                 else if (target.classList.contains('btn-gerar-pdf')) {
+                    console.log('Botão Gerar PDF clicado');
+                    const dados = window.calculadora.formIntegration?.obterDadosFormulario(tipo);
+                     // Tenta carregar jsPDF dinamicamente se não estiver carregado
+                    if (typeof jspdf === 'undefined') {
+                        // Placeholder for dynamic loading logic if needed
+                        // await loadJsPDF(); 
+                        console.warn('jsPDF library not loaded. PDF generation might fail.');
+                        // Attempting to proceed assuming it might be loaded elsewhere or globally
+                    }
+
+                    if (dados && dados.registro && window.calculadora.pdfGenerator?.gerarPDF && typeof jspdf !== 'undefined') {
+                        try {
+                            window.showToast('Gerando PDF...', 'info', 5000);
+                            await window.calculadora.pdfGenerator.gerarPDF(tipo, dados);
+                            // O save é feito dentro da função gerarPDF
+                            // window.showToast(`PDF '${tipo}_${dados.registro}.pdf' gerado com sucesso!`, 'success');
+                        } catch (error) {
+                            console.error('Erro ao gerar PDF:', error);
+                            window.showToast(`Erro ao gerar PDF: ${error.message}`, 'error');
+                        }
+                    } else if (!dados?.registro) {
+                         window.showToast('Erro: Número do Registro é obrigatório para gerar PDF.', 'error');
+                    } else if (typeof jspdf === 'undefined'){
+                        window.showToast('Erro ao gerar PDF: Biblioteca jsPDF não carregada.', 'error');
+                    } else {
+                        window.showToast('Erro ao obter dados ou função para gerar PDF.', 'error');
+                    }
+                }
+                 else if (target.classList.contains('btn-limpar')) {
+                    console.log('Botão Limpar clicado');
+                    window.calculadora.formIntegration?.limparFormulario();
+                    // A notificação já é exibida dentro de limparFormulario
+                }
+                 else if (target.classList.contains('btn-voltar')) {
+                    // Botão Voltar DENTRO da calculadora (volta para a lista)
+                    console.log('Botão Voltar (calculadora) clicado');
+                    document.querySelector('.tab-btn[data-tab="lista-ensaios"]')?.click();
+                }
+            }
+            // Botão Voltar FORA da calculadora (volta para o menu principal)
+            else if (target.classList.contains('btn-voltar-menu-principal')) {
+                 console.log('Botão Voltar (menu principal) clicado');
+                 voltarMenuPrincipal();
+            }
+            // Botões na Lista de Ensaios
+            else if (listaEnsaiosContainer) {
+                 if (target.classList.contains('btn-novo-ensaio')) {
+                    console.log('Botão Novo Ensaio clicado');
+                    const tipo = window.location.hash.substring(1) || 'in-situ';
+                    if (window.calculadora.formIntegration) {
+                        window.calculadora.formIntegration.carregarFormulario(tipo);
+                        window.calculadora.formIntegration.limparFormulario(); // Garante que o form carregado esteja limpo
+                        document.querySelector('.tab-btn[data-tab="calculadora"]')?.click();
+                    }
+                 }
+                 else if (target.classList.contains('btn-editar')) {
+                    console.log('Botão Editar clicado');
+                    const item = target.closest('.registro-item');
+                    const registroId = item?.dataset.registroId;
+                    const tipo = item?.dataset.tipo;
+                    if (registroId && tipo && window.calculadora.formIntegration?.carregarRegistroParaEdicao) {
+                        window.calculadora.formIntegration.carregarRegistroParaEdicao(tipo, registroId);
+                    } else {
+                        window.showToast('Erro ao obter dados para edição.', 'error');
+                    }
+                 }
+                 else if (target.classList.contains('btn-excluir')) {
+                    console.log('Botão Excluir clicado');
+                    const item = target.closest('.registro-item');
+                    const registroId = item?.dataset.registroId;
+                    const tipo = item?.dataset.tipo;
+                    if (registroId && tipo && window.calculadora.db?.excluirRegistro) {
+                        if (confirm(`Deseja realmente excluir o registro ${registroId}?`)) {
+                            try {
+                                await window.calculadora.db.excluirRegistro(tipo, registroId);
+                                window.showToast('Registro excluído com sucesso!', 'success');
+                                carregarListaEnsaios(tipo); // Recarrega a lista
+                            } catch (error) {
+                                console.error('Erro ao excluir registro:', error);
+                                window.showToast(`Erro ao excluir registro: ${error.message}`, 'error');
+                            }
+                        }
+                    } else {
+                         window.showToast('Erro ao obter dados para exclusão.', 'error');
+                    }
+                 }
+                 else if (target.classList.contains('btn-filtro')) {
+                    console.log('Botão Filtrar clicado');
+                    const tipo = window.location.hash.substring(1) || 'in-situ';
+                    carregarListaEnsaios(tipo); // Recarrega a lista aplicando filtros
+                 }
+            }
+        });
+    }
+
+    function inicializarBancoDeDados() {
+        if (window.calculadora.db) {
+            window.calculadora.db.init()
+                .then(() => {
+                    console.log('Banco de dados inicializado');
+                    // Carrega a lista inicial baseada no hash ou padrão
+                    const tipoInicial = window.location.hash.substring(1);
+                    if (['in-situ', 'real', 'max-min'].includes(tipoInicial)) {
+                         carregarListaEnsaios(tipoInicial);
+                    } else {
+                        // Se não houver hash válido, não carrega nenhuma lista inicialmente
+                        // A lista será carregada quando um tipo de ensaio for selecionado
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao inicializar banco de dados:', error);
+                    window.showToast('Erro ao conectar ao banco de dados local.', 'error', 5000);
                 });
-                
-                // Adicionar registros à lista
+        } else {
+            console.error('Módulo de banco de dados não disponível');
+            window.showToast('Funcionalidade de banco de dados indisponível.', 'error', 5000);
+        }
+    }
+
+    function verificarHashNavegacao() {
+        const hash = window.location.hash.substring(1);
+        if (['in-situ', 'real', 'max-min'].includes(hash)) {
+            carregarEnsaio(hash);
+        }
+    }
+
+    // Carregar lista de ensaios (com filtros)
+    async function carregarListaEnsaios(tipo) {
+        if (!window.calculadora.db) {
+            console.error('Módulo de banco de dados não disponível para carregar lista');
+            return;
+        }
+
+        const listaRegistros = document.querySelector('.lista-registros');
+        const filtroRegistroInput = document.getElementById('filtro-registro');
+        const filtroDataInput = document.getElementById('filtro-data');
+        if (!listaRegistros || !filtroRegistroInput || !filtroDataInput) return;
+
+        listaRegistros.innerHTML = '<div class="loading-lista">Carregando registros...</div>'; // Feedback de carregamento
+
+        const filtroRegistro = filtroRegistroInput.value.toLowerCase();
+        const filtroData = filtroDataInput.value;
+
+        try {
+            let registros = await window.calculadora.db.listarRegistros(tipo);
+
+            // Aplicar filtros
+            if (filtroRegistro) {
+                registros = registros.filter(r => r.registro.toLowerCase().includes(filtroRegistro));
+            }
+            if (filtroData) {
+                registros = registros.filter(r => r.data === filtroData);
+            }
+
+            // Limpar lista antes de adicionar itens filtrados
+            listaRegistros.innerHTML = '';
+
+            if (registros.length === 0) {
+                listaRegistros.innerHTML = '<p class="sem-registros">Nenhum registro encontrado para este tipo de ensaio ou filtro.</p>';
+            } else {
                 registros.forEach(registro => {
-                    const item = criarItemRegistro(registro, tipo);
+                    const item = document.createElement('div');
+                    item.className = 'registro-item';
+                    item.dataset.registroId = registro.id; // Usar ID único do banco
+                    item.dataset.tipo = tipo;
+                    item.innerHTML = `
+                        <span class="registro-nome">Registro: ${registro.registro}</span>
+                        <span class="registro-data">Data: ${registro.data || 'N/A'}</span>
+                        <div class="registro-acoes">
+                            <button class="btn-editar" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-excluir" title="Excluir"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    `;
                     listaRegistros.appendChild(item);
                 });
-            })
-            .catch(error => {
-                console.error('Erro ao carregar lista de ensaios:', error);
-                
-                // Exibir mensagem de erro
-                const mensagemErro = document.createElement('div');
-                mensagemErro.className = 'lista-vazia';
-                mensagemErro.textContent = 'Erro ao carregar registros';
-                listaRegistros.appendChild(mensagemErro);
-            });
-    }
-    
-    // Criar item de registro para a lista
-    function criarItemRegistro(registro, tipo) {
-        const item = document.createElement('div');
-        item.className = 'registro-item';
-        
-        // Cabeçalho do registro
-        const header = document.createElement('div');
-        header.className = 'registro-header';
-        
-        const titulo = document.createElement('div');
-        titulo.className = 'registro-titulo';
-        titulo.textContent = registro.registro;
-        header.appendChild(titulo);
-        
-        const data = document.createElement('div');
-        data.className = 'registro-data';
-        data.textContent = registro.data ? new Date(registro.data).toLocaleDateString() : 'Data não informada';
-        header.appendChild(data);
-        
-        item.appendChild(header);
-        
-        // Operador
-        const operador = document.createElement('div');
-        operador.className = 'registro-operador';
-        operador.textContent = `Operador: ${registro.operador || 'Não informado'}`;
-        item.appendChild(operador);
-        
-        // Material
-        const material = document.createElement('div');
-        material.className = 'registro-material';
-        material.textContent = `Material: ${registro.material || 'Não informado'}`;
-        item.appendChild(material);
-        
-        // Valores principais
-        const valores = document.createElement('div');
-        valores.className = 'registro-valores';
-        
-        // Adicionar valores específicos por tipo
-        switch (tipo) {
-            case 'in-situ':
-                adicionarValor(valores, 'γd Topo', registro.gamadTopo, 'g/cm³');
-                adicionarValor(valores, 'γd Base', registro.gamadBase, 'g/cm³');
-                adicionarValor(valores, 'CR Topo', registro.crTopo, '%');
-                adicionarValor(valores, 'CR Base', registro.crBase, '%');
-                break;
-                
-            case 'real':
-                adicionarValor(valores, 'Densidade Real', registro.mediaDensidadeReal, 'g/cm³');
-                adicionarValor(valores, 'Umidade Média', registro.umidadeMediaReal, '%');
-                break;
-                
-            case 'max-min':
-                adicionarValor(valores, 'γd máx', registro.gamadMax, 'g/cm³');
-                adicionarValor(valores, 'γd mín', registro.gamadMin, 'g/cm³');
-                break;
+            }
+        } catch (error) {
+            console.error(`Erro ao carregar lista de ensaios (${tipo}):`, error);
+            listaRegistros.innerHTML = '<p class="erro-lista">Erro ao carregar registros. Tente novamente mais tarde.</p>';
+            window.showToast(`Erro ao carregar registros: ${error.message}`, 'error');
         }
-        
-        item.appendChild(valores);
-        
-        // Ações
-        const acoes = document.createElement('div');
-        acoes.className = 'registro-acoes';
-        
-        const btnEditar = document.createElement('button');
-        btnEditar.className = 'btn-editar';
-        btnEditar.textContent = 'Editar';
-        btnEditar.addEventListener('click', () => {
-            if (window.calculadora.formIntegration) {
-                window.calculadora.formIntegration.carregarRegistroParaEdicao(tipo, registro.registro);
-            }
-        });
-        acoes.appendChild(btnEditar);
-        
-        const btnExcluir = document.createElement('button');
-        btnExcluir.className = 'btn-excluir';
-        btnExcluir.textContent = 'Excluir';
-        btnExcluir.addEventListener('click', () => {
-            if (confirm(`Deseja realmente excluir o registro ${registro.registro}?`)) {
-                if (window.calculadora.db) {
-                    window.calculadora.db.excluirRegistro(tipo, registro.registro)
-                        .then(() => {
-                            // Recarregar lista
-                            carregarListaEnsaios(tipo);
-                            
-                            // Exibir notificação
-                            if (window.calculadora.formIntegration) {
-                                window.calculadora.formIntegration.exibirNotificacao('Registro excluído com sucesso', 'success');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Erro ao excluir registro:', error);
-                            
-                            // Exibir notificação
-                            if (window.calculadora.formIntegration) {
-                                window.calculadora.formIntegration.exibirNotificacao('Erro ao excluir registro', 'error');
-                            }
-                        });
-                }
-            }
-        });
-        acoes.appendChild(btnExcluir);
-        
-        item.appendChild(acoes);
-        
-        return item;
     }
-    
-    // Adicionar valor ao container de valores
-    function adicionarValor(container, label, valor, unidade) {
-        const item = document.createElement('div');
-        item.className = 'valor-item';
-        
-        const labelEl = document.createElement('span');
-        labelEl.className = 'valor-label';
-        labelEl.textContent = label + ':';
-        item.appendChild(labelEl);
-        
-        const valorEl = document.createElement('span');
-        valorEl.className = valor ? '' : 'valor-invalido';
-        valorEl.textContent = valor ? `${valor} ${unidade}` : 'Não calculado';
-        item.appendChild(valorEl);
-        
-        container.appendChild(item);
-    }
+
+    // Placeholder para função de carregar jsPDF dinamicamente (se necessário)
+    // async function loadJsPDF() {
+    //     if (typeof jspdf === 'undefined') {
+    //         console.log('Tentando carregar jsPDF...');
+    //         return new Promise((resolve, reject) => {
+    //             const script = document.createElement('script');
+    //             script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'; // Exemplo de CDN
+    //             script.onload = () => {
+    //                 console.log('jsPDF carregado com sucesso.');
+    //                 window.jspdf = window.jspdf.jsPDF; // Ajuste conforme a biblioteca expõe
+    //                 resolve();
+    //             };
+    //             script.onerror = (e) => {
+    //                 console.error('Falha ao carregar jsPDF:', e);
+    //                 reject(new Error('Falha ao carregar jsPDF'));
+    //             };
+    //             document.body.appendChild(script);
+    //         });
+    //     }
+    // }
+
 });
+
