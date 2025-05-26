@@ -171,10 +171,27 @@ window.calculadora.formIntegration = (function() {
         }
     }
 
+       function preencherResultados(tipo, resultados) {
+        // ...
+    }
+
+    function getTipoFormularioAtual() {
+        const form = document.querySelector('#calculadora form');
+        if (!form) return null;
+
+        if (form.querySelector('#registro')) return 'in-situ';
+        if (form.querySelector('#registro-real')) return 'real';
+        if (form.querySelector('#registro-max-min')) return 'max-min';
+
+        return null;
+    }
+
     return {
         carregarFormulario,
         obterDadosFormulario,
         setUltimosResultados,
-        preencherResultados
+        preencherResultados,
+        getTipoFormularioAtual
     };
+
 })();
