@@ -1,18 +1,21 @@
 window.calculadora.formIntegration = (function() {
     // Se você definiu window.calculadora.templates = { 'in-situ': '...', 'real': '...', 'max-min': '...' }
     // ele será usado. Caso contrário, procuramos um <template id="template-in-situ">, etc.
-    function getTemplateHTML(tipo) {
-        // 1) tentar objeto JS
-        if (window.calculadora.templates && window.calculadora.templates[tipo]) {
-            return window.calculadora.templates[tipo];
-        }
-        // 2) tentar <template> no HTML
-        const tpl = document.getElementById(template - $, { tipo });
-        if (tpl && tpl.innerHTML) {
-            return tpl.innerHTML;
-        }
-        return null;
+   function getTemplateHTML(tipo) {
+    // 1) se o usuário definiu window.calculadora.templates, usa isso
+    if (window.calculadora.templates && window.calculadora.templates[tipo]) {
+        return window.calculadora.templates[tipo];
     }
+    // 2) procura pelo <template id="template-densidade-<tipo>">
+    // mapeia 'in-situ' → 'template-densidade-in-situ', 'real' → 'template-densidade-real', 'max-min' → 'template-densidade-max-min'
+    const templateId = `template-densidade-${tipo}`;
+    const tpl = document.getElementById(templateId);
+    if (tpl && tpl.innerHTML) {
+        return tpl.innerHTML;
+    }
+    return null;
+}
+
 
     /**
      * Carrega o formulário da calculadora e dispara evento customizado
