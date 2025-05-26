@@ -48,60 +48,60 @@ window.calculadora.formIntegration = (function() {
      * @param {'in-situ'|'real'|'max-min'} tipo
      * @returns {object|null}
      */
-    function obterDadosFormulario(tipo) {
-        const form = document.querySelector('#calculadora form');
-        if (!form) {
-            console.error(Formulário, '${tipo}', não, encontrado);
-            return null;
-        }
-        try {
-            const prefix = tipo === 'in-situ' ? '' : -$, { tipo };
-            const dados = {
-                registro: (form.querySelector(#registro$, { prefix }) || {}).value?.trim() || '',
-                data: (form.querySelector(#data$, { prefix }) || {}).value?.trim() || '',
-                operador: (form.querySelector(#operador$, { prefix }) || {}).value?.trim() || '',
-                material: (form.querySelector(#material$, { prefix }) || {}).value?.trim() || ''
-            };
-
-            if (tipo === 'in-situ') {
-                dados.responsavel = (form.querySelector('#responsavel') || {}).value?.trim() || '';
-                dados.verificador = (form.querySelector('#verificador') || {}).value?.trim() || '';
-                dados.norte = parseFloat((form.querySelector('#norte') || {}).value) || 0;
-                dados.este = parseFloat((form.querySelector('#este') || {}).value) || 0;
-                dados.cota = parseFloat((form.querySelector('#cota') || {}).value) || 0;
-                dados.camada = parseInt((form.querySelector('#camada') || {}).value) || 0;
-                dados.hora = (form.querySelector('#hora') || {}).value || '';
-                dados.cilindro = {
-                    numero: (form.querySelector('#numero-cilindro') || {}).value?.trim() || '',
-                    solo: parseFloat((form.querySelector('#solo') || {}).value) || 0,
-                    volume: parseFloat((form.querySelector('#volume') || {}).value) || 0
-                };
-                dados.teorUmidade = {
-                    topo: { seco: parseFloat((form.querySelector('#umidade-topo') || {}).value) || 0 },
-                    base: { seco: parseFloat((form.querySelector('#umidade-base') || {}).value) || 0 }
-                };
-                dados.refReal = parseFloat(form.dataset.densidadeReal) || null;
-                dados.refMax = parseFloat(form.dataset.densidadeMax) || null;
-                dados.refMin = parseFloat(form.dataset.densidadeMin) || null;
-
-            } else if (tipo === 'real') {
-                // TODO: implementar extração para densidade real
-                dados.determinacoesUmidadeReal = [];
-                dados.determinacoesPicnometro = [];
-
-            } else if (tipo === 'max-min') {
-                // TODO: implementar extração para densidade máx/min
-                dados.determinacoesMax = [];
-                dados.determinacoesMin = [];
-            }
-
-            return dados;
-
-        } catch (err) {
-            console.error('Erro ao obter dados do formulário:', err);
-            return null;
-        }
+   function obterDadosFormulario(tipo) {
+    const form = document.querySelector('#calculadora form');
+    if (!form) {
+        console.error(`Formulário '${tipo}' não encontrado`);
+        return null;
     }
+
+    try {
+        const dados = {
+            registro: form.querySelector('#registro')?.value.trim() || '',
+            data: form.querySelector('#data')?.value || '',
+            operador: form.querySelector('#operador')?.value.trim() || '',
+            responsavel: form.querySelector('#responsavel')?.value.trim() || '',
+            verificador: form.querySelector('#verificador')?.value.trim() || '',
+            material: form.querySelector('#material')?.value.trim() || '',
+            origem: form.querySelector('#origem')?.value.trim() || '',
+            norte: parseFloat(form.querySelector('#norte')?.value) || 0,
+            este: parseFloat(form.querySelector('#este')?.value) || 0,
+            cota: parseFloat(form.querySelector('#cota')?.value) || 0,
+            camada: form.querySelector('#camada')?.value.trim() || '',
+            hora: form.querySelector('#hora')?.value || '',
+            determinacoesInSitu: [
+                {
+                    moldeSolo: parseFloat(form.querySelector('#molde-solo-1')?.value) || 0,
+                    molde: parseFloat(form.querySelector('#molde-1')?.value) || 0,
+                    volume: parseFloat(form.querySelector('#volume-1')?.value) || 0
+                },
+                {
+                    moldeSolo: parseFloat(form.querySelector('#molde-solo-2')?.value) || 0,
+                    molde: parseFloat(form.querySelector('#molde-2')?.value) || 0,
+                    volume: parseFloat(form.querySelector('#volume-2')?.value) || 0
+                }
+            ],
+            determinacoesUmidadeTopo: [1, 2, 3].map(i => ({
+                soloUmidoTara: parseFloat(form.querySelector(`#solo-umido-tara-topo-${i}`)?.value) || 0,
+                soloSecoTara: parseFloat(form.querySelector(`#solo-seco-tara-topo-${i}`)?.value) || 0,
+                tara: parseFloat(form.querySelector(`#tara-topo-${i}`)?.value) || 0
+            })),
+            determinacoesUmidadeBase: [1, 2, 3].map(i => ({
+                soloUmidoTara: parseFloat(form.querySelector(`#solo-umido-tara-base-${i}`)?.value) || 0,
+                soloSecoTara: parseFloat(form.querySelector(`#solo-seco-tara-base-${i}`)?.value) || 0,
+                tara: parseFloat(form.querySelector(`#tara-base-${i}`)?.value) || 0
+            })),
+            refReal: parseFloat(form.dataset.densidadeReal) || null,
+            refMax: parseFloat(form.dataset.densidadeMax) || null,
+            refMin: parseFloat(form.dataset.densidadeMin) || null
+        };
+
+        return dados;
+    } catch (err) {
+        console.error('Erro ao obter dados do formulário:', err);
+        return null;
+    }
+}
 
     function limparFormulario() {
         const form = document.querySelector('#calculadora form');
