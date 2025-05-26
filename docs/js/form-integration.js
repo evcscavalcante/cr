@@ -106,6 +106,26 @@ window.calculadora.formIntegration = (function() {
         }
     }
 
+    function limparFormulario() {
+    const form = document.querySelector('#calculadora form');
+    if (!form) {
+        console.warn('Formulário não encontrado para limpeza');
+        return;
+    }
+
+    const inputs = form.querySelectorAll('input, select');
+    inputs.forEach(input => {
+        if (input.type === 'checkbox' || input.type === 'radio') {
+            input.checked = false;
+        } else {
+            input.value = '';
+        }
+    });
+
+    console.log('Formulário limpo');
+}
+
+
     /**
      * Armazena os últimos resultados no estado global
      */
@@ -120,60 +140,70 @@ window.calculadora.formIntegration = (function() {
      * @param {object} resultados
      */
     function preencherResultados(tipo, resultados) {
-        const form = document.querySelector('#calculadora form');
-        if (!form) return;
+    const form = document.querySelector('#calculadora form');
+    if (!form) return;
 
-        // limpa campos
-        form.querySelectorAll('.resultado-campo').forEach(el => el.value = '');
+    form.querySelectorAll('.resultado-campo').forEach(el => el.value = '');
 
-        if (!resultados) return;
+    if (!resultados) return;
 
-        if (tipo === 'in-situ') {
-            // gama_d topo
-            const topoEl = form.querySelector('#gamad-topo');
-            if (topoEl && resultados.gamad) topoEl.value = resultados.gamad.topo.toFixed(3);
+    if (tipo === 'in-situ') {
+        const topoEl = form.querySelector('#gamad-topo');
+        if (topoEl && resultados.gamad) topoEl.value = resultados.gamad.topo.toFixed(3);
 
-            // gama_d base
-            const baseEl = form.querySelector('#gamad-base');
-            if (baseEl && resultados.gamad) baseEl.value = resultados.gamad.base.toFixed(3);
+        const baseEl = form.querySelector('#gamad-base');
+        if (baseEl && resultados.gamad) baseEl.value = resultados.gamad.base.toFixed(3);
 
-            // índice vazios topo
-            const ivTopo = form.querySelector('#indice-vazios-topo');
-            if (ivTopo && resultados.indiceVazios) ivTopo.value = resultados.indiceVazios.topo.toFixed(3);
+        const ivTopo = form.querySelector('#indice-vazios-topo');
+        if (ivTopo && resultados.indiceVazios) ivTopo.value = resultados.indiceVazios.topo.toFixed(3);
 
-            // índice vazios base
-            const ivBase = form.querySelector('#indice-vazios-base');
-            if (ivBase && resultados.indiceVazios) ivBase.value = resultados.indiceVazios.base.toFixed(3);
+        const ivBase = form.querySelector('#indice-vazios-base');
+        if (ivBase && resultados.indiceVazios) ivBase.value = resultados.indiceVazios.base.toFixed(3);
 
-            // compacidade relativa topo
-            const crTopo = form.querySelector('#cr-topo');
-            if (crTopo && resultados.compacidadeRelativa) crTopo.value = resultados.compacidadeRelativa.topo.toFixed(1);
+        const crTopo = form.querySelector('#cr-topo');
+        if (crTopo && resultados.compacidadeRelativa) crTopo.value = resultados.compacidadeRelativa.topo.toFixed(1);
 
-            // compacidade relativa base
-            const crBase = form.querySelector('#cr-base');
-            if (crBase && resultados.compacidadeRelativa) crBase.value = resultados.compacidadeRelativa.base.toFixed(1);
+        const crBase = form.querySelector('#cr-base');
+        if (crBase && resultados.compacidadeRelativa) crBase.value = resultados.compacidadeRelativa.base.toFixed(1);
 
-        } else if (tipo === 'real') {
-            const mdrEl = form.querySelector('#media-densidade-real');
-            if (mdrEl && resultados.mediaDensidadeReal != null) {
-                mdrEl.value = resultados.mediaDensidadeReal.toFixed(3);
-            }
+    } else if (tipo === 'real') {
+        const mdrEl = form.querySelector('#media-densidade-real');
+        if (mdrEl && resultados.mediaDensidadeReal != null) {
+            mdrEl.value = resultados.mediaDensidadeReal.toFixed(3);
+        }
 
-        } else if (tipo === 'max-min') {
-            const maxEl = form.querySelector('#gamad-max');
-            if (maxEl && resultados.mediaGamadMax != null) {
-                maxEl.value = resultados.mediaGamadMax.toFixed(3);
-            }
-            const minEl = form.querySelector('#gamad-min');
-            if (minEl && resultados.mediaGamadMin != null) {
-                minEl.value = resultados.mediaGamadMin.toFixed(3);
-            }
+    } else if (tipo === 'max-min') {
+        const maxEl = form.querySelector('#gamad-max');
+        if (maxEl && resultados.mediaGamadMax != null) {
+            maxEl.value = resultados.mediaGamadMax.toFixed(3);
+        }
+        const minEl = form.querySelector('#gamad-min');
+        if (minEl && resultados.mediaGamadMin != null) {
+            minEl.value = resultados.mediaGamadMin.toFixed(3);
         }
     }
+}
 
-       function preencherResultados(tipo, resultados) {
-        // ...
+// ✅ Adicione logo abaixo:
+function limparFormulario() {
+    const form = document.querySelector('#calculadora form');
+    if (!form) {
+        console.warn('Formulário não encontrado para limpeza');
+        return;
     }
+
+    const inputs = form.querySelectorAll('input, select');
+    inputs.forEach(input => {
+        if (input.type === 'checkbox' || input.type === 'radio') {
+            input.checked = false;
+        } else {
+            input.value = '';
+        }
+    });
+
+    console.log('Formulário limpo');
+}
+
 
     function getTipoFormularioAtual() {
         const form = document.querySelector('#calculadora form');
@@ -191,7 +221,8 @@ window.calculadora.formIntegration = (function() {
         obterDadosFormulario,
         setUltimosResultados,
         preencherResultados,
-        getTipoFormularioAtual
+        getTipoFormularioAtual,
+        limparFormulario 
     };
 
 })();
