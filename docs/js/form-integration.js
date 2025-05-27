@@ -209,9 +209,9 @@ window.calculadora.formIntegration = (function() {
                 // Referências (obtidas do dataset do form, preenchido pelos selects)
                 dados.registroDensidadeReal = form.dataset.registroDensidadeReal || '';
                 dados.registroDensidadeMaxMin = form.dataset.registroDensidadeMaxMin || '';
-                dados.densidadeRealRef = parseFloat(form.dataset.densidadeReal) || null;
-                dados.gamadMaxRef = parseFloat(form.dataset.densidadeMax) || null;
-                dados.gamadMinRef = parseFloat(form.dataset.densidadeMin) || null;
+                dados.refReal = parseFloat(form.dataset.densidadeReal) || null;
+                dados.refMax  = parseFloat(form.dataset.densidadeMax) || null;
+                dados.refMin = parseFloat(form.dataset.densidadeMin) || null;
 
                 // Densidade In Situ - Determinações
                 dados.determinacoesInSitu = getMultipleDeterminations(form, 'in-situ-det', 2, {
