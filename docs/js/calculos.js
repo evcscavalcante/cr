@@ -19,154 +19,142 @@ window.calculadora.calculos = (() => {
   }
 
   // --- Calcular Densidade In Situ ---
-    function calcularDensidadeInSitu(dados) {
-        console.log(
-            '⭑ calcularDensidadeInSitu → refReal, refMax, refMin:',
-            dados.refReal, dados.refMax, dados.refMin
-        );
-        const resultados = {
-            determinacoesInSitu: [],
-            determinacoesUmidadeTopo: [],
-            determinacoesUmidadeBase: [],
-            umidadeMediaTopo: 0,
-            umidadeMediaBase: 0,
-            gamaNatMedio: 0,    // média de γnat
-            gammaSMedia: 0,    // média de γs (densidade seca)
-            gamadTopo: null, // γd usando γnat médio
-            gamadBase: null,
-            gamadMedia: null, // média de γd topo/base
-            indiceVaziosTopo: null,
-            indiceVaziosBase: null,
-            compacidadeRelativa: null,
-            status: 'AGUARDANDO DADOS'
-        };
+   function calcularDensidadeInSitu(dados) {
+    console.log(
+        '⭑ calcularDensidadeInSitu → refReal, refMax, refMin:',
+        dados.refReal, dados.refMax, dados.refMin
+    );
+    const resultados = {
+        determinacoesInSitu: [],
+        determinacoesUmidadeTopo: [],
+        determinacoesUmidadeBase: [],
+        umidadeMediaTopo: 0,
+        umidadeMediaBase: 0,
+        gamaNatMedio: 0,
+        gammaSMedia: 0,
+        gamadTopo: null,
+        gamadBase: null,
+        gamadMedia: null,
+        indiceVaziosTopo: null,
+        indiceVaziosBase: null,
+        compacidadeRelativa: null,
+        status: 'AGUARDANDO DADOS'
+    };
 
-        // --- 1) γnat e média de γnat ---
-        let somaGamaNat = 0, countGamaNat = 0;
-        if (Array.isArray(dados.determinacoesInSitu)) {
-            dados.determinacoesInSitu.forEach(det => {
-                const solo = isValidNumber(det.moldeSolo) && isValidNumber(det.molde)
-                    ? det.moldeSolo - det.molde
-                    : 0;
-
-                const gamaNat = isValidPositiveNumber(solo) && isValidPositiveNumber(det.volume)
-                    ? solo / det.volume
-                    : 0;
-
-                resultados.determinacoesInSitu.push({ ...det, solo, gamaNat });
-                if (isValidPositiveNumber(gamaNat)) {
-                    somaGamaNat += gamaNat;
-                    countGamaNat++;
-                }
-            });
-        }
-        resultados.gamaNatMedio = countGamaNat > 0 ? somaGamaNat / countGamaNat : 0;
-
-        // --- 2) Teor de umidade Topo e média ---
-        const umidadesTopo = [];
-        if (Array.isArray(dados.determinacoesUmidadeTopo)) {
-            dados.determinacoesUmidadeTopo.forEach(det => {
-                const soloSeco = isValidNumber(det.soloSecoTara) && isValidNumber(det.tara)
-                    ? det.soloSecoTara - det.tara
-                    : 0;
-                const agua = isValidNumber(det.soloUmidoTara) && isValidNumber(det.soloSecoTara)
-                    ? det.soloUmidoTara - det.soloSecoTara
-                    : 0;
-                const umidade = isValidPositiveNumber(soloSeco) && isValidNumber(agua)
-                    ? (agua / soloSeco) * 100
-                    : 0;
-
-                resultados.determinacoesUmidadeTopo.push({ ...det, soloSeco, agua, umidade });
-                if (isValidNumber(umidade)) umidadesTopo.push(umidade);
-            });
-        }
-        resultados.umidadeMediaTopo = calcularMediaValida(umidadesTopo);
-
-        // --- 3) Teor de umidade Base e média ---
-        const umidadesBase = [];
-        if (Array.isArray(dados.determinacoesUmidadeBase)) {
-            dados.determinacoesUmidadeBase.forEach(det => {
-                const soloSeco = isValidNumber(det.soloSecoTara) && isValidNumber(det.tara)
-                    ? det.soloSecoTara - det.tara
-                    : 0;
-                const agua = isValidNumber(det.soloUmidoTara) && isValidNumber(det.soloSecoTara)
-                    ? det.soloUmidoTara - det.soloSecoTara
-                    : 0;
-                const umidade = isValidPositiveNumber(soloSeco) && isValidNumber(agua)
-                    ? (agua / soloSeco) * 100
-                    : 0;
-
-                resultados.determinacoesUmidadeBase.push({ ...det, soloSeco, agua, umidade });
-                if (isValidNumber(umidade)) umidadesBase.push(umidade);
-            });
-        }
-        resultados.umidadeMediaBase = calcularMediaValida(umidadesBase);
-
-        // --- 4) γs (densidade seca) por determinação e média ---
-        resultados.determinacoesInSitu.forEach(det => {
-            det.gammaS = (isValidNumber(det.gamaNat) && isValidNumber(resultados.umidadeMediaTopo))
-                ? det.gamaNat * 100 / (resultados.umidadeMediaTopo + 100)
+    // 1) γnat e média de γnat
+    let somaGamaNat = 0, countGamaNat = 0;
+    if (Array.isArray(dados.determinacoesInSitu)) {
+        dados.determinacoesInSitu.forEach(det => {
+            const solo = isValidNumber(det.moldeSolo) && isValidNumber(det.molde)
+                ? det.moldeSolo - det.molde
                 : 0;
+            const gamaNat = isValidPositiveNumber(solo) && isValidPositiveNumber(det.volume)
+                ? solo / det.volume
+                : 0;
+            resultados.determinacoesInSitu.push({ ...det, solo, gamaNat });
+            if (isValidPositiveNumber(gamaNat)) {
+                somaGamaNat += gamaNat;
+                countGamaNat++;
+            }
         });
-        const listaGS = resultados.determinacoesInSitu.map(det => det.gammaS);
-        resultados.gammaSMedia = calcularMediaValida(listaGS);
-
-        // Referências para compacidade
-        const densidadeRealRef = dados.refReal;
-        const gamadMaxRef = dados.refMax;
-        const gamadMinRef = dados.refMin;
-
-        // --- 5) γd usando γnat médio e teor de umidade média ---
-        if (isValidPositiveNumber(resultados.gamaNatMedio) && isValidNumber(resultados.umidadeMediaTopo)) {
-            resultados.gamadTopo = resultados.gamaNatMedio / (1 + resultados.umidadeMediaTopo / 100);
-        }
-        if (isValidPositiveNumber(resultados.gamaNatMedio) && isValidNumber(resultados.umidadeMediaBase)) {
-            resultados.gamadBase = resultados.gamaNatMedio / (1 + resultados.umidadeMediaBase / 100);
-        }
-        if (isValidNumber(resultados.gamadTopo) && isValidNumber(resultados.gamadBase)) {
-            resultados.gamadMedia = calcularMediaValida([
-                resultados.gamadTopo,
-                resultados.gamadBase
-            ]);
-        }
-
-        // --- 6) Índice de vazios e compacidade relativa ---
-        if (
-            isValidPositiveNumber(dados.refReal) &&
-            isValidPositiveNumber(dados.refMax) &&
-            isValidPositiveNumber(dados.refMin) &&
-            isValidNumber(resultados.gamadTopo) &&
-            isValidNumber(resultados.gamadBase)
-        ) {
-            const eMax = densidadeRealRef / gamadMinRef - 1;
-            const eMin = densidadeRealRef / gamadMaxRef - 1;
-
-            resultados.indiceVaziosTopo = densidadeRealRef / resultados.gamadTopo - 1;
-            resultados.indiceVaziosBase = densidadeRealRef / resultados.gamadBase - 1;
-
-            resultados.compacidadeRelativa = {
-                topo: eMax !== eMin
-                    ? ((eMax - resultados.indiceVaziosTopo) / (eMax - eMin)) * 100
-                    : null,
-                base: eMax !== eMin
-                    ? ((eMax - resultados.indiceVaziosBase) / (eMax - eMin)) * 100
-                    : null
-            };
-
-            const crValidos = [
-                resultados.compacidadeRelativa.topo,
-                resultados.compacidadeRelativa.base
-            ].filter(isValidNumber);
-
-            resultados.status = crValidos.length > 0
-                ? (calcularMediaValida(crValidos) <= 77 ? 'APROVADO' : 'REPROVADO')
-                : 'DADOS INSUFICIENTES';
-        } else {
-            resultados.status = 'FALTAM REFERÊNCIAS';
-        }
-
-        return resultados;
     }
+    resultados.gamaNatMedio = countGamaNat > 0 ? somaGamaNat / countGamaNat : 0;
+
+    // 2) Teor de umidade Topo e média
+    const umidadesTopo = [];
+    if (Array.isArray(dados.determinacoesUmidadeTopo)) {
+        dados.determinacoesUmidadeTopo.forEach(det => {
+            const soloSeco = isValidNumber(det.soloSecoTara) && isValidNumber(det.tara)
+                ? det.soloSecoTara - det.tara
+                : 0;
+            const agua = isValidNumber(det.soloUmidoTara) && isValidNumber(det.soloSecoTara)
+                ? det.soloUmidoTara - det.soloSecoTara
+                : 0;
+            const umidade = isValidPositiveNumber(soloSeco) && isValidNumber(agua)
+                ? (agua / soloSeco) * 100
+                : 0;
+            resultados.determinacoesUmidadeTopo.push({ ...det, soloSeco, agua, umidade });
+            if (isValidNumber(umidade)) umidadesTopo.push(umidade);
+        });
+    }
+    resultados.umidadeMediaTopo = calcularMediaValida(umidadesTopo);
+
+    // 3) Teor de umidade Base e média
+    const umidadesBase = [];
+    if (Array.isArray(dados.determinacoesUmidadeBase)) {
+        dados.determinacoesUmidadeBase.forEach(det => {
+            const soloSeco = isValidNumber(det.soloSecoTara) && isValidNumber(det.tara)
+                ? det.soloSecoTara - det.tara
+                : 0;
+            const agua = isValidNumber(det.soloUmidoTara) && isValidNumber(det.soloSecoTara)
+                ? det.soloUmidoTara - det.soloSecoTara
+                : 0;
+            const umidade = isValidPositiveNumber(soloSeco) && isValidNumber(agua)
+                ? (agua / soloSeco) * 100
+                : 0;
+            resultados.determinacoesUmidadeBase.push({ ...det, soloSeco, agua, umidade });
+            if (isValidNumber(umidade)) umidadesBase.push(umidade);
+        });
+    }
+    resultados.umidadeMediaBase = calcularMediaValida(umidadesBase);
+
+    // 4) γs (densidade seca) por determinação e média
+    resultados.determinacoesInSitu.forEach(det => {
+        det.gammaS = (isValidNumber(det.gamaNat) && isValidNumber(resultados.umidadeMediaTopo))
+            ? det.gamaNat * 100 / (resultados.umidadeMediaTopo + 100)
+            : 0;
+    });
+    resultados.gammaSMedia = calcularMediaValida(
+        resultados.determinacoesInSitu.map(det => det.gammaS)
+    );
+
+    // 5) γd usando γnat médio e teor de umidade média
+    if (isValidPositiveNumber(resultados.gamaNatMedio) && isValidNumber(resultados.umidadeMediaTopo)) {
+        resultados.gamadTopo = resultados.gamaNatMedio / (1 + resultados.umidadeMediaTopo / 100);
+    }
+    if (isValidPositiveNumber(resultados.gamaNatMedio) && isValidNumber(resultados.umidadeMediaBase)) {
+        resultados.gamadBase = resultados.gamaNatMedio / (1 + resultados.umidadeMediaBase / 100);
+    }
+    if (isValidNumber(resultados.gamadTopo) && isValidNumber(resultados.gamadBase)) {
+        resultados.gamadMedia = calcularMediaValida([
+            resultados.gamadTopo,
+            resultados.gamadBase
+        ]);
+    }
+
+    // 6) Índice de vazios e critério < 0.75
+    const densidadeRealRef = dados.refReal;
+    const gamadMaxRef    = dados.refMax;
+    const gamadMinRef    = dados.refMin;
+
+    if (
+        isValidPositiveNumber(densidadeRealRef) &&
+        isValidPositiveNumber(gamadMaxRef) &&
+        isValidPositiveNumber(gamadMinRef) &&
+        isValidNumber(resultados.gamadTopo) &&
+        isValidNumber(resultados.gamadBase)
+    ) {
+        resultados.indiceVaziosTopo = densidadeRealRef / resultados.gamadTopo - 1;
+        resultados.indiceVaziosBase = densidadeRealRef / resultados.gamadBase - 1;
+
+        // usa a média dos índices de vazios
+        const ivValidos = [
+            resultados.indiceVaziosTopo,
+            resultados.indiceVaziosBase
+        ].filter(isValidNumber);
+
+        if (ivValidos.length > 0) {
+            const mediaIv = calcularMediaValida(ivValidos);
+            resultados.status = mediaIv < 0.75 ? 'APROVADO' : 'REPROVADO';
+        } else {
+            resultados.status = 'DADOS INSUFICIENTES';
+        }
+    } else {
+        resultados.status = 'FALTAM REFERÊNCIAS';
+    }
+
+    return resultados;
+}
 
 
   // --- Calcular Densidade Real ---
