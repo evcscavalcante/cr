@@ -7,31 +7,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Função para exibir Notificações Toast ---
     window.showToast = function(message, type = 'info', duration = 3000) {
-    const container = document.getElementById('toast-container') || createToastContainer();
-    const toast = document.createElement('div');
+        const container = document.getElementById('toast-container') || createToastContainer();
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        container.appendChild(toast);
 
-    // Usa classe no padrão: toast toast-success, toast-error etc.
-    toast.className = `toast toast-${type}`;
-    toast.textContent = message;
-    container.appendChild(toast);
+        // Trigger reflow to enable animation
+        toast.offsetHeight;
 
-    // Trigger reflow para ativar animação
-    toast.offsetHeight;
-    toast.classList.add('show');
+        toast.classList.add('show');
 
-    setTimeout(() => {
-        toast.classList.add('toast-hide');
-        toast.addEventListener('animationend', () => {
-            if (toast.parentNode === container) {
-                container.removeChild(toast);
-            }
-            if (container.children.length === 0 && container.parentNode === document.body) {
-                document.body.removeChild(container);
-            }
-        });
-    }, duration);
-}
-
+        setTimeout(() => {
+            toast.classList.remove('show');
+            // Remove o toast do DOM após a animação de saída
+            toast.addEventListener('transitionend', () => {
+                if (toast.parentNode === container) {
+                     container.removeChild(toast);
+                }
+                 // Remove o container se estiver vazio
+                 if (container.children.length === 0 && container.parentNode === document.body) {
+                    document.body.removeChild(container);
+                 }
+            });
+        }, duration);
+    }
 
     function createToastContainer() {
         let container = document.getElementById('toast-container');
