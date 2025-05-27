@@ -19,7 +19,7 @@ window.calculadora.calculos = (() => {
   }
 
   // --- Calcular Densidade In Situ ---
-   function calcularDensidadeInSitu(dados) {
+  function calcularDensidadeInSitu(dados) {
     console.log(
         '⭑ calcularDensidadeInSitu → refReal, refMax, refMin:',
         dados.refReal, dados.refMax, dados.refMin
@@ -122,7 +122,7 @@ window.calculadora.calculos = (() => {
         ]);
     }
 
-    // 6) Índice de vazios e critério < 0.75
+    // 6) Índice de vazios e compacidade relativa
     const densidadeRealRef = dados.refReal;
     const gamadMaxRef    = dados.refMax;
     const gamadMinRef    = dados.refMin;
@@ -134,10 +134,22 @@ window.calculadora.calculos = (() => {
         isValidNumber(resultados.gamadTopo) &&
         isValidNumber(resultados.gamadBase)
     ) {
+        const eMax = densidadeRealRef / gamadMinRef - 1;
+        const eMin = densidadeRealRef / gamadMaxRef - 1;
+
         resultados.indiceVaziosTopo = densidadeRealRef / resultados.gamadTopo - 1;
         resultados.indiceVaziosBase = densidadeRealRef / resultados.gamadBase - 1;
 
-        // usa a média dos índices de vazios
+        resultados.compacidadeRelativa = {
+            topo: eMax !== eMin
+                ? ((eMax - resultados.indiceVaziosTopo) / (eMax - eMin)) * 100
+                : null,
+            base: eMax !== eMin
+                ? ((eMax - resultados.indiceVaziosBase) / (eMax - eMin)) * 100
+                : null
+        };
+
+        // Critério de aprovação: média do índice de vazios < 0.75
         const ivValidos = [
             resultados.indiceVaziosTopo,
             resultados.indiceVaziosBase
