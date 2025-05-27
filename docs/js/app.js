@@ -214,7 +214,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     const registroId = item?.dataset.registroId;
                     const tipo = item?.dataset.tipo;
                     if (registroId && tipo && window.calculadora.formIntegration?.carregarRegistroParaEdicao) {
-                        window.calculadora.formIntegration.carregarRegistroParaEdicao(tipo, registroId);
+                        await window.calculadora.formIntegration.carregarRegistroParaEdicao(tipo, registroId);
+                        // Força a mudança para a aba da calculadora após carregar para edição
+                        const tabBtn = document.querySelector('.tab-btn[data-tab="calculadora"]');
+                        if (tabBtn) {
+                            tabBtn.click();
+                        } else {
+                             window.showToast('Erro: Aba da calculadora não encontrada.', 'error');
+                        }
                     } else {
                         window.showToast('Erro ao obter dados para edição.', 'error');
                     }
@@ -316,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 registros.forEach(registro => {
                     const item = document.createElement('div');
                     item.className = 'registro-item';
-                    item.dataset.registroId = registro.id; // Usar ID único do banco
+                    item.dataset.registroId = registro.registro; // Usar o número do registro como ID
                     item.dataset.tipo = tipo;
                     item.innerHTML = `
                         <span class="registro-nome">Registro: ${registro.registro}</span>
