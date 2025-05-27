@@ -6,32 +6,32 @@ document.addEventListener('DOMContentLoaded', () => {
     window.calculadora = window.calculadora || {};
 
     // --- Função para exibir Notificações Toast ---
-    window.showToast = function(message, type = 'info', duration = 3000) {
+    window.showToast = function (message, type = 'info', duration = 3000) {
         const container = document.getElementById('toast-container') || createToastContainer();
         const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
+
+        // Usa classe no padrão: toast toast-success, toast-error etc.
+        toast.className = `toast toast-${type}`;
         toast.textContent = message;
         container.appendChild(toast);
 
-        // Trigger reflow to enable animation
+        // Trigger reflow para ativar animação
         toast.offsetHeight;
-
         toast.classList.add('show');
 
         setTimeout(() => {
-            toast.classList.remove('show');
-            // Remove o toast do DOM após a animação de saída
-            toast.addEventListener('transitionend', () => {
+            toast.classList.add('toast-hide');
+            toast.addEventListener('animationend', () => {
                 if (toast.parentNode === container) {
-                     container.removeChild(toast);
+                    container.removeChild(toast);
                 }
-                 // Remove o container se estiver vazio
-                 if (container.children.length === 0 && container.parentNode === document.body) {
+                if (container.children.length === 0 && container.parentNode === document.body) {
                     document.body.removeChild(container);
-                 }
+                }
             });
         }, duration);
     }
+
 
     function createToastContainer() {
         let container = document.getElementById('toast-container');
