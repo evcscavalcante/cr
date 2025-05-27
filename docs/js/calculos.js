@@ -159,7 +159,7 @@ window.calculadora.calculos = (() => {
             ].filter(isValidNumber);
 
             resultados.status = crValidos.length > 0
-                ? (calcularMediaValida(crValidos) >= 77 ? 'APROVADO' : 'REPROVADO')
+                ? (calcularMediaValida(crValidos) <= 77 ? 'APROVADO' : 'REPROVADO')
                 : 'DADOS INSUFICIENTES';
         } else {
             resultados.status = 'FALTAM REFERÊNCIAS';
