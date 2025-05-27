@@ -80,8 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         };
                     case 'max-min':
                         return {
-                            gamadMax: ensaio.gamadMax,
-                            gamadMin: ensaio.gamadMin
+                            gamadMax: ensaio.mediaGamadMax,
+                            gamadMin: ensaio.mediaGamadMin
                         };
                     default:
                         return null;
