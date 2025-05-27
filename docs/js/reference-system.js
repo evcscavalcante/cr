@@ -132,8 +132,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             mostrarToast(`Densidade Máxima: ${valores.gamadMax.toFixed(3)} g/cm³ | Densidade Mínima: ${valores.gamadMin.toFixed(3)} g/cm³`, 'info');
                             
                             // Armazenar os valores para uso nos cálculos
-                            form.dataset.densidadeMax = valores.gamadMax;
-                            form.dataset.densidadeMin = valores.gamadMin;
+                            form.dataset.densidadeMax = valores.mediaGamadMax;
+                            form.dataset.densidadeMin = valores.mediaGamadMin;
                             
                             // Recalcular valores dependentes
                             const btnCalcular = form.querySelector('.btn-calcular');
