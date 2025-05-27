@@ -439,17 +439,27 @@ window.calculadora.formIntegration = (function() {
             fillInput('#gamad-topo', resultados.gamadTopo, 3);
             fillInput('#gamad-base', resultados.gamadBase, 3);
             // 7) Índice de Vazios
-            fillInput('#indice-vazios-topo', resultados.indiceVaziosTopo, 2);
-            fillInput('#indice-vazios-base', resultados.indiceVaziosBase, 2);
-
-            // 8) Compacidade Relativa
-            fillInput('#cr-topo', resultados.compacidadeRelativa.topo, 1);
-            fillInput('#cr-base', resultados.compacidadeRelativa.base, 1);
-
-            // 9) Status
             
-            if (statusEl) statusEl.textContent = resultados.status || 'N/A';
-            document.getElementById('status-ensaio').innerText = resultados.status;
+  // 7) Índice de Vazios
+  fillInput('#indice-vazios-topo', resultados.indiceVaziosTopo ?? '', 2);
+  fillInput('#indice-vazios-base', resultados.indiceVaziosBase ?? '', 2);
+
+  // 8) Compacidade Relativa (com checagem)
+  if (resultados.compacidadeRelativa && typeof resultados.compacidadeRelativa.topo === 'number') {
+    fillInput('#cr-topo', resultados.compacidadeRelativa.topo, 1);
+  } else {
+    fillInput('#cr-topo', '', 1);
+  }
+
+  if (resultados.compacidadeRelativa && typeof resultados.compacidadeRelativa.base === 'number') {
+    fillInput('#cr-base', resultados.compacidadeRelativa.base, 1);
+  } else {
+    fillInput('#cr-base', '', 1);
+  }
+
+  // 9) Status
+  document.getElementById('status-ensaio').innerText = resultados.status || '';
+           
 
         } else if (tipo === 'real') {
             resultados.determinacoesUmidadeReal?.forEach((det, i) => {
