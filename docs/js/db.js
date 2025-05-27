@@ -367,32 +367,4 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(error => {
             console.error('Falha ao inicializar banco de dados:', error);
         });
-    
-  // Retorna uma lista de todos os ensaios de um dado tipo
-  db.carregarTodosEnsaios = async function(tipo) {
-    switch (tipo) {
-      case 'in-situ':
-        return await db.insitu.toArray();      // se a tabela/chave for insitu
-      case 'real':
-        return await db.real.toArray();        // ou db.table('real').toArray()
-      case 'max-min':
-        return await db['max-min'].toArray();  // ou o nome que você tenha dado
-      default:
-        return [];
-    }
-  };
-
-  // Retorna um único ensaio (objeto) pelo registro
-  db.carregarEnsaio = async function(tipo, registro) {
-    switch (tipo) {
-      case 'in-situ':
-        return await db.insitu.get(registro);
-      case 'real':
-        return await db.real.get(registro);
-      case 'max-min':
-        return await db['max-min'].get(registro);
-      default:
-        return null;
-    }
-  };
 });
