@@ -61,23 +61,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function navegarParaCalculadora(tipo, ensaio = null) {
-      if (!['in-situ','real','max-min'].includes(tipo)) {
-        return console.error('Tipo inválido:', tipo);
-      }
-      historico.push({ ...estadoAtual });
-      estadoAtual = { tela: 'calculadora', tipo, aba: 'calculadora', ensaio };
+  if (typeof tipo !== 'string' || !['in-situ','real','max-min'].includes(tipo)) {
+    console.warn('navegarParaCalculadora: tipo inválido, pulando navegação →', tipo);
+    return;
+  }
+  historico.push({ ...estadoAtual });
+  estadoAtual = { tela: 'calculadora', tipo, aba: 'calculadora', ensaio };
 
-      const menu = elementos.menuPrincipal();
-      if (menu) menu.style.display = 'none';
+  elementos.menuPrincipal()?.style.display = 'none';
+  elementos.secaoListaEnsaios()?.style.display = 'block';
 
-      const secao = elementos.secaoListaEnsaios();
-      if (secao) secao.style.display = 'block';
-
-      ativarAba('calculadora');
-      carregarFormularioCalculadora(tipo, ensaio);
-      adicionarBotaoVoltarMenuPrincipal();
-    }
-
+  ativarAba('calculadora');
+  carregarFormularioCalculadora(tipo, ensaio);
+  adicionarBotaoVoltarMenuPrincipal();
+}
     function voltar() {
       if (!historico.length) {
         return navegarParaMenu();
@@ -173,29 +170,37 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             document.addEventListener('click', e => {
-                if (e.target.matches('.btn-novo-ensaio')) {
-                    navegarParaCalculadora(estadoAtual.tipo);
-                }
-                if (e.target.matches('.btn-voltar, .btn-voltar-acoes')) {
-                    voltar();
-                }
-            });
-        }
-        
-        function inicializar() {
-            configurarEventListeners();
-            navegarParaMenu();
-        }
-        
-        inicializar();
-        
-        return {
-            navegarParaMenu,
-            navegarParaLista,
-            navegarParaCalculadora,
-            voltar,
-            ativarAba,
-            getEstadoAtual: () => ({ ...estadoAtual })
-        };
+  // “Novo Ensaio” só deve navegar se já houver um tipo escolhido
+  if (e.target.matches('.btn-novo-ensaio')) {
+    if (!estadoAtual.tipo) {
+      console.warn('Novo Ensaio cancelado: tipo de ensaio não definido. Voltando ao menu.');
+      navegarParaMenu();
+    } else {
+      navegarParaCalculadora(estadoAtual.tipo);
+    }
+    return;
+  }
+  // Botões de voltar
+  if (e.target.matches('.btn-voltar') || e.target.matches('.btn-voltar-acoes')) {
+    voltar();
+  }
+});
+
+function inicializar() {
+  configurarEventListeners();
+  navegarParaMenu();
+}
+
+inicializar();
+
+// Export da API de navegação
+return {
+  navegarParaMenu,
+  navegarParaLista,
+  navegarParaCalculadora,
+  voltar,
+  ativarAba,
+  getEstadoAtual: () => ({ ...estadoAtual })
+};
     })();
 });
