@@ -68,8 +68,12 @@ document.addEventListener('DOMContentLoaded', () => {
   historico.push({ ...estadoAtual });
   estadoAtual = { tela: 'calculadora', tipo, aba: 'calculadora', ensaio };
 
-  elementos.menuPrincipal()?.style.display = 'none';
-  elementos.secaoListaEnsaios()?.style.display = 'block';
+  const menu = elementos.menuPrincipal();
+if (menu) menu.style.display = 'none';
+
+const secao = elementos.secaoListaEnsaios();
+if (secao) secao.style.display = 'block';
+
 
   ativarAba('calculadora');
   carregarFormularioCalculadora(tipo, ensaio);
