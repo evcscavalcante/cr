@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 if (!registro) return null;
                 
-                const ensaio = await db.carregarEnsaio(tipo, registro);
+                const ensaio = await db.carregarRegistro(tipo, registro);
                 
                 if (!ensaio) {
                     console.warn(`Ensaio ${registro} não encontrado para tipo ${tipo}`);
