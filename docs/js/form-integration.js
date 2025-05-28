@@ -603,33 +603,33 @@ window.calculadora.formIntegration = (function() {
         }
 
         console.log(`Carregando registro '${registroId}' do tipo '${tipo}' para edição...`);
-        // Adiciona feedback visual de carregamento
         const listaEnsaios = document.querySelector('.lista-registros');
         if (listaEnsaios) listaEnsaios.classList.add('loading');
 
         try {
-            // Potencial ponto de lentidão
+            // busca o objeto salvo no IndexedDB
             const registro = await window.calculadora.db.carregarRegistro(tipo, registroId);
             if (!registro) {
                 exibirNotificacao(`Registro '${registroId}' não encontrado.`, 'error');
                 return;
             }
 
-            // Carrega o formulário correspondente (pode ser otimizado se já carregado)
-            carregarFormulario(tipo);
+            // injeta o template/form adequado
+            window.calculadora.formIntegration.carregarFormulario(tipo);
 
-            // Aguarda o formulário ser totalmente carregado no DOM e referências carregadas
+            // espera o form e os selects de referência ficarem disponíveis e habilitados
             await new Promise(resolve => {
-                const checkFormReady = () => {
+                const checkReady = () => {
                     const form = document.querySelector('#calculadora form');
-                    const refsLoaded = tipo !== 'in-situ' || (form && !form.querySelector('#registro-densidade-real')?.disabled);
-                    if (form && refsLoaded) {
-                        resolve();
-                    } else {
-                        setTimeout(checkFormReady, 100);
-                    }
+                    const refsLoaded = tipo !== 'in-situ'
+                        || (form
+                            && form.querySelector('#registro-densidade-real')?.options.length > 1
+                            && form.querySelector('#registro-densidade-max-min')?.options.length > 1
+                        );
+                    if (form && refsLoaded) return resolve();
+                    setTimeout(checkReady, 50);
                 };
-                checkFormReady();
+                checkReady();
             });
 
             const form = document.querySelector('#calculadora form');
@@ -638,159 +638,113 @@ window.calculadora.formIntegration = (function() {
                 return;
             }
 
-            // Função auxiliar para preencher input
-            const fillInput = (selector, value) => {
-                const el = form.querySelector(selector);
-                if (el) {
-                    // Trata data para formato YYYY-MM-DD
-                    if (el.type === 'date' && value) {
-                         try {
-                            // Garante que a data seja interpretada corretamente, independente do fuso
-                            const date = new Date(value);
-                            const offset = date.getTimezoneOffset();
-                            const adjustedDate = new Date(date.getTime() + (offset * 60 * 1000));
-                            el.value = adjustedDate.toISOString().split('T')[0];
-                         } catch(e) { 
-                            console.warn(`Data inválida encontrada para ${selector}: ${value}`);
-                            el.value = ''; 
-                         }
-                    } else {
-                        el.value = (value !== null && value !== undefined) ? value : '';
-                    }
-                }
+            // === 1) Preenche todos os campos estáticos ===
+            const prefix = tipo === 'in-situ' ? '' : `-${tipo}`;
+            const fill = (sel, v) => {
+                const el = form.querySelector(sel);
+                if (el) el.value = v ?? '';
             };
 
-            // Preenche informações gerais comuns
-            const prefix = tipo === 'in-situ' ? '' : `-${tipo}`;
-            const registroInput = form.querySelector(`#registro${prefix}`);
-            fillInput(`#registro${prefix}`, registro.registro);
-            // Torna o campo de registro readonly ao editar
-            if (registroInput) {
-                registroInput.readOnly = true;
-                registroInput.title = 'O número do registro não pode ser alterado durante a edição.';
-                registroInput.style.backgroundColor = '#eee'; // Estilo visual para indicar readonly
-            }
-            fillInput(`#data${prefix}`, registro.data);
-            fillInput(`#operador${prefix}`, registro.operador);
-            fillInput(`#material${prefix}`, registro.material);
-            fillInput(`#origem${prefix}`, registro.origem);
+            fill(`#registro${prefix}`, registro.registro);
+            fill(`#data${prefix}`, registro.data);
+            fill(`#operador${prefix}`, registro.operador);
+            fill(`#material${prefix}`, registro.material);
+            fill(`#origem${prefix}`, registro.origem);
 
-            // Preenche campos específicos por tipo
             if (tipo === 'in-situ') {
-                fillInput('#responsavel', registro.responsavel);
-                fillInput('#verificador', registro.verificador);
-                fillInput('#norte', registro.norte);
-                fillInput('#este', registro.este);
-                fillInput('#cota', registro.cota);
-                fillInput('#quadrante', registro.quadrante);
-                fillInput('#camada', registro.camada);
-                fillInput('#hora', registro.hora);
-                fillInput('#balanca', registro.balanca);
-                fillInput('#estufa', registro.estufa);
+                // campos in-situ
+                ['responsavel', 'verificador', 'norte', 'este', 'cota', 'quadrante', 'camada', 'hora', 'balanca', 'estufa']
+                    .forEach(id => fill(`#${id}`, registro[id]));
 
-                // Seleciona referências e atualiza dataset (já feito em carregarReferenciasInSitu, mas garante valor)
-                const selectReal = form.querySelector('#registro-densidade-real');
-                const selectMaxMin = form.querySelector('#registro-densidade-max-min');
-                if (selectReal && registro.registroDensidadeReal) {
-                    selectReal.value = registro.registroDensidadeReal;
-                    // Atualiza dataset manualmente para garantir que está correto antes do cálculo
-                    const selectedRealOption = selectReal.selectedOptions[0];
-                    form.dataset.densidadeReal = selectedRealOption?.dataset.gs || '';
-                    form.dataset.registroDensidadeReal = selectReal.value;
-                }
-                 if (selectMaxMin && registro.registroDensidadeMaxMin) {
-                    selectMaxMin.value = registro.registroDensidadeMaxMin;
-                    // Atualiza dataset manualmente
-                    const selectedMaxMinOption = selectMaxMin.selectedOptions[0];
-                    form.dataset.densidadeMax = selectedMaxMinOption?.dataset.gamadMax || '';
-                    form.dataset.densidadeMin = selectedMaxMinOption?.dataset.gamadMin || '';
-                    form.dataset.registroDensidadeMaxMin = selectMaxMin.value;
-                }
-
-                // Preenche tabelas - CORREÇÃO DO BUG DE DENSIDADE IN SITU
-                // Garante que ambas as determinações sejam preenchidas corretamente
-                for (let i = 0; i < 2; i++) {
-                    const det = registro.determinacoesInSitu?.[i];
-                    const index = i + 1;
-                    fillInput(`#numero-cilindro-${index}`, det?.numeroCilindro ?? '');
-                    fillInput(`#molde-solo-${index}`, det?.moldeSolo ?? '');
-                    fillInput(`#molde-${index}`, det?.molde ?? '');
-                    fillInput(`#volume-${index}`, det?.volume ?? '');
-                }
-                
-                for (let i = 0; i < 3; i++) {
-                    const detTopo = registro.determinacoesUmidadeTopo?.[i];
-                    const index = i + 1;
-                    fillInput(`#capsula-topo-${index}`, detTopo?.capsula ?? '');
-                    fillInput(`#solo-umido-tara-topo-${index}`, detTopo?.soloUmidoTara ?? '');
-                    fillInput(`#solo-seco-tara-topo-${index}`, detTopo?.soloSecoTara ?? '');
-                    fillInput(`#tara-topo-${index}`, detTopo?.tara ?? '');
-                }
-                
-                for (let i = 0; i < 3; i++) {
-                    const detBase = registro.determinacoesUmidadeBase?.[i];
-                    const index = i + 1;
-                    fillInput(`#capsula-base-${index}`, detBase?.capsula ?? '');
-                    fillInput(`#solo-umido-tara-base-${index}`, detBase?.soloUmidoTara ?? '');
-                    fillInput(`#solo-seco-tara-base-${index}`, detBase?.soloSecoTara ?? '');
-                    fillInput(`#tara-base-${index}`, detBase?.tara ?? '');
-                }
-
-            } else if (tipo === 'real') {
-                 for (let i = 0; i < 3; i++) {
-                    const detUmidade = registro.determinacoesUmidadeReal?.[i];
-                    const index = i + 1;
-                    fillInput(`#capsula-real-${index}`, detUmidade?.capsula ?? '');
-                    fillInput(`#solo-umido-tara-real-${index}`, detUmidade?.soloUmidoTara ?? '');
-                    fillInput(`#solo-seco-tara-real-${index}`, detUmidade?.soloSecoTara ?? '');
-                    fillInput(`#tara-real-${index}`, detUmidade?.tara ?? '');
-                 }
-                 for (let i = 0; i < 2; i++) {
-                    const detPic = registro.determinacoesPicnometro?.[i];
-                    const index = i + 1;
-                    fillInput(`#picnometro-${index}`, detPic?.picnometro ?? '');
-                    fillInput(`#massa-pic-${index}`, detPic?.massaPic ?? '');
-                    fillInput(`#massa-pic-amostra-agua-${index}`, detPic?.massaPicAmostraAgua ?? '');
-                    fillInput(`#temperatura-${index}`, detPic?.temperatura ?? '');
-                    fillInput(`#massa-pic-agua-${index}`, detPic?.massaPicAgua ?? '');
-                    fillInput(`#massa-solo-umido-${index}`, detPic?.massaSoloUmido ?? '');
-                 }
-
-            } else if (tipo === 'max-min') {
-                for (let i = 0; i < 3; i++) {
-                    const detMax = registro.determinacoesMax?.[i];
-                    const index = i + 1;
-                    fillInput(`#numero-cilindro-max-${index}`, detMax?.numeroCilindro ?? '');
-                    fillInput(`#molde-solo-max-${index}`, detMax?.moldeSolo ?? '');
-                    fillInput(`#molde-max-${index}`, detMax?.molde ?? '');
-                    fillInput(`#volume-max-${index}`, detMax?.volume ?? '');
-                    fillInput(`#w-max-${index}`, detMax?.w ?? '');
-                }
-                for (let i = 0; i < 3; i++) {
-                    const detMin = registro.determinacoesMin?.[i];
-                    const index = i + 1;
-                    fillInput(`#numero-cilindro-min-${index}`, detMin?.numeroCilindro ?? '');
-                    fillInput(`#molde-solo-min-${index}`, detMin?.moldeSolo ?? '');
-                    fillInput(`#molde-min-${index}`, detMin?.molde ?? '');
-                    fillInput(`#volume-min-${index}`, detMin?.volume ?? '');
-                    fillInput(`#w-min-${index}`, detMin?.w ?? '');
-                }
+                // preenche as determinações salvas:
+                registro.determinacoesInSitu?.forEach((d, i) => {
+                    const idx = i + 1;
+                    fill(`#numero-cilindro-${idx}`, d.numeroCilindro);
+                    fill(`#molde-solo-${idx}`, d.moldeSolo);
+                    fill(`#molde-${idx}`, d.molde);
+                    fill(`#volume-${idx}`, d.volume);
+                });
+                registro.determinacoesUmidadeTopo?.forEach((d, i) => {
+                    const idx = i + 1;
+                    fill(`#capsula-topo-${idx}`, d.capsula);
+                    fill(`#solo-umido-tara-topo-${idx}`, d.soloUmidoTara);
+                    fill(`#solo-seco-tara-topo-${idx}`, d.soloSecoTara);
+                    fill(`#tara-topo-${idx}`, d.tara);
+                });
+                registro.determinacoesUmidadeBase?.forEach((d, i) => {
+                    const idx = i + 1;
+                    fill(`#capsula-base-${idx}`, d.capsula);
+                    fill(`#solo-umido-tara-base-${idx}`, d.soloUmidoTara);
+                    fill(`#solo-seco-tara-base-${idx}`, d.soloSecoTara);
+                    fill(`#tara-base-${idx}`, d.tara);
+                });
+            }
+            else if (tipo === 'real') {
+                registro.determinacoesUmidadeReal?.forEach((d, i) => {
+                    const idx = i + 1;
+                    fill(`#capsula-real-${idx}`, d.capsula);
+                    fill(`#solo-umido-tara-real-${idx}`, d.soloUmidoTara);
+                    fill(`#solo-seco-tara-real-${idx}`, d.soloSecoTara);
+                    fill(`#tara-real-${idx}`, d.tara);
+                });
+                registro.determinacoesPicnometro?.forEach((d, i) => {
+                    const idx = i + 1;
+                    fill(`#picnometro-${idx}`, d.picnometro);
+                    fill(`#massa-pic-${idx}`, d.massaPic);
+                    fill(`#massa-pic-amostra-agua-${idx}`, d.massaPicAmostraAgua);
+                    fill(`#temperatura-${idx}`, d.temperatura);
+                    fill(`#massa-pic-agua-${idx}`, d.massaPicAgua);
+                    fill(`#massa-solo-umido-${idx}`, d.massaSoloUmido);
+                });
+            }
+            else if (tipo === 'max-min') {
+                registro.determinacoesMax?.forEach((d, i) => {
+                    const idx = i + 1;
+                    fill(`#numero-cilindro-max-${idx}`, d.numeroCilindro);
+                    fill(`#molde-solo-max-${idx}`, d.moldeSolo);
+                    fill(`#molde-max-${idx}`, d.molde);
+                    fill(`#volume-max-${idx}`, d.volume);
+                    fill(`#w-max-${idx}`, d.w);
+                });
+                registro.determinacoesMin?.forEach((d, i) => {
+                    const idx = i + 1;
+                    fill(`#numero-cilindro-min-${idx}`, d.numeroCilindro);
+                    fill(`#molde-solo-min-${idx}`, d.moldeSolo);
+                    fill(`#molde-min-${idx}`, d.molde);
+                    fill(`#volume-min-${idx}`, d.volume);
+                    fill(`#w-min-${idx}`, d.w);
+                });
             }
 
-            // Dispara cálculo inicial para preencher campos calculados
-            // Usar setTimeout para garantir que o DOM está pronto e os listeners de change dos selects já rodaram
+            // === 2) Injeta as referências salvas no dataset e nos selects ===
+            if (tipo === 'in-situ') {
+                form.querySelector('#registro-densidade-real').value = registro.registroDensidadeReal || '';
+                form.querySelector('#registro-densidade-max-min').value = registro.registroDensidadeMaxMin || '';
+
+                form.dataset.densidadeReal = registro.mediaDensidadeReal ?? form.dataset.densidadeReal;
+                form.dataset.densidadeMax = registro.mediaGamadMax ?? form.dataset.densidadeMax;
+                form.dataset.densidadeMin = registro.mediaGamadMin ?? form.dataset.densidadeMin;
+                form.dataset.registroDensidadeReal = registro.registroDensidadeReal ?? form.dataset.registroDensidadeReal;
+                form.dataset.registroDensidadeMaxMin = registro.registroDensidadeMaxMin ?? form.dataset.registroDensidadeMaxMin;
+            }
+
+            // === 3) Exibe imediatamente os resultados que estavam salvos ===
+            preencherResultados(tipo, registro);
+
+            // === 4) Dispara o recálculo automático para atualizar ou manter tudo ===
             setTimeout(() => {
                 window.calculadora.eventIntegration?.calcularAutomaticamente(tipo);
                 exibirNotificacao(`Registro '${registroId}' carregado para edição.`, 'info');
-            }, 150); // Pequeno delay
+            }, 150);
 
         } catch (error) {
             console.error(`Erro ao carregar registro '${registroId}' para edição:`, error);
             exibirNotificacao('Erro ao carregar dados do registro.', 'error');
         } finally {
-             if (listaEnsaios) listaEnsaios.classList.remove('loading');
+            if (listaEnsaios) listaEnsaios.classList.remove('loading');
         }
     }
+
 
     /**
      * Salva os dados do formulário atual no banco de dados.
@@ -801,73 +755,63 @@ window.calculadora.formIntegration = (function() {
             exibirNotificacao('Erro: Módulo de banco de dados não disponível.', 'error');
             return;
         }
-
         const form = document.querySelector('#calculadora form');
         if (!form) {
             exibirNotificacao('Erro: Formulário não encontrado.', 'error');
             return;
         }
 
+        // 1) Força atualização do dataset com os selects de referência
+        if (tipo === 'in-situ') {
+            const selReal = form.querySelector('#registro-densidade-real');
+            const selMaxMin = form.querySelector('#registro-densidade-max-min');
+
+            if (selReal && selReal.selectedOptions.length) {
+                form.dataset.densidadeReal = selReal.selectedOptions[0].dataset.gs || '';
+                form.dataset.registroDensidadeReal = selReal.value;
+            }
+            if (selMaxMin && selMaxMin.selectedOptions.length) {
+                form.dataset.densidadeMax = selMaxMin.selectedOptions[0].dataset.gamadMax || '';
+                form.dataset.densidadeMin = selMaxMin.selectedOptions[0].dataset.gamadMin || '';
+                form.dataset.registroDensidadeMaxMin = selMaxMin.value;
+            }
+        }
+
+        // 2) Desabilita o botão enquanto salva
         const btnSalvar = form.querySelector('.btn-salvar');
-        btnSalvar.disabled = true; // Desabilita botão durante salvamento
-        btnSalvar.textContent = 'Salvando...';
+        btnSalvar.disabled = true;
+        btnSalvar.textContent = 'Salvando…';
 
         try {
+            // 3) Extrai dados, agora com refReal/refMax/refMin corretos
             const dados = obterDadosFormulario(tipo);
-            if (!dados) {
-                exibirNotificacao('Não foi possível obter os dados do formulário para salvar.', 'error');
-                return; // Já exibiu erro em obterDadosFormulario
-            }
+            if (!dados) return; // já mostrou erro em obterDadosFormulario
 
-            // Validação básica (ex: registro obrigatório)
+            // Validação simples
             if (!dados.registro) {
                 exibirNotificacao('O campo "Registro" é obrigatório.', 'warning');
-                const registroInput = form.querySelector(`#registro${tipo === 'in-situ' ? '' : `-${tipo}`}`);
-                registroInput?.focus();
+                form.querySelector(`#registro${tipo === 'in-situ' ? '' : `-${tipo}`}`)?.focus();
                 return;
             }
 
-            // *** VALIDAÇÃO DE NOME DUPLICADO ***
-            const registroInput = form.querySelector(`#registro${tipo === 'in-situ' ? '' : `-${tipo}`}`);
-            const isEditing = registroInput?.readOnly === true; // Verifica se está editando (campo registro bloqueado)
-
-            if (!isEditing) { // Só verifica duplicidade se for um novo registro
-                const existingRecord = await window.calculadora.db.carregarRegistro(tipo, dados.registro);
-                if (existingRecord) {
-                    exibirNotificacao(`Erro: Já existe um registro com o nome "${dados.registro}". Escolha outro nome.`, 'error');
-                    registroInput?.focus();
-                    return;
-                }
-            }
-            // *** FIM DA VALIDAÇÃO ***
-
-            // Adiciona/atualiza os resultados calculados aos dados a serem salvos
-            const ultimosResultados = window.calculadora._ultimosResultados?.[tipo];
-            if (ultimosResultados) {
-                // Mescla resultados, garantindo que dados do form tenham precedência se recalculados
-                Object.assign(dados, ultimosResultados);
-            }
-
+            // 4) Salvamento no IndexedDB
             await window.calculadora.db.salvarRegistro(tipo, dados);
             exibirNotificacao(`Registro "${dados.registro}" salvo com sucesso!`, 'success');
 
-            // Opcional: Limpar formulário ou voltar para lista após salvar
-            // limparFormulario();
-            // window.calculadora.navigation?.mostrarLista(tipo); // Se existir módulo de navegação
-
-            // Atualiza a lista de ensaios na interface (se visível)
+            // Atualiza lista se existir função global
             if (typeof window.atualizarListaEnsaios === 'function') {
-                 window.atualizarListaEnsaios(tipo);
+                window.atualizarListaEnsaios(tipo);
             }
-
         } catch (error) {
             console.error('Erro ao salvar registro:', error);
-            exibirNotificacao(`Erro ao salvar registro: ${error.message || 'Verifique o console.'}`, 'error');
+            exibirNotificacao(`Erro ao salvar registro: ${error.message}`, 'error');
         } finally {
-            btnSalvar.disabled = false; // Reabilita botão
+            // 5) Reabilita botão
+            btnSalvar.disabled = false;
             btnSalvar.textContent = 'Salvar';
         }
     }
+
 
     /**
      * Gera o PDF para o formulário atual.
@@ -923,9 +867,13 @@ window.calculadora.formIntegration = (function() {
         limparFormulario,
         exibirNotificacao,
         carregarRegistroParaEdicao,
-        salvar, // Adicionada função salvar
-        gerarPDF // Adicionada função gerarPDF
+        salvar,
+        gerarPDF,
+        // exposições adicionais
+        getTipoFormularioAtual,
+        setUltimosResultados
     };
+
 
 })();
 

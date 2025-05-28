@@ -159,6 +159,8 @@ function calcularDensidadeInSitu(dados) {
         }
     } else {
         resultados.status = 'FALTAM REFERÊNCIAS';
+          // Sem referências Máx/Min completas, mas demais cálculos OK
+        resultados.status = 'CALCULADO';
     }
 
     return resultados;
@@ -339,11 +341,15 @@ function calcularDensidadeInSitu(dados) {
     init();
   }
 
-  // Public API
-  return {
-    calcularResultados,
-    calcularAutomaticamente
-  };
+    // Public API: além de calcularResultados e calcularAutomaticamente,
+      // também expomos as funções individuais para serem chamadas diretamente.
+         return {
+                calcularResultados,
+                calcularAutomaticamente,// funções usadas pelo event-integration.js
+                calcularDensidadeInSitu,
+                calcularDensidadeReal,
+                calcularDensidadeMaxMin
+         };
 
 })();
 
