@@ -700,13 +700,21 @@ window.calculadora.formIntegration = (function() {
                 });
             }
 
-            // Recalcula e preenche os resultados
-            if (window.calculadora.calculos) {
-                const dadosFormulario = obterDadosFormulario(tipo);
-                const resultados = window.calculadora.calculos.calcularResultados(tipo, dadosFormulario);
-                setUltimosResultados(tipo, resultados);
-                preencherResultados(tipo, resultados);
-            }
+           // ======= reaplica resultados salvos ou então recalc =========
+if (registro.resultados) {
+  // reaplica exatamente o que veio do banco
+  setUltimosResultados(tipo, registro.resultados);
+  preencherResultados(tipo, registro.resultados);
+}
+else if (window.calculadora.calculos) {
+  // só recalcula se não houver resultados salvos
+  const dadosFormulario = obterDadosFormulario(tipo);
+  const resultados = window.calculadora.calculos.calcularResultados(tipo, dadosFormulario);
+  setUltimosResultados(tipo, resultados);
+  preencherResultados(tipo, resultados);
+}
+// =============================================================
+
 
             // Muda para a aba da calculadora
             const tabBtn = document.querySelector('.tab-btn[data-tab="calculadora"]');
