@@ -363,139 +363,114 @@ window.calculadora.formIntegration = (function() {
      * @param {object} resultados
      */
     function preencherResultados(tipo, resultados) {
-        const form = document.querySelector('#calculadora form');
-        if (!form) return;
+  const form = document.querySelector('#calculadora form');
+  if (!form) return;
 
-        // Função auxiliar para preencher input
-        const fillInput = (selector, value, precision) => {
-            const el = form.querySelector(selector);
-            if (el) {
-                if (typeof value === 'number' && !isNaN(value)) {
-                    el.value = value.toFixed(precision);
-                } else if (value !== null && value !== undefined) {
-                    el.value = value; // Para strings ou outros tipos
-                } else {
-                    el.value = ''; // Limpa se for null, undefined ou NaN
-                }
-            }
-        };
-
-        // Limpa campos de resultado antes de preencher
-        form.querySelectorAll('input[readonly]').forEach(el => {
-             // Verifica se o ID contém 'resultado' ou é um campo calculado comum
-             const id = el.id.toLowerCase();
-             const isCalculatedField = id.includes('solo-') || id.includes('agua-') || id.includes('umidade-') || id.includes('gama-') || id.includes('gamad-') || id.includes('gamas-') || id.includes('indice-vazios') || id.includes('cr-') || id.includes('media-') || id.includes('diferenca-');
-             if (isCalculatedField) {
-                 el.value = '';
-             }
-        });
-        const statusEl = form.querySelector('#status-ensaio');
-        if (statusEl) statusEl.textContent = 'AGUARDANDO CÁLCULO';
-
-        if (!resultados) return;
-
-        // Preenche campos calculados nas tabelas
-        if (tipo === 'in-situ') {
-            resultados.determinacoesInSitu?.forEach((det, i) => {
-                // solo (g)
-                fillInput(`#solo-${i + 1}`, det.solo, 1);
-
-                // γnat = solo/volume
-                // no HTML: <input id="gama-nat-um-<n>">
-                fillInput(`#gama-nat-um-${i + 1}`, det.gamaNat, 3);
-
-                // γs = (γnat / (umidadeMediaTopo+100)) * 100
-                // no HTML: <input id="gama-nat-<n>">
-                fillInput(`#gama-nat-${i + 1}`, det.gammaS, 3);
-            });
-
-            // 2) Teor de umidade topo
-            resultados.determinacoesUmidadeTopo.forEach((det, i) => {
-                fillInput(`#solo-seco-topo-${i + 1}`, det.soloSeco, 1);
-                fillInput(`#agua-topo-${i + 1}`, det.agua, 1);
-                fillInput(`#umidade-topo-${i + 1}`, det.umidade, 1);
-            });
-
-            // 3) Teor de umidade base
-            resultados.determinacoesUmidadeBase.forEach((det, i) => {
-                fillInput(`#solo-seco-base-${i + 1}`, det.soloSeco, 1);
-                fillInput(`#agua-base-${i + 1}`, det.agua, 1);
-                fillInput(`#umidade-base-${i + 1}`, det.umidade, 1);
-            });
-
-            // 4) Médias de umidade
-            fillInput('#umidade-media-topo', resultados.umidadeMediaTopo, 1);
-            fillInput('#umidade-media-base', resultados.umidadeMediaBase, 1);
-
-            // 5) Se quiser exibir a média de γnat (ynat médio) num campo próprio:
-            //    adicione no HTML <input id="gama-nat-medio" …>
-            // fillInput('#gama-nat-medio', resultados.gamaNatMedio, 3);
-
-            // 6) Média de γs (densidade seca)
-            //    no HTML: <input id="gama-nat-m" …>
-            fillInput('#gama-nat-m', resultados.gammaSMedia, 3);
-
-            // Resultados Finais In Situ
-            fillInput('#gamad-topo', resultados.gamadTopo, 3);
-            fillInput('#gamad-base', resultados.gamadBase, 3);
-            // 7) Índice de Vazios
-            
-  // 7) Índice de Vazios
-  fillInput('#indice-vazios-topo', resultados.indiceVaziosTopo ?? '', 2);
-  fillInput('#indice-vazios-base', resultados.indiceVaziosBase ?? '', 2);
-
-  // 8) Compacidade Relativa (com checagem)
-  if (resultados.compacidadeRelativa && typeof resultados.compacidadeRelativa.topo === 'number') {
-    fillInput('#cr-topo', resultados.compacidadeRelativa.topo, 1);
-  } else {
-    fillInput('#cr-topo', '', 1);
-  }
-
-  if (resultados.compacidadeRelativa && typeof resultados.compacidadeRelativa.base === 'number') {
-    fillInput('#cr-base', resultados.compacidadeRelativa.base, 1);
-  } else {
-    fillInput('#cr-base', '', 1);
-  }
-
-  // 9) Status
-  document.getElementById('status-ensaio').innerText = resultados.status || '';
-           
-
-        } else if (tipo === 'real') {
-            resultados.determinacoesUmidadeReal?.forEach((det, i) => {
-                fillInput(`#solo-seco-real-${i + 1}`, det.soloSeco, 1);
-                fillInput(`#agua-real-${i + 1}`, det.agua, 1);
-                fillInput(`#umidade-real-${i + 1}`, det.umidade, 1);
-            });
-            fillInput('#umidade-media-real', resultados.umidadeMedia, 1);
-
-            resultados.determinacoesPicnometro?.forEach((det, i) => {
-                fillInput(`#densidade-agua-${i + 1}`, det.densidadeAgua, 4);
-                fillInput(`#massa-solo-seco-${i + 1}`, det.massaSoloSeco, 1);
-                fillInput(`#densidade-real-${i + 1}`, det.densidadeReal, 3);
-            });
-
-            // Resultados Finais Real
-            fillInput('#diferenca-real', resultados.diferenca, 1);
-            fillInput('#media-densidade-real', resultados.mediaDensidadeReal, 3);
-
-        } else if (tipo === 'max-min') {
-            resultados.determinacoesMax?.forEach((det, i) => {
-                fillInput(`#solo-max-${i + 1}`, det.solo, 1);
-                fillInput(`#gamaNat-max-${i + 1}`, det.gamaNat, 3); // Corrigido ID e valor para γnat
-                fillInput(`#gamad-max-${i + 1}`, det.gamad, 3);   // Corrigido ID para γd
-            });
-            resultados.determinacoesMin?.forEach((det, i) => {
-                fillInput(`#solo-min-${i + 1}`, det.solo, 1);
-                fillInput(`#gamaNat-min-${i + 1}`, det.gamaNat, 3); // Corrigido ID e valor para γnat
-                fillInput(`#gamad-min-${i + 1}`, det.gamad, 3);   // Corrigido ID para γd
-            });
-
-            // Resultados Finais Max/Min
-            fillInput('#gamad-max', resultados.mediaGamadMax, 3);
-            fillInput('#gamad-min', resultados.mediaGamadMin, 3);
-        }
+  // Auxiliar para preencher um input readonly
+  const fillInput = (selector, value, precision) => {
+    const el = form.querySelector(selector);
+    if (!el) return;
+    if (typeof value === 'number' && !isNaN(value)) {
+      el.value = value.toFixed(precision);
+    } else if (value != null) {
+      el.value = value;
+    } else {
+      el.value = '';
     }
+  };
+
+  // 1) Limpa todos os campos calculados
+  form.querySelectorAll('input[readonly]').forEach(el => el.value = '');
+  form.querySelector('#status-ensaio')?.textContent = 'AGUARDANDO CÁLCULO';
+
+  if (!resultados) return;
+
+  if (tipo === 'in-situ') {
+    // --- γnat e γs ---
+    (resultados.determinacoesInSitu || []).forEach((det, i) => {
+      fillInput(`#solo-${i+1}`,        det.solo,    1);
+      fillInput(`#gama-nat-um-${i+1}`,  det.gamaNat, 3);
+      fillInput(`#gama-nat-${i+1}`,     det.gammaS,  3);
+    });
+
+    // --- Teor de umidade topo ---
+    (resultados.determinacoesUmidadeTopo || []).forEach((det, i) => {
+      fillInput(`#solo-seco-topo-${i+1}`, det.soloSeco, 1);
+      fillInput(`#agua-topo-${i+1}`,      det.agua,     1);
+      fillInput(`#umidade-topo-${i+1}`,   det.umidade,  1);
+    });
+
+    // --- Teor de umidade base ---
+    (resultados.determinacoesUmidadeBase || []).forEach((det, i) => {
+      fillInput(`#solo-seco-base-${i+1}`, det.soloSeco, 1);
+      fillInput(`#agua-base-${i+1}`,      det.agua,     1);
+      fillInput(`#umidade-base-${i+1}`,   det.umidade,  1);
+    });
+
+    // --- Médias ---
+    fillInput('#umidade-media-topo', resultados.umidadeMediaTopo, 1);
+    fillInput('#umidade-media-base', resultados.umidadeMediaBase, 1);
+    fillInput('#gama-nat-m',         resultados.gammaSMedia,      3);
+
+    // --- Densidade seca final ---
+    fillInput('#gamad-topo', resultados.gamadTopo, 3);
+    fillInput('#gamad-base', resultados.gamadBase, 3);
+
+    // --- Índice de vazios ---
+    fillInput('#indice-vazios-topo', resultados.indiceVaziosTopo  ?? '', 2);
+    fillInput('#indice-vazios-base', resultados.indiceVaziosBase  ?? '', 2);
+
+    // --- Compacidade relativa ---
+    if (resultados.compacidadeRelativa?.topo != null) {
+      fillInput('#cr-topo', resultados.compacidadeRelativa.topo, 1);
+    }
+    if (resultados.compacidadeRelativa?.base != null) {
+      fillInput('#cr-base', resultados.compacidadeRelativa.base, 1);
+    }
+
+    // --- Status ---
+    form.querySelector('#status-ensaio').textContent = resultados.status || '';
+
+  } else if (tipo === 'real') {
+    // --- Umidade real ---
+    (resultados.determinacoesUmidadeReal || []).forEach((det, i) => {
+      fillInput(`#solo-seco-real-${i+1}`, det.soloSeco, 1);
+      fillInput(`#agua-real-${i+1}`,      det.agua,     1);
+      fillInput(`#umidade-real-${i+1}`,   det.umidade,  1);
+    });
+    fillInput('#umidade-media-real', resultados.umidadeMedia, 1);
+
+    // --- Picnômetro ---
+    (resultados.determinacoesPicnometro || []).forEach((det, i) => {
+      fillInput(`#densidade-agua-${i+1}`,     det.densidadeAgua, 4);
+      fillInput(`#massa-solo-seco-${i+1}`,    det.massaSoloSeco, 1);
+      fillInput(`#densidade-real-${i+1}`,     det.densidadeReal, 3);
+    });
+
+    // --- Resultados finais real ---
+    fillInput('#media-densidade-real', resultados.mediaDensidadeReal, 3);
+    fillInput('#diferenca-real',        resultados.diferenca,        1);
+
+  } else if (tipo === 'max-min') {
+    // --- Densidade máxima ---
+    (resultados.determinacoesMax || []).forEach((det, i) => {
+      fillInput(`#solo-max-${i+1}`,     det.solo,    1);
+      fillInput(`#gamaNat-max-${i+1}`,  det.gamaNat, 3);
+      fillInput(`#gamad-max-${i+1}`,    det.gamad,   3);
+    });
+
+    // --- Densidade mínima ---
+    (resultados.determinacoesMin || []).forEach((det, i) => {
+      fillInput(`#solo-min-${i+1}`,     det.solo,    1);
+      fillInput(`#gamaNat-min-${i+1}`,  det.gamaNat, 3);
+      fillInput(`#gamad-min-${i+1}`,    det.gamad,   3);
+    });
+
+    // --- Médias máximas e mínimas ---
+    fillInput('#gamad-max', resultados.mediaGamadMax, 3);
+    fillInput('#gamad-min', resultados.mediaGamadMin, 3);
+  }
+}
 
     /**
      * Limpa todos os campos do formulário atual
@@ -699,25 +674,21 @@ window.calculadora.formIntegration = (function() {
                     fillInput(`#w-min-${i + 1}`, det.w);
                 });
             }
-            if (registro.gamadTopo != null && registro.gamadBase != null) {
-  // monta manualmente o objeto de resultados usando as propriedades que vieram do DB
-  const resultados = {
-    gamadTopo: registro.gamadTopo,
-    gamadBase: registro.gamadBase,
-    indiceVaziosTopo: registro.indiceVaziosTopo,
-    indiceVaziosBase: registro.indiceVaziosBase,
-    compacidadeRelativa: {
-      topo: registro.compacidadeRelativaTopo,
-      base: registro.compacidadeRelativaBase
-    },
-    status: registro.status
-  };
+           // ======= reaplica resultados salvos ou então recalc ==========
+if (registro.resultados) {
+  // reaplica exatamente o que veio do banco
+  setUltimosResultados(tipo, registro.resultados);
+  preencherResultados(tipo, registro.resultados);
+}
+else {
+  // só recalcula se não houver resultados salvos
+  const dadosFormulario = obterDadosFormulario(tipo);
+  const resultados     = window.calculadora.calculos.calcularResultados(tipo, dadosFormulario);
   setUltimosResultados(tipo, resultados);
   preencherResultados(tipo, resultados);
 }
-else if (window.calculadora.calculos) {
-  // ...
-}
+// =============================================================
+
 // Muda para a aba da calculadora
             const tabBtn = document.querySelector('.tab-btn[data-tab="calculadora"]');
             if (tabBtn) {
