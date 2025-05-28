@@ -699,24 +699,26 @@ window.calculadora.formIntegration = (function() {
                     fillInput(`#w-min-${i + 1}`, det.w);
                 });
             }
-
-           // ======= reaplica resultados salvos ou então recalc =========
-if (registro.resultados) {
-  // reaplica exatamente o que veio do banco
-  setUltimosResultados(tipo, registro.resultados);
-  preencherResultados(tipo, registro.resultados);
-}
-else if (window.calculadora.calculos) {
-  // só recalcula se não houver resultados salvos
-  const dadosFormulario = obterDadosFormulario(tipo);
-  const resultados = window.calculadora.calculos.calcularResultados(tipo, dadosFormulario);
+            if (registro.gamadTopo != null && registro.gamadBase != null) {
+  // monta manualmente o objeto de resultados usando as propriedades que vieram do DB
+  const resultados = {
+    gamadTopo: registro.gamadTopo,
+    gamadBase: registro.gamadBase,
+    indiceVaziosTopo: registro.indiceVaziosTopo,
+    indiceVaziosBase: registro.indiceVaziosBase,
+    compacidadeRelativa: {
+      topo: registro.compacidadeRelativaTopo,
+      base: registro.compacidadeRelativaBase
+    },
+    status: registro.status
+  };
   setUltimosResultados(tipo, resultados);
   preencherResultados(tipo, resultados);
 }
-// =============================================================
-
-
-            // Muda para a aba da calculadora
+else if (window.calculadora.calculos) {
+  // ...
+}
+// Muda para a aba da calculadora
             const tabBtn = document.querySelector('.tab-btn[data-tab="calculadora"]');
             if (tabBtn) {
                 tabBtn.click();
