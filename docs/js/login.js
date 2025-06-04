@@ -7,6 +7,7 @@
    const header = document.querySelector('header');
    const main = document.querySelector('main');
   const footer = document.querySelector('footer');
+  const sidebar = document.querySelector('.sidebar');
   const logoutBtn = document.getElementById('logout-btn');
 
    function showForm(form) {
@@ -52,11 +53,12 @@
      const u = document.getElementById('login-username').value.trim();
      const p = document.getElementById('login-password').value;
      const users = getUsers();
-     if (users[u] && users[u].password === btoa(p)) {
-       loginContainer.style.display = 'none';
-       header.style.display = 'block';
-       main.style.display = 'block';
-       footer.style.display = 'block';
+    if (users[u] && users[u].password === btoa(p)) {
+      loginContainer.style.display = 'none';
+      header.style.display = 'block';
+      sidebar.style.display = 'block';
+      main.style.display = 'block';
+      footer.style.display = 'block';
      } else {
        alert('Usuário ou senha inválidos');
      }
@@ -75,15 +77,17 @@
 
   logoutBtn.addEventListener('click', () => {
     header.style.display = 'none';
+    sidebar.style.display = 'none';
     main.style.display = 'none';
     footer.style.display = 'none';
     loginContainer.style.display = 'flex';
     showForm(loginForm);
   });
 
-   header.style.display = 'none';
-   main.style.display = 'none';
-   footer.style.display = 'none';
+  header.style.display = 'none';
+  sidebar.style.display = 'none';
+  main.style.display = 'none';
+  footer.style.display = 'none';
    loginContainer.style.display = 'flex';
    showForm(loginForm);
  });
