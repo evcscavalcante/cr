@@ -11,6 +11,15 @@ window.calculadora.pdfGenerator = (() => {
         console.log(`Gerando PDF para ${tipo}:`, dados);
 
         return new Promise(async (resolve, reject) => {
+            if (tipo === 'in-situ' && typeof html2pdf !== 'undefined') {
+                try {
+                    await gerarPDFInSituHTML(dados);
+                    return resolve(true);
+                } catch (err) {
+                    return reject(err);
+                }
+            }
+
             // Verificar pdf-lib
             if (typeof PDFLib === 'undefined' || typeof PDFLib.PDFDocument === 'undefined') {
                 console.error("pdf-lib não está carregado. Verifique a inclusão da biblioteca.");
@@ -424,6 +433,133 @@ window.calculadora.pdfGenerator = (() => {
         // Texto do rodapé
         ctx.fillText('Documento gerado pelo Sistema de Calculadora de Compacidade', 297, 800);
         ctx.fillText(`Data de Geração: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`, 297, 815);
+    }
+
+    // === Novo gerador via HTML para Densidade In Situ ===
+    function gerarPDFInSituHTML(dados) {
+        return new Promise((resolve, reject) => {
+            if (typeof html2pdf === 'undefined') {
+                return reject(new Error('html2pdf não carregado'));
+            }
+
+            const container = document.createElement('div');
+            container.innerHTML = buildInSituHtml(dados);
+            container.style.position = 'fixed';
+            container.style.left = '-9999px';
+            document.body.appendChild(container);
+
+            const opt = {
+                margin:       0,
+                filename:     `in-situ_${dados.registro || 'sem_registro'}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(container).save().then(() => {
+                document.body.removeChild(container);
+                resolve(true);
+            }).catch(err => {
+                document.body.removeChild(container);
+                reject(err);
+            });
+        });
+    }
+
+    function buildInSituHtml(dados) {
+        const f = (v, p=0) => (typeof v === 'number' && !isNaN(v)) ? v.toFixed(p).replace('.', ',') : (v || '');
+
+        const maxRows = (dados.determinacoesMax || []).map(det =>
+            `<tr>
+                <td>${f(det.moldeSolo, 0)}</td>
+                <td>${f(det.molde, 0)}</td>
+                <td>${f(det.solo, 0)}</td>
+                <td>${f(det.volume, 0)}</td>
+                <td>${f(det.gamaNat, 3)}</td>
+                <td>${f(det.w, 1)}</td>
+                <td>${f(det.gamad, 3)}</td>
+            </tr>`).join('');
+
+        const minRows = (dados.determinacoesMin || []).map(det =>
+            `<tr>
+                <td>${det.numeroCilindro || ''}</td>
+                <td>${f(det.moldeSolo, 0)}</td>
+                <td>${f(det.molde, 0)}</td>
+                <td>${f(det.solo, 0)}</td>
+                <td>${f(det.volume, 0)}</td>
+                <td>${f(det.gamad, 3)}</td>
+                <td>${f(det.w, 1)}</td>
+            </tr>`).join('');
+
+        const inSituRows = (dados.determinacoesInSitu || []).map(det =>
+            `<tr>
+                <td>${det.numeroCilindro || ''}</td>
+                <td>${f(det.moldeSolo, 0)}</td>
+                <td>${f(det.molde, 0)}</td>
+                <td>${f(det.solo, 0)}</td>
+                <td>${f(det.volume, 0)}</td>
+                <td>${f(det.gamaNat, 3)}</td>
+            </tr>`).join('');
+
+        const umidTopoRows = (dados.determinacoesUmidadeTopo || []).map(det =>
+            `<tr>
+                <td>${det.capsula || ''}</td>
+                <td>${f(det.soloUmidoTara, 2)}</td>
+                <td>${f(det.soloSecoTara, 2)}</td>
+                <td>${f(det.tara, 2)}</td>
+                <td>${f(det.soloSeco, 2)}</td>
+                <td>${f(det.agua, 2)}</td>
+                <td>${f(det.umidade, 1)}</td>
+            </tr>`).join('');
+
+        const umidBaseRows = (dados.determinacoesUmidadeBase || []).map(det =>
+            `<tr>
+                <td>${det.capsula || ''}</td>
+                <td>${f(det.soloUmidoTara, 2)}</td>
+                <td>${f(det.soloSecoTara, 2)}</td>
+                <td>${f(det.tara, 2)}</td>
+                <td>${f(det.soloSeco, 2)}</td>
+                <td>${f(det.agua, 2)}</td>
+                <td>${f(det.umidade, 1)}</td>
+            </tr>`).join('');
+
+        return `<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8" />
+<style>
+body{font-family:Arial, sans-serif;font-size:11px;margin:20px auto;max-width:900px;color:#000;}
+h1,h2,h3{margin:0;padding:0}
+.center{text-align:center}
+.section{border:1px dashed #000;padding:10px 15px;margin-bottom:20px}
+.inline-fields{display:flex;justify-content:space-between;margin-bottom:6px}
+.inline-fields div{width:32%;white-space:nowrap}
+.small-space{margin-bottom:6px}
+table{width:100%;border-collapse:collapse;margin-top:8px}
+th,td{border:1px dashed #000;padding:4px 6px;text-align:center;font-size:11px}
+th{background:#eee;font-weight:bold}
+.table-caption{text-align:center;font-size:12px;font-weight:bold;margin-bottom:4px}
+.footer-text{font-size:9px;text-align:center;margin-top:20px}
+</style></head><body>
+<div class="section">
+<div class="center"><h2>DETERMINAÇÃO DA COMPACTAÇÃO RELATIVA</h2><p style="font-size:10px;font-style:italic;">NBR 6457:2024 – NBR 9813:2016</p></div>
+<div class="inline-fields"><div><span class="label-bold">OPERADOR:</span> ${dados.operador || ''}</div><div><span class="label-bold">NORTE:</span> ${f(dados.norte,3)}</div><div><span class="label-bold">CAMADA N°:</span> ${dados.camada || ''}</div></div>
+<div class="inline-fields"><div><span class="label-bold">RESPONSÁVEL PELO CÁLCULO:</span> ${dados.responsavel || ''}</div><div><span class="label-bold">ESTE:</span> ${f(dados.este,3)}</div><div><span class="label-bold">MATERIAL:</span> ${dados.material || ''}</div></div>
+<div class="inline-fields"><div><span class="label-bold">VERIFICADOR:</span> ${dados.verificador || ''}</div><div><span class="label-bold">COTA:</span> ${f(dados.cota,3)}</div><div><span class="label-bold">ORIGEM:</span> ${dados.origem || ''}</div></div>
+<div class="inline-fields small-space"><div><span class="label-bold">DATA:</span> ${dados.data || ''}</div><div><span class="label-bold">QUADRANTE:</span> ${dados.quadrante || ''}</div><div><span class="label-bold">REGISTRO:</span> ${dados.registro || ''}</div></div>
+<div class="inline-fields"><div><span class="label-bold">HORA:</span> ${dados.hora || ''}</div></div>
+<div class="inline-fields small-space"><div><span class="label-bold">DISPOSITIVOS</span></div><div><span class="label-bold">BALANÇA:</span> ${dados.balanca || ''} <span class="label-bold">ESTUFA:</span> ${dados.estufa || ''}</div></div>
+<div class="table-caption">DENSIDADE SECA MÁXIMA</div>
+<table><thead><tr><th>Molde+Solo(g)</th><th>Molde(g)</th><th>Solo(g)</th><th>Volume(cm³)</th><th>γnat</th><th>w(%)</th><th>γd</th></tr></thead><tbody>${maxRows}</tbody></table>
+<div class="table-caption">DENSIDADE SECA MÍNIMA</div>
+<table><thead><tr><th>Cil Nº</th><th>Molde+Solo(g)</th><th>Molde(g)</th><th>Solo(g)</th><th>Volume(cm³)</th><th>γd</th><th>w(%)</th></tr></thead><tbody>${minRows}</tbody></table>
+<div class="pagebreak"></div>
+<div class="table-caption">DENSIDADE "IN SITU" – CILINDRO DE CRAVAÇÃO</div>
+<table><thead><tr><th>Cil Nº</th><th>Molde+Solo(g)</th><th>Molde(g)</th><th>Solo(g)</th><th>Volume(cm³)</th><th>γnat</th></tr></thead><tbody>${inSituRows}</tbody></table>
+<div class="table-caption">UMIDADE - TOPO</div>
+<table><thead><tr><th>Cápsula Nº</th><th>Solo Úmido+Tara(g)</th><th>Solo Seco+Tara(g)</th><th>Tara(g)</th><th>Solo Seco(g)</th><th>Água(g)</th><th>Umidade(%)</th></tr></thead><tbody>${umidTopoRows}</tbody></table>
+<div class="table-caption">UMIDADE - BASE</div>
+<table><thead><tr><th>Cápsula Nº</th><th>Solo Úmido+Tara(g)</th><th>Solo Seco+Tara(g)</th><th>Tara(g)</th><th>Solo Seco(g)</th><th>Água(g)</th><th>Umidade(%)</th></tr></thead><tbody>${umidBaseRows}</tbody></table>
+<div class="footer-text">Documento gerado pelo Sistema de Calculadora de Compacidade</div>
+</div></body></html>`;
     }
 
     // API pública
