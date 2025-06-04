@@ -42,6 +42,9 @@ header {
     text-align: center;
     box-shadow: var(--box-shadow);
     width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 header h1 {
@@ -553,6 +556,20 @@ main {
 }
 
 .btn-limpar:hover {
+    background-color: #e0e0e0;
+}
+
+.btn-logout {
+    padding: 0.6rem 1rem;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-logout:hover {
     background-color: #e0e0e0;
 }
 
