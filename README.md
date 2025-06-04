@@ -92,6 +92,13 @@ Ele executa `http-server` na pasta `docs` com cache desabilitado (opção `-c-1`
 
 Esse script possui o mesmo comportamento do arquivo `iniciar-servidor.bat` para Windows.
 
+## Geração de PDF
+
+Ao gerar relatórios o sistema utiliza as bibliotecas **pdf-lib** e **html2pdf**.
+Esses arquivos são carregados automaticamente em tempo de execução caso ainda
+não estejam presentes na página. É necessário conexão com a internet ou cópias
+locais dessas bibliotecas para que o processo funcione corretamente.
+
 ## Compatibilidade
 
 O aplicativo foi testado e é compatível com:

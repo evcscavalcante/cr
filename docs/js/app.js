@@ -155,9 +155,16 @@ document.addEventListener('DOMContentLoaded', () => {
                  else if (target.classList.contains('btn-gerar-pdf')) {
                     console.log('Botão Gerar PDF clicado');
                     const dados = window.calculadora.formIntegration?.obterDadosFormulario(tipo);
-                    // Verifica se pdf-lib está carregado
-                    if (typeof PDFLib === 'undefined') {
-                        console.warn('pdf-lib library not loaded. PDF generation might fail.');
+
+                    // Garante que as bibliotecas de geração de PDF estão carregadas
+                    try {
+                        await loadPdfLib();
+                        if (tipo === 'in-situ') {
+                            await loadHtml2Pdf();
+                        }
+                    } catch (e) {
+                        window.showToast(e.message, 'error');
+                        return;
                     }
 
                     if (dados && dados.registro && window.calculadora.pdfGenerator?.gerarPDF && typeof PDFLib !== 'undefined') {
@@ -172,8 +179,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     } else if (!dados?.registro) {
                          window.showToast('Erro: Número do Registro é obrigatório para gerar PDF.', 'error');
-                    } else if (typeof PDFLib === 'undefined'){
-                        window.showToast('Erro ao gerar PDF: Biblioteca pdf-lib não carregada.', 'error');
                     } else {
                         window.showToast('Erro ao obter dados ou função para gerar PDF.', 'error');
                     }
@@ -340,25 +345,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Placeholder para função de carregar pdf-lib dinamicamente (se necessário)
-    // async function loadPdfLib() {
-    //     if (typeof PDFLib === 'undefined') {
-    //         console.log('Tentando carregar pdf-lib...');
-    //         return new Promise((resolve, reject) => {
-    //             const script = document.createElement('script');
-    //             script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
-    //             script.onload = () => {
-    //                 console.log('pdf-lib carregado com sucesso.');
-    //                 resolve();
-    //             };
-    //             script.onerror = (e) => {
-    //                 console.error('Falha ao carregar pdf-lib:', e);
-    //                 reject(new Error('Falha ao carregar pdf-lib'));
-    //             };
-    //             document.body.appendChild(script);
-    //         });
-    //     }
-    // }
+    // Carrega bibliotecas necessárias para geração de PDF apenas quando
+    // ainda não estiverem disponíveis na página.
+    async function loadPdfLib() {
+        if (typeof PDFLib === 'undefined') {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
+                script.onload = resolve;
+                script.onerror = () => reject(new Error('Falha ao carregar pdf-lib'));
+                document.body.appendChild(script);
+            });
+        }
+    }
+
+    async function loadHtml2Pdf() {
+        if (typeof html2pdf === 'undefined') {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+                script.onload = resolve;
+                script.onerror = () => reject(new Error('Falha ao carregar html2pdf'));
+                document.body.appendChild(script);
+            });
+        }
+    }
 
 });
 
