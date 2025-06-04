@@ -620,13 +620,15 @@ window.calculadora.formIntegration = (function() {
             // espera o form e os selects de referência ficarem disponíveis e habilitados
             await new Promise(resolve => {
                 const checkReady = () => {
-                    const form = document.querySelector('#calculadora form');
-                    const refsLoaded = tipo !== 'in-situ'
-                        || (form
-                            && form.querySelector('#registro-densidade-real')?.options.length > 1
-                            && form.querySelector('#registro-densidade-max-min')?.options.length > 1
-                        );
-                    if (form && refsLoaded) return resolve();
+                    const form = document.querySelector("#calculadora form");
+                    if (!form) return setTimeout(checkReady, 50);
+
+                    if (tipo !== "in-situ") return resolve();
+
+                    const selectReal = form.querySelector("#registro-densidade-real");
+                    const selectMaxMin = form.querySelector("#registro-densidade-max-min");
+                    const refsLoaded = selectReal && selectMaxMin && !selectReal.disabled && !selectMaxMin.disabled;
+                    if (refsLoaded) return resolve();
                     setTimeout(checkReady, 50);
                 };
                 checkReady();
