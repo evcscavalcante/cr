@@ -18,10 +18,11 @@ window.calculadora.pdfGenerator = (() => {
             }
 
             try {
-                // Criar elemento canvas para desenhar o PDF
+                // Criar elemento canvas para desenhar o PDF com maior resolução
+                const DPI = 150; // aumenta qualidade final
                 const canvas = document.createElement("canvas");
-                canvas.width = 595; // A4 width in pixels at 72 dpi
-                canvas.height = 842; // A4 height in pixels at 72 dpi
+                canvas.width = Math.round(8.27 * DPI);  // largura A4 em polegadas
+                canvas.height = Math.round(11.69 * DPI); // altura A4 em polegadas
                 // Anexar ao body temporariamente pode ser necessário para alguns contextos de renderização
                 canvas.style.position = 'absolute';
                 canvas.style.left = '-9999px';
