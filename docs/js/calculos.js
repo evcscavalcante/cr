@@ -290,6 +290,7 @@ function calcularDensidadeInSitu(dados) {
 
   // configuração de listeners para inputs/selects e evento formLoaded
   function configurarCalculosAutomaticos() {
+    if (typeof document === 'undefined') return; // Skip in non-browser env
     const container = document.getElementById('calculadora');
     if (!container) return;
 
@@ -333,26 +334,34 @@ function calcularDensidadeInSitu(dados) {
     configurarCalculosAutomaticos();
   }
 
-  // Initialize when the DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    // DOMContentLoaded has already fired
-    init();
+  // Initialize when the DOM is ready (only in browser)
+  if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      // DOMContentLoaded has already fired
+      init();
+    }
   }
 
     // Public API: além de calcularResultados e calcularAutomaticamente,
       // também expomos as funções individuais para serem chamadas diretamente.
          return {
                 calcularResultados,
-                calcularAutomaticamente,// funções usadas pelo event-integration.js
+                calcularAutomaticamente, // funções usadas pelo event-integration.js
                 calcularDensidadeInSitu,
                 calcularDensidadeReal,
-                calcularDensidadeMaxMin
+                calcularDensidadeMaxMin,
+                calcularDensidadeAgua
          };
 
 })();
 
 // Alias for potential backward compatibility if other scripts call it directly
 window.calculadora.calcularAutomaticamente = window.calculadora.calculos.calcularAutomaticamente;
+
+// Support usage in Node (e.g., for testing with Jest)
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = window.calculadora.calculos;
+}
 

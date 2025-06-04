@@ -1,0 +1,19 @@
+{
+  "name": "cr",
+  "version": "1.0.0",
+  "description": "Aplicativo web para cálculos de ensaios geotécnicos conforme as normas NBR 6457:2024 e NBR 9813:2016.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
