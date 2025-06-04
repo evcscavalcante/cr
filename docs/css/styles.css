@@ -2,10 +2,10 @@
 
 /* Variáveis CSS */
 :root {
-    --primary-color: #0078d7;
-    --primary-dark: #005a9e;
-    --primary-light: #e3f2fd;
-    --secondary-color: #f0f0f0;
+    --primary-color: #6200ea;
+    --primary-dark: #3700b3;
+    --primary-light: #bb86fc;
+    --secondary-color: #f5f5f5;
     --text-color: #333;
     --text-light: #666;
     --success-color: #4caf50;
@@ -24,7 +24,7 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     color: var(--text-color);
     background-color: #f9f9f9;

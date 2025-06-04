@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login - Laboratório Ev.C.S</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body class="login-body">
+  <div class="login-container">
+    <h1>Laboratório Ev.C.S</h1>
+    <div id="message" class="message"></div>
+    <form id="login-form" class="auth-form">
+      <h2>Entrar</h2>
+      <input type="text" name="username" placeholder="Usuário" required>
+      <input type="password" name="password" placeholder="Senha" required>
+      <button type="submit">Login</button>
+    </form>
+
+    <form id="register-form" class="auth-form">
+      <h2>Criar Conta</h2>
+      <input type="text" name="username" placeholder="Usuário" required>
+      <input type="password" name="password" placeholder="Senha" required>
+      <button type="submit">Registrar</button>
+    </form>
+
+    <form id="recover-form" class="auth-form">
+      <h2>Recuperar Senha</h2>
+      <input type="text" name="username" placeholder="Usuário" required>
+      <input type="password" name="password" placeholder="Nova Senha" required>
+      <button type="submit">Recuperar</button>
+    </form>
+  </div>
+  <script src="js/auth.js"></script>
+</body>
+</html>

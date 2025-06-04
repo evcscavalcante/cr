@@ -242,6 +242,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     .catch(reject);
             });
         }
+
+        // Sincronizar dados com o servidor quando online
+        function sincronizarComServidor() {
+            if (!navigator.onLine) {
+                console.log('Offline, sincronização adiada');
+                return;
+            }
+            exportarDados()
+                .then(dados => {
+                    return fetch('/api/data/sync', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(dados)
+                    });
+                })
+                .then(r => r.json())
+                .then(() => console.log('Dados sincronizados com o servidor'))
+                .catch(err => console.error('Erro ao sincronizar', err));
+        }
         
         // Importar dados
         function importarDados(dados) {
@@ -351,7 +370,8 @@ document.addEventListener('DOMContentLoaded', () => {
             importarDados,
             recuperarBackup,
             verificarDisponibilidade,
-            carregarTodosEnsaios // ✅ agora incluída aqui
+            carregarTodosEnsaios, // ✅ agora incluída aqui
+            sincronizarComServidor
         };
     })();
     
@@ -367,4 +387,11 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(error => {
             console.error('Falha ao inicializar banco de dados:', error);
         });
+
+    window.addEventListener('online', () => {
+        window.calculadora.db.sincronizarComServidor();
+    });
+
+    // Tentar sincronizar ao iniciar
+    window.calculadora.db.sincronizarComServidor();
 });
