@@ -99,6 +99,24 @@ O aplicativo foi testado e é compatível com:
 - Chrome para Android
 - Safari para iOS
 
+## Desenvolvimento
+
+1. Instale as dependências do projeto:
+   ```bash
+   npm install
+   ```
+   Isso baixa as bibliotecas listadas em `package.json`.
+
+2. Rode a suíte de testes automatizados:
+   ```bash
+   npm test
+   ```
+   O comando executa o Jest conforme configurado no script `test`.
+
+3. Inicie a aplicação localmente:
+   - **Windows:** execute `iniciar-servidor.bat` para abrir o navegador e iniciar `python -m http.server` na pasta `docs`.
+   - **Outros sistemas:** acesse o diretório `docs` e rode `python3 -m http.server 8000`, depois visite `http://localhost:8000`.
+
 ## Próximos Passos
 
 - Hospedagem do aplicativo para testes do usuário
