@@ -20,10 +20,6 @@ window.calculadora.calculos = (() => {
 
   // --- Calcular Densidade In Situ ---
 function calcularDensidadeInSitu(dados) {
-    // console.log(
-    //     '⭑ calcularDensidadeInSitu → refReal, refMax, refMin:',
-    //     dados.refReal, dados.refMax, dados.refMin
-    // );
 
     const resultados = {
         determinacoesInSitu: [],
