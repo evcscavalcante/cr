@@ -155,15 +155,12 @@ document.addEventListener('DOMContentLoaded', () => {
                  else if (target.classList.contains('btn-gerar-pdf')) {
                     console.log('Botão Gerar PDF clicado');
                     const dados = window.calculadora.formIntegration?.obterDadosFormulario(tipo);
-                     // Tenta carregar jsPDF dinamicamente se não estiver carregado
-                    if (typeof jspdf === 'undefined') {
-                        // Placeholder for dynamic loading logic if needed
-                        // await loadJsPDF(); 
-                        console.warn('jsPDF library not loaded. PDF generation might fail.');
-                        // Attempting to proceed assuming it might be loaded elsewhere or globally
+                    // Verifica se pdf-lib está carregado
+                    if (typeof PDFLib === 'undefined') {
+                        console.warn('pdf-lib library not loaded. PDF generation might fail.');
                     }
 
-                    if (dados && dados.registro && window.calculadora.pdfGenerator?.gerarPDF && typeof jspdf !== 'undefined') {
+                    if (dados && dados.registro && window.calculadora.pdfGenerator?.gerarPDF && typeof PDFLib !== 'undefined') {
                         try {
                             window.showToast('Gerando PDF...', 'info', 5000);
                             await window.calculadora.pdfGenerator.gerarPDF(tipo, dados);
@@ -175,8 +172,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     } else if (!dados?.registro) {
                          window.showToast('Erro: Número do Registro é obrigatório para gerar PDF.', 'error');
-                    } else if (typeof jspdf === 'undefined'){
-                        window.showToast('Erro ao gerar PDF: Biblioteca jsPDF não carregada.', 'error');
+                    } else if (typeof PDFLib === 'undefined'){
+                        window.showToast('Erro ao gerar PDF: Biblioteca pdf-lib não carregada.', 'error');
                     } else {
                         window.showToast('Erro ao obter dados ou função para gerar PDF.', 'error');
                     }
@@ -343,21 +340,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Placeholder para função de carregar jsPDF dinamicamente (se necessário)
-    // async function loadJsPDF() {
-    //     if (typeof jspdf === 'undefined') {
-    //         console.log('Tentando carregar jsPDF...');
+    // Placeholder para função de carregar pdf-lib dinamicamente (se necessário)
+    // async function loadPdfLib() {
+    //     if (typeof PDFLib === 'undefined') {
+    //         console.log('Tentando carregar pdf-lib...');
     //         return new Promise((resolve, reject) => {
     //             const script = document.createElement('script');
-    //             script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'; // Exemplo de CDN
+    //             script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
     //             script.onload = () => {
-    //                 console.log('jsPDF carregado com sucesso.');
-    //                 window.jspdf = window.jspdf.jsPDF; // Ajuste conforme a biblioteca expõe
+    //                 console.log('pdf-lib carregado com sucesso.');
     //                 resolve();
     //             };
     //             script.onerror = (e) => {
-    //                 console.error('Falha ao carregar jsPDF:', e);
-    //                 reject(new Error('Falha ao carregar jsPDF'));
+    //                 console.error('Falha ao carregar pdf-lib:', e);
+    //                 reject(new Error('Falha ao carregar pdf-lib'));
     //             };
     //             document.body.appendChild(script);
     //         });
