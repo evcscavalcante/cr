@@ -453,10 +453,11 @@ window.calculadora.pdfGenerator = (() => {
                 filename:     `in-situ_${dados.registro || 'sem_registro'}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: ['css', 'legacy'] }
             };
 
-            html2pdf().set(opt).from(container).save().then(() => {
+            html2pdf().from(container).set(opt).toPdf().get('pdf').then(() => {
                 document.body.removeChild(container);
                 resolve(true);
             }).catch(err => {
