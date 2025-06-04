@@ -66,7 +66,7 @@ O projeto foi estruturado com uma arquitetura modular, utilizando HTML5, CSS3 e 
 
 ## Servidor de Desenvolvimento
 
-Execute `iniciar-servidor.bat` no diretório raiz do projeto para abrir o aplicativo em `http://localhost:8000`.
+Execute `iniciar-servidor.bat` no diretório raiz do projeto para abrir o aplicativo em `http://localhost:8000`. O script usa `http-server` com cache desabilitado para que as alterações apareçam imediatamente.
 
 ## Instruções de Uso
 
@@ -84,7 +84,7 @@ Para servir a aplicação durante o desenvolvimento, utilize o script Node já i
 npm start
 ```
 
-Ele executa `http-server` na pasta `docs` ouvindo a porta `8000`. Usuários Linux ou macOS também podem utilizar o script `start-server.sh`:
+Ele executa `http-server` na pasta `docs` com cache desabilitado (opção `-c-1`) ouvindo a porta `8000`. Usuários Linux ou macOS também podem utilizar o script `start-server.sh`:
 
 ```bash
 ./start-server.sh
@@ -117,8 +117,8 @@ O aplicativo foi testado e é compatível com:
    O comando executa o Jest conforme configurado no script `test`.
 
 3. Inicie a aplicação localmente:
-   - **Windows:** execute `iniciar-servidor.bat` para abrir o navegador e iniciar `python -m http.server` na pasta `docs`.
-   - **Outros sistemas:** acesse o diretório `docs` e rode `python3 -m http.server 8000`, depois visite `http://localhost:8000`.
+   - **Windows:** execute `iniciar-servidor.bat` para abrir o navegador. O script chama `http-server` na pasta `docs` sem cache.
+   - **Outros sistemas:** rode `./start-server.sh` ou `npm start` para iniciar `http-server` na pasta `docs`.
 
 ## Próximos Passos
 
