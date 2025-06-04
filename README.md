@@ -67,11 +67,12 @@ O projeto foi estruturado com uma arquitetura modular, utilizando HTML5, CSS3 e 
 
 ## Instruções de Uso
 
-1. Acesse o menu principal
-2. Selecione o tipo de ensaio desejado
-3. Preencha os dados de entrada
-4. Clique em "Calcular" para obter os resultados
-5. Salve o ensaio ou gere um relatório em PDF
+1. Instale as dependências com `npm install`
+2. Acesse o menu principal
+3. Selecione o tipo de ensaio desejado
+4. Preencha os dados de entrada
+5. Clique em "Calcular" para obter os resultados
+6. Salve o ensaio ou gere um relatório em PDF
 
 ## Execução Local
 
