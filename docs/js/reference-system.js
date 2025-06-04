@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const valores = await referenceCrossSystem.obterValoresReferencia('real', registroSelecionado);
                         if (valores) {
                             // Exibir informações do registro selecionado em um toast em vez de alert
-                            mostrarToast(`Densidade Real selecionada: ${valores.mediaDensidadeReal.toFixed(3)} g/cm³`, 'info');
+                            window.showToast(`Densidade Real selecionada: ${valores.mediaDensidadeReal.toFixed(3)} g/cm³`, 'info');
                             
                             // Armazenar o valor para uso nos cálculos
                             form.dataset.densidadeReal = valores.mediaDensidadeReal;
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const valores = await referenceCrossSystem.obterValoresReferencia('max-min', registroSelecionado);
                         if (valores) {
                             // Exibir informações do registro selecionado em um toast em vez de alert
-                            mostrarToast(`Densidade Máxima: ${valores.gamadMax.toFixed(3)} g/cm³ | Densidade Mínima: ${valores.gamadMin.toFixed(3)} g/cm³`, 'info');
+                            window.showToast(`Densidade Máxima: ${valores.gamadMax.toFixed(3)} g/cm³ | Densidade Mínima: ${valores.gamadMin.toFixed(3)} g/cm³`, 'info');
                             
                             // Armazenar os valores para uso nos cálculos
                             form.dataset.densidadeMax = valores.gamadMax;
@@ -347,14 +347,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (confirm(`Tem certeza que deseja excluir o ensaio ${ensaio.registro}?`)) {
                         try {
                             await db.excluirEnsaio(tipo, ensaio.registro);
-                            mostrarToast(`Ensaio ${ensaio.registro} excluído com sucesso`, 'success');
+                            window.showToast(`Ensaio ${ensaio.registro} excluído com sucesso`, 'success');
                             
                             // Atualizar a lista
                             const ensaiosAtualizados = await db.carregarTodosEnsaios(tipo);
                             atualizarListaEnsaios(listaContainer, ensaiosAtualizados, tipo);
                         } catch (error) {
                             console.error('Erro ao excluir ensaio:', error);
-                            mostrarToast('Erro ao excluir ensaio', 'error');
+                            window.showToast('Erro ao excluir ensaio', 'error');
                         }
                     }
                 });
@@ -405,11 +405,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
                 
-                mostrarToast(`Ensaio ${ensaio.registro} carregado para edição`, 'success');
+                window.showToast(`Ensaio ${ensaio.registro} carregado para edição`, 'success');
             }
         } catch (error) {
             console.error('Erro ao carregar ensaio para edição:', error);
-            mostrarToast('Erro ao carregar ensaio', 'error');
+            window.showToast('Erro ao carregar ensaio', 'error');
         }
     }
     
@@ -534,39 +534,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return parseFloat(valor).toFixed(casas);
     }
     
-    // Função para mostrar toast de notificação
-    function mostrarToast(mensagem, tipo = 'info') {
-        // Verificar se o container de toasts existe
-        let toastContainer = document.querySelector('.toast-container');
-        
-        if (!toastContainer) {
-            // Criar container de toasts
-            toastContainer = document.createElement('div');
-            toastContainer.className = 'toast-container';
-            document.body.appendChild(toastContainer);
-        }
-        
-        // Criar toast
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${tipo}`;
-        toast.textContent = mensagem;
-        
-        // Adicionar ao container
-        toastContainer.appendChild(toast);
-        
-        // Remover após 3 segundos
-        setTimeout(() => {
-            toast.classList.add('toast-hide');
-            setTimeout(() => {
-                toastContainer.removeChild(toast);
-                
-                // Remover container se estiver vazio
-                if (toastContainer.children.length === 0) {
-                    document.body.removeChild(toastContainer);
-                }
-            }, 300);
-        }, 3000);
-    }
     
     // Inicializar sistema de referência cruzada e filtros
     function inicializarSistemas() {
