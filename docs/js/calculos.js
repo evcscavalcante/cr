@@ -158,9 +158,9 @@ function calcularDensidadeInSitu(dados) {
             resultados.status = 'REPROVADO';
         }
     } else {
+        // Sem referências Máx/Min completas, mas demais cálculos OK
+        // Mantém status indicando falta de referências
         resultados.status = 'FALTAM REFERÊNCIAS';
-          // Sem referências Máx/Min completas, mas demais cálculos OK
-        resultados.status = 'CALCULADO';
     }
 
     return resultados;
