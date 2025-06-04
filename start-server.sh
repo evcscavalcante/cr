@@ -8,5 +8,5 @@ if command -v xdg-open >/dev/null 2>&1; then
 elif command -v open >/dev/null 2>&1; then
   open "$URL" 2>/dev/null &
 fi
-python3 -m http.server 8000
+npx http-server . -p 8000 -c-1
 
