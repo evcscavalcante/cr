@@ -21,7 +21,6 @@ O projeto foi estruturado com uma arquitetura modular, utilizando HTML5, CSS3 e 
 - `form-integration.js`: Integração entre formulários e cálculos
 - `reference-system.js`: Sistema de referência cruzada entre registros
 - `pdf-generator.js`: Geração de relatórios em PDF
-- `main.js`: Integração de todos os módulos
 
 ## Funcionalidades Implementadas
 
