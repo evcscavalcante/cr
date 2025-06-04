@@ -38,7 +38,16 @@
     <h1>Laboratório Ev.C.S</h1>
   </header>
 
-  <main>
+  <div class="app-container">
+    <nav class="sidebar">
+      <ul>
+        <li><button id="btn-menu-solos" class="sidebar-btn">Solos</button></li>
+        <li><button id="btn-menu-asfalto" class="sidebar-btn">Asfalto</button></li>
+        <li><button id="btn-menu-concreto" class="sidebar-btn">Concreto</button></li>
+      </ul>
+    </nav>
+
+    <main>
     <!-- Menu Principal -->
     <div class="menu-principal">
       <h2>Selecione o tipo de ensaio</h2>
@@ -54,6 +63,13 @@
         </button>
       </div>
     </div>
+
+    <section id="placeholder-asfalto" class="placeholder" style="display:none;">
+      <h2>Em construção: calculadoras de asfalto</h2>
+    </section>
+    <section id="placeholder-concreto" class="placeholder" style="display:none;">
+      <h2>Em construção: calculadoras de concreto</h2>
+    </section>
 
     <!-- Seção de Lista de Ensaios -->
     <div id="secao-lista-ensaios" style="display: none;">
@@ -88,6 +104,7 @@
       </div>
     </div>
   </main>
+  </div><!-- end app-container -->
 
   <footer>
     <div>© 2025 Laboratório Ev.C.S - Versão 2.0</div>
@@ -857,8 +874,9 @@
   <script src="js/pdf-generator.js"></script>
   <script src="js/dados-helper.js"></script>
   <script src="js/login.js"></script>
-  <script src="js/event-integration.js"></script>
-  <script src="js/navigation.js"></script>
-  <script src="js/app.js"></script>
-</body>
-</html>
+    <script src="js/event-integration.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/side-menu.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+  </html>
