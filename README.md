@@ -73,6 +73,22 @@ O projeto foi estruturado com uma arquitetura modular, utilizando HTML5, CSS3 e 
 4. Clique em "Calcular" para obter os resultados
 5. Salve o ensaio ou gere um relatório em PDF
 
+## Execução Local
+
+Para servir a aplicação durante o desenvolvimento, utilize o script Node já incluído:
+
+```bash
+npm start
+```
+
+Ele executa `http-server` na pasta `docs` ouvindo a porta `8000`. Usuários Linux ou macOS também podem utilizar o script `start-server.sh`:
+
+```bash
+./start-server.sh
+```
+
+Esse script possui o mesmo comportamento do arquivo `iniciar-servidor.bat` para Windows.
+
 ## Compatibilidade
 
 O aplicativo foi testado e é compatível com:
