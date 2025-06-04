@@ -10,11 +10,11 @@ window.calculadora.pdfGenerator = (() => {
     function gerarPDF(tipo, dados) {
         console.log(`Gerando PDF para ${tipo}:`, dados);
 
-        return new Promise((resolve, reject) => {
-            // Adicionar verificação de jsPDF
-            if (typeof jspdf === 'undefined' || typeof jspdf.jsPDF === 'undefined') {
-                console.error("jsPDF não está carregado. Verifique a inclusão da biblioteca.");
-                return reject(new Error("jsPDF não está carregado."));
+        return new Promise(async (resolve, reject) => {
+            // Verificar pdf-lib
+            if (typeof PDFLib === 'undefined' || typeof PDFLib.PDFDocument === 'undefined') {
+                console.error("pdf-lib não está carregado. Verifique a inclusão da biblioteca.");
+                return reject(new Error("pdf-lib não está carregado."));
             }
 
             try {
@@ -61,13 +61,26 @@ window.calculadora.pdfGenerator = (() => {
                 // Converter canvas para PDF
                 const imgData = canvas.toDataURL("image/png");
 
-                // Criar PDF usando jsPDF
-                const pdf = new jspdf.jsPDF();
-                pdf.addImage(imgData, "PNG", 0, 0, 210, 297); // A4 size in mm
+                // Criar PDF usando pdf-lib
+                const { PDFDocument } = PDFLib;
+                const pdfDoc = await PDFDocument.create();
+                const page = pdfDoc.addPage([595.28, 841.89]); // A4 em pontos
+                const pngImage = await pdfDoc.embedPng(imgData);
+                page.drawImage(pngImage, {
+                    x: 0,
+                    y: 0,
+                    width: page.getWidth(),
+                    height: page.getHeight()
+                });
 
-                // *** REVERTIDO: Salvar o arquivo PDF diretamente ***
+                const pdfBytes = await pdfDoc.save();
                 const nomeArquivo = `${tipo}_${dados.registro || "sem_registro"}.pdf`;
-                pdf.save(nomeArquivo);
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = nomeArquivo;
+                link.click();
+                URL.revokeObjectURL(link.href);
 
                 // Remover canvas
                 document.body.removeChild(canvas);
