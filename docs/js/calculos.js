@@ -159,8 +159,13 @@ function calcularDensidadeInSitu(dados) {
         }
     } else {
         resultados.status = 'FALTAM REFERÊNCIAS';
-          // Sem referências Máx/Min completas, mas demais cálculos OK
-        resultados.status = 'CALCULADO';
+        // Sem referências Máx/Min completas, mas demais cálculos OK
+        if (
+            isValidNumber(resultados.gamadTopo) ||
+            isValidNumber(resultados.gamadBase)
+        ) {
+            resultados.status = 'CALCULADO';
+        }
     }
 
     return resultados;
