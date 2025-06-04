@@ -65,6 +65,10 @@ O projeto foi estruturado com uma arquitetura modular, utilizando HTML5, CSS3 e 
 - LocalStorage para persistência de dados
 - Biblioteca para geração de PDF
 
+## Servidor de Desenvolvimento
+
+Execute `iniciar-servidor.bat` no diretório raiz do projeto para abrir o aplicativo em `http://localhost:8000`.
+
 ## Instruções de Uso
 
 1. Acesse o menu principal
