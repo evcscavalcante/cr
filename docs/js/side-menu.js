@@ -5,6 +5,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnSolos = document.getElementById('btn-menu-solos');
   const btnAsfalto = document.getElementById('btn-menu-asfalto');
   const btnConcreto = document.getElementById('btn-menu-concreto');
+  const toggleBtn = document.getElementById('toggle-sidebar');
+
+  document.body.classList.add('sidebar-visible');
+
+  toggleBtn?.addEventListener('click', () => {
+    document.body.classList.toggle('sidebar-hidden');
+    document.body.classList.toggle('sidebar-visible');
+  });
 
   const menuPrincipal = document.querySelector('.menu-principal');
   const secaoLista = document.getElementById('secao-lista-ensaios');

@@ -67,6 +67,15 @@ header h1 {
   font-size: 1.5rem;
 }
 
+.toggle-sidebar {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-left: 1rem;
+}
+
 /* Layout com menu lateral */
 .app-container {
     display: flex;
@@ -79,6 +88,14 @@ header h1 {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    overflow-y: auto;
+    transform: translateX(0);
+    transition: transform 0.3s ease;
+    z-index: 1000;
 }
 
 .sidebar ul {
@@ -902,4 +919,23 @@ footer {
 #login-container .login-form p {
     text-align: center;
     margin-top: 0.5rem;
+}
+
+/* Controle de visibilidade do menu lateral */
+body.sidebar-visible header,
+body.sidebar-visible main,
+body.sidebar-visible footer {
+    padding-left: 180px;
+    transition: padding-left 0.3s ease;
+}
+
+body.sidebar-hidden header,
+body.sidebar-hidden main,
+body.sidebar-hidden footer {
+    padding-left: 0;
+    transition: padding-left 0.3s ease;
+}
+
+body.sidebar-hidden .sidebar {
+    transform: translateX(-100%);
 }
