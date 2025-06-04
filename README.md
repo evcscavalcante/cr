@@ -8,7 +8,7 @@ O projeto foi estruturado com uma arquitetura modular, utilizando HTML5, CSS3 e 
 
 ### Diretórios e Arquivos
 
-- `/src`: Código-fonte do aplicativo
+- `/docs`: Código-fonte do aplicativo
   - `/css`: Estilos CSS
   - `/js`: Scripts JavaScript
   - `/assets`: Recursos estáticos (imagens, ícones)
