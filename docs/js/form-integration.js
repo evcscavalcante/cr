@@ -721,9 +721,10 @@ window.calculadora.formIntegration = (function() {
                 form.querySelector('#registro-densidade-real').value = registro.registroDensidadeReal || '';
                 form.querySelector('#registro-densidade-max-min').value = registro.registroDensidadeMaxMin || '';
 
-                form.dataset.densidadeReal = registro.mediaDensidadeReal ?? form.dataset.densidadeReal;
-                form.dataset.densidadeMax = registro.mediaGamadMax ?? form.dataset.densidadeMax;
-                form.dataset.densidadeMin = registro.mediaGamadMin ?? form.dataset.densidadeMin;
+                // Mantém no dataset os valores de referência já armazenados no registro
+                form.dataset.densidadeReal = registro.refReal ?? form.dataset.densidadeReal;
+                form.dataset.densidadeMax = registro.refMax ?? form.dataset.densidadeMax;
+                form.dataset.densidadeMin = registro.refMin ?? form.dataset.densidadeMin;
                 form.dataset.registroDensidadeReal = registro.registroDensidadeReal ?? form.dataset.registroDensidadeReal;
                 form.dataset.registroDensidadeMaxMin = registro.registroDensidadeMaxMin ?? form.dataset.registroDensidadeMaxMin;
             }
