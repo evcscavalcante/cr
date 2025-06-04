@@ -39,28 +39,35 @@
   </header>
 
   <main>
-    <!-- Menu Principal -->
-    <div class="menu-principal">
-      <h2>Selecione o tipo de ensaio</h2>
-      <div class="menu-opcoes">
-        <button id="btn-densidade-in-situ" class="btn-menu">
-          <i class="fas fa-ruler-vertical"></i> Densidade In Situ
-        </button>
-        <button id="btn-densidade-real" class="btn-menu">
-          <i class="fas fa-balance-scale"></i> Densidade Real
-        </button>
-        <button id="btn-densidade-max-min" class="btn-menu">
-          <i class="fas fa-balance-scale-left"></i> Densidade Máxima e Mínima
-        </button>
-      </div>
-    </div>
+    <div class="layout">
+      <aside class="sidebar">
+        <button id="btn-menu-solo" class="sidebar-btn">Solo</button>
+        <button id="btn-menu-asfalto" class="sidebar-btn">Asfalto</button>
+        <button id="btn-menu-concreto" class="sidebar-btn">Concreto</button>
+      </aside>
+      <div class="content">
+        <!-- Menu Principal -->
+        <div class="menu-principal" style="display:none;">
+          <h2>Selecione o tipo de ensaio</h2>
+          <div class="menu-opcoes">
+            <button id="btn-densidade-in-situ" class="btn-menu">
+              <i class="fas fa-ruler-vertical"></i> Densidade In Situ
+            </button>
+            <button id="btn-densidade-real" class="btn-menu">
+              <i class="fas fa-balance-scale"></i> Densidade Real
+            </button>
+            <button id="btn-densidade-max-min" class="btn-menu">
+              <i class="fas fa-balance-scale-left"></i> Densidade Máxima e Mínima
+            </button>
+          </div>
+        </div>
 
-    <!-- Seção de Lista de Ensaios -->
-    <div id="secao-lista-ensaios" style="display: none;">
-      <div class="tabs">
-        <button class="tab-btn active" data-tab="lista-ensaios">Lista de Ensaios</button>
-        <button class="tab-btn" data-tab="calculadora">Calculadora</button>
-      </div>
+        <!-- Seção de Lista de Ensaios -->
+        <div id="secao-lista-ensaios" style="display: none;">
+          <div class="tabs">
+            <button class="tab-btn active" data-tab="lista-ensaios">Lista de Ensaios</button>
+            <button class="tab-btn" data-tab="calculadora">Calculadora</button>
+          </div>
 
       <div id="lista-ensaios" class="tab-content active">
         <div class="lista-header">
@@ -83,8 +90,10 @@
         </div>
       </div>
 
-      <div id="calculadora" class="tab-content">
-        <!-- Conteúdo da calculadora será carregado dinamicamente -->
+          <div id="calculadora" class="tab-content">
+            <!-- Conteúdo da calculadora será carregado dinamicamente -->
+          </div>
+        </div>
       </div>
     </div>
   </main>
@@ -859,6 +868,7 @@
   <script src="js/login.js"></script>
   <script src="js/event-integration.js"></script>
   <script src="js/navigation.js"></script>
+  <script src="js/sidebar.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

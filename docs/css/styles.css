@@ -70,6 +70,41 @@ main {
     margin: 0;
 }
 
+/* Layout com menu lateral */
+.layout {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 1rem;
+    background-color: var(--secondary-color);
+    padding: 1rem;
+}
+
+.sidebar-btn {
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: var(--border-radius);
+    background-color: var(--primary-color);
+    color: #fff;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.sidebar-btn:hover {
+    background-color: var(--primary-dark);
+}
+
+.content {
+    flex: 1;
+    padding: 0 1rem;
+}
+
 /* Menu Principal */
 .menu-principal {
     text-align: center;
@@ -753,6 +788,15 @@ footer {
 
 /* Responsividade */
 @media (min-width: 768px) {
+    .layout {
+        flex-direction: row;
+    }
+
+    .sidebar {
+        flex-direction: column;
+        width: 200px;
+    }
+
     .menu-opcoes {
         flex-direction: row;
         flex-wrap: wrap;
