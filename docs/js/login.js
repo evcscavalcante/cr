@@ -6,7 +6,8 @@
 
    const header = document.querySelector('header');
    const main = document.querySelector('main');
-   const footer = document.querySelector('footer');
+  const footer = document.querySelector('footer');
+  const logoutBtn = document.getElementById('logout-btn');
 
    function showForm(form) {
      loginForm.style.display = 'none';
@@ -61,16 +62,24 @@
      }
    });
 
-   document.getElementById('recover-btn').addEventListener('click', () => {
-     const u = document.getElementById('recover-username').value.trim();
-     const newP = document.getElementById('recover-password').value;
+  document.getElementById('recover-btn').addEventListener('click', () => {
+    const u = document.getElementById('recover-username').value.trim();
+    const newP = document.getElementById('recover-password').value;
      const users = getUsers();
      if (!users[u]) return alert('Usuário não encontrado');
      users[u].password = btoa(newP);
      saveUsers(users);
-     alert('Senha atualizada');
-     showForm(loginForm);
-   });
+    alert('Senha atualizada');
+    showForm(loginForm);
+  });
+
+  logoutBtn.addEventListener('click', () => {
+    header.style.display = 'none';
+    main.style.display = 'none';
+    footer.style.display = 'none';
+    loginContainer.style.display = 'flex';
+    showForm(loginForm);
+  });
 
    header.style.display = 'none';
    main.style.display = 'none';
