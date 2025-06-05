@@ -2,6 +2,17 @@
 
 Aplicativo web para cálculos de ensaios geotécnicos conforme as normas NBR 6457:2024 e NBR 9813:2016.
 
+## Início Rápido
+
+Execute os comandos abaixo para instalar as dependências e rodar a suíte de testes:
+
+```bash
+npm install
+npm test
+```
+
+Caso o Jest não seja encontrado durante a execução dos testes, verifique se todas as dependências foram instaladas corretamente com `npm install`.
+
 ## Estrutura do Projeto
 
 O projeto foi estruturado com uma arquitetura modular, utilizando HTML5, CSS3 e JavaScript puro para garantir compatibilidade e desempenho em diversos dispositivos.
