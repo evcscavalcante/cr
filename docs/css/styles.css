@@ -790,6 +790,15 @@ footer {
     cursor: not-allowed;
 }
 
+/* Linha para médias nas tabelas */
+.media-row {
+    background-color: #e8f0fe;
+}
+
+.media-row td {
+    font-weight: 500;
+}
+
 /* Tabela para cabeçalho dos formulários */
 .header-table {
     width: 100%;

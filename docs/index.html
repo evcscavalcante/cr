@@ -279,16 +279,14 @@
                     <td><input type="number" id="gama-nat-1" step="0.001" placeholder="0.000" readonly></td>
                     <td><input type="number" id="gama-nat-2" step="0.001" placeholder="0.000" readonly></td>
                 </tr>
+                <tr class="media-row">
+                    <td>γS (g/cm³) Média:</td>
+                    <td colspan="2"><input type="number" id="gama-nat-m" step="0.001" placeholder="0.000" readonly></td>
+                </tr>
             </tbody>
-          </table>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="gama-nat-m">γS (g/cm³) Média:</label>
-            <input type="number" id="gama-nat-m" step="0.001" placeholder="0.000" readonly>
+            </table>
           </div>
         </div>
-      </div>
 
       <!-- Teor de Umidade Topo -->
       <div class="form-section">
@@ -340,21 +338,19 @@
                 <td><input type="number" id="agua-topo-2" step="0.01" placeholder="0.00" readonly></td>
                 <td><input type="number" id="agua-topo-3" step="0.01" placeholder="0.00" readonly></td>
               </tr>
-              <tr>
-                <td>Umidade (%)</td>
-                <td><input type="number" id="umidade-topo-1" step="0.1" placeholder="0.0" readonly></td>
-                <td><input type="number" id="umidade-topo-2" step="0.1" placeholder="0.0" readonly></td>
-                <td><input type="number" id="umidade-topo-3" step="0.1" placeholder="0.0" readonly></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="umidade-media-topo">Umidade Média (%):</label>
-            <input type="number" id="umidade-media-topo" step="0.1" placeholder="0.0" readonly>
+                <tr>
+                  <td>Umidade (%)</td>
+                  <td><input type="number" id="umidade-topo-1" step="0.1" placeholder="0.0" readonly></td>
+                  <td><input type="number" id="umidade-topo-2" step="0.1" placeholder="0.0" readonly></td>
+                  <td><input type="number" id="umidade-topo-3" step="0.1" placeholder="0.0" readonly></td>
+                </tr>
+                <tr class="media-row">
+                  <td>Umidade Média (%):</td>
+                  <td colspan="3"><input type="number" id="umidade-media-topo" step="0.1" placeholder="0.0" readonly></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-        </div>
       </div>
 
       <!-- Teor de Umidade Base -->
@@ -407,22 +403,20 @@
                 <td><input type="number" id="agua-base-2" step="0.01" placeholder="0.00" readonly></td>
                 <td><input type="number" id="agua-base-3" step="0.01" placeholder="0.00" readonly></td>
               </tr>
-              <tr>
-                <td>Umidade (%)</td>
-                <td><input type="number" id="umidade-base-1" step="0.1" placeholder="0.0" readonly></td>
-                <td><input type="number" id="umidade-base-2" step="0.1" placeholder="0.0" readonly></td>
-                <td><input type="number" id="umidade-base-3" step="0.1" placeholder="0.0" readonly></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="umidade-media-base">Umidade Média (%):</label>
-            <input type="number" id="umidade-media-base" step="0.1" placeholder="0.0" readonly>
+                <tr>
+                  <td>Umidade (%)</td>
+                  <td><input type="number" id="umidade-base-1" step="0.1" placeholder="0.0" readonly></td>
+                  <td><input type="number" id="umidade-base-2" step="0.1" placeholder="0.0" readonly></td>
+                  <td><input type="number" id="umidade-base-3" step="0.1" placeholder="0.0" readonly></td>
+                </tr>
+                <tr class="media-row">
+                  <td>Umidade Média (%):</td>
+                  <td colspan="3"><input type="number" id="umidade-media-base" step="0.1" placeholder="0.0" readonly></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-        </div>
-      </div>
+       </div>
 
       <!-- Resultados -->
       <div class="form-section">
@@ -561,22 +555,20 @@
                 <td><input type="number" id="agua-real-2" step="0.01" placeholder="0.00" readonly></td>
                 <td><input type="number" id="agua-real-3" step="0.01" placeholder="0.00" readonly></td>
               </tr>
-              <tr>
-                <td>Umidade (%)</td>
-                <td><input type="number" id="umidade-real-1" step="0.1" placeholder="0.0" readonly></td>
-                <td><input type="number" id="umidade-real-2" step="0.1" placeholder="0.0" readonly></td>
-                <td><input type="number" id="umidade-real-3" step="0.1" placeholder="0.0" readonly></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="umidade-media-real">Umidade Média (%):</label>
-            <input type="number" id="umidade-media-real" step="0.1" placeholder="0.0" readonly>
+                <tr>
+                  <td>Umidade (%)</td>
+                  <td><input type="number" id="umidade-real-1" step="0.1" placeholder="0.0" readonly></td>
+                  <td><input type="number" id="umidade-real-2" step="0.1" placeholder="0.0" readonly></td>
+                  <td><input type="number" id="umidade-real-3" step="0.1" placeholder="0.0" readonly></td>
+                </tr>
+                <tr class="media-row">
+                  <td>Umidade Média (%):</td>
+                  <td colspan="3"><input type="number" id="umidade-media-real" step="0.1" placeholder="0.0" readonly></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
-      </div>
 
       <!-- Picnômetro -->
       <div class="form-section">
@@ -768,22 +760,20 @@
                 <td><input type="number" id="w-max-2" step="0.1" placeholder="0.0"></td>
                 <td><input type="number" id="w-max-3" step="0.1" placeholder="0.0"></td>
               </tr>
-              <tr>
-                <td>γd (g/cm³)</td>
-                <td><input type="number" id="gamad-max-1" step="0.001" placeholder="0.000" readonly></td>
-                <td><input type="number" id="gamad-max-2" step="0.001" placeholder="0.000" readonly></td>
-                <td><input type="number" id="gamad-max-3" step="0.001" placeholder="0.000" readonly></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="gamad-max">γd máx (g/cm³):</label>
-            <input type="number" id="gamad-max" step="0.001" placeholder="0.000" readonly>
+                <tr>
+                  <td>γd (g/cm³)</td>
+                  <td><input type="number" id="gamad-max-1" step="0.001" placeholder="0.000" readonly></td>
+                  <td><input type="number" id="gamad-max-2" step="0.001" placeholder="0.000" readonly></td>
+                  <td><input type="number" id="gamad-max-3" step="0.001" placeholder="0.000" readonly></td>
+                </tr>
+                <tr class="media-row">
+                  <td>γd máx (g/cm³):</td>
+                  <td colspan="3"><input type="number" id="gamad-max" step="0.001" placeholder="0.000" readonly></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
-      </div>
 
       <!-- Densidade Mínima -->
       <div class="form-section">
@@ -841,22 +831,20 @@
                 <td><input type="number" id="w-min-2" step="0.1" placeholder="0.0"></td>
                 <td><input type="number" id="w-min-3" step="0.1" placeholder="0.0"></td>
               </tr>
-              <tr>
-                <td>γd (g/cm³)</td>
-                <td><input type="number" id="gamad-min-1" step="0.001" placeholder="0.000" readonly></td>
-                <td><input type="number" id="gamad-min-2" step="0.001" placeholder="0.000" readonly></td>
-                <td><input type="number" id="gamad-min-3" step="0.001" placeholder="0.000" readonly></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="gamad-min">γd mín (g/cm³):</label>
-            <input type="number" id="gamad-min" step="0.001" placeholder="0.000" readonly>
+                <tr>
+                  <td>γd (g/cm³)</td>
+                  <td><input type="number" id="gamad-min-1" step="0.001" placeholder="0.000" readonly></td>
+                  <td><input type="number" id="gamad-min-2" step="0.001" placeholder="0.000" readonly></td>
+                  <td><input type="number" id="gamad-min-3" step="0.001" placeholder="0.000" readonly></td>
+                </tr>
+                <tr class="media-row">
+                  <td>γd mín (g/cm³):</td>
+                  <td colspan="3"><input type="number" id="gamad-min" step="0.001" placeholder="0.000" readonly></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
-      </div>
 
       <!-- Ações -->
       <div class="acoes">
