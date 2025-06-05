@@ -164,7 +164,7 @@ function calcularDensidadeInSitu(dados) {
 
   // --- Calcular Densidade Real ---
   function calcularDensidadeReal(dados) {
-    const resultados = { determinacoesUmidadeReal: [], umidadeMedia: 0, determinacoesPicnometro: [], mediaDensidadeReal: null, diferenca: null };
+    const resultados = { determinacoesUmidadeReal: [], umidadeMedia: 0, determinacoesPicnometro: [], mediaDensidadeReal: null, diferenca: null, status: 'AGUARDANDO DADOS' };
     const umidades = [];
     if (dados.determinacoesUmidadeReal && Array.isArray(dados.determinacoesUmidadeReal)) {
       dados.determinacoesUmidadeReal.forEach(det => {
@@ -191,7 +191,8 @@ function calcularDensidadeInSitu(dados) {
     resultados.mediaDensidadeReal = calcularMediaValida(densidadesReais);
     if (densidadesReais.length >= 2) {
       const [a, b] = densidadesReais;
-      resultados.diferenca = Math.abs((a - b) / a) * 100;
+      resultados.diferenca = Math.abs(a - b);
+      resultados.status = resultados.diferenca <= 0.020 ? 'APROVADO' : 'REPROVADO';
     }
     return resultados;
   }
