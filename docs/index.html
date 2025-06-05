@@ -426,34 +426,83 @@
 
       <!-- Resultados -->
       <div class="form-section">
-        <h3>Resultados</h3>
-        <div class="table-responsive">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th></th>
-                <th>Topo</th>
-                <th>Base</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>γd Topo (g/cm³)</td>
-                <td><input type="number" id="gamad-topo" step="0.001" placeholder="0.000" readonly></td>
-                <td><input type="number" id="gamad-base" step="0.001" placeholder="0.000" readonly></td>
-              </tr>
-              <tr>
-                <td>Índice de Vazios</td>
-                <td><input type="number" id="indice-vazios-topo" step="0.01" placeholder="0.00" readonly></td>
-                <td><input type="number" id="indice-vazios-base" step="0.01" placeholder="0.00" readonly></td>
-              </tr>
-              <tr>
-                <td>Compacidade Relativa</td>
-                <td><input type="number" id="cr-topo" step="0.1" placeholder="0.0" readonly></td>
-                <td><input type="number" id="cr-base" step="0.1" placeholder="0.0" readonly></td>
-              </tr>
-            </tbody>
-          </table>
+        <h3>Resultados Finais</h3>
+        <div class="resultados-cards-container">
+          <div class="card-resultado">
+            <h4>Densidades de Referência</h4>
+            <div class="card-content">
+              <div class="resultado-item">
+                <div class="resultado-label">Densidade Real (γs):</div>
+                <div class="resultado-valor">
+                  <input type="number" id="densidade-real" step="0.001" placeholder="0.000" readonly>
+                  <span class="resultado-unidade">g/cm³</span>
+                </div>
+              </div>
+              <div class="resultado-item">
+                <div class="resultado-label">Densidade Máxima (γd máx):</div>
+                <div class="resultado-valor">
+                  <input type="number" id="densidade-max" step="0.001" placeholder="0.000" readonly>
+                  <span class="resultado-unidade">g/cm³</span>
+                </div>
+              </div>
+              <div class="resultado-item">
+                <div class="resultado-label">Densidade Mínima (γd mín):</div>
+                <div class="resultado-valor">
+                  <input type="number" id="densidade-min" step="0.001" placeholder="0.000" readonly>
+                  <span class="resultado-unidade">g/cm³</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-resultado">
+            <h4>Compacidade Relativa (CR)</h4>
+            <div class="card-content">
+              <div class="resultado-item">
+                <div class="resultado-label">CR Topo:</div>
+                <div class="resultado-valor">
+                  <input type="number" id="cr-topo" step="0.1" placeholder="0.0" readonly>
+                  <span class="resultado-unidade">%</span>
+                </div>
+              </div>
+              <div class="resultado-item">
+                <div class="resultado-label">CR Base:</div>
+                <div class="resultado-valor">
+                  <input type="number" id="cr-base" step="0.1" placeholder="0.0" readonly>
+                  <span class="resultado-unidade">%</span>
+                </div>
+              </div>
+              <div class="resultado-item resultado-destaque">
+                <div class="resultado-label">CR Média:</div>
+                <div class="resultado-valor">
+                  <input type="number" id="cr-media" step="0.1" placeholder="0.0" readonly>
+                  <span class="resultado-unidade">%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-resultado">
+            <h4>Índice de Vazios (IV)</h4>
+            <div class="card-content">
+              <div class="resultado-item">
+                <div class="resultado-label">IV Topo:</div>
+                <div class="resultado-valor">
+                  <input type="number" id="indice-vazios-topo" step="0.001" placeholder="0.000" readonly>
+                </div>
+              </div>
+              <div class="resultado-item">
+                <div class="resultado-label">IV Base:</div>
+                <div class="resultado-valor">
+                  <input type="number" id="indice-vazios-base" step="0.001" placeholder="0.000" readonly>
+                </div>
+              </div>
+              <div class="resultado-item resultado-destaque">
+                <div class="resultado-label">IV Média:</div>
+                <div class="resultado-valor">
+                  <input type="number" id="iv-media" step="0.001" placeholder="0.000" readonly>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="form-row">
           <div class="status-container">
@@ -644,16 +693,25 @@
       <!-- Resultados finais -->
       <div class="form-section">
         <h3>Resultados</h3>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="diferenca-real">Diferença (g/cm³):</label>
-            <input type="number" id="diferenca-real" step="0.001" placeholder="0.000" readonly>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="media-densidade-real">Média Densidade Real (g/cm³):</label>
-            <input type="number" id="media-densidade-real" step="0.001" placeholder="0.000" readonly>
+        <div class="resultados-cards-container">
+          <div class="card-resultado">
+            <h4>Resultados Finais</h4>
+            <div class="card-content">
+              <div class="resultado-item resultado-destaque">
+                <div class="resultado-label">Densidade Real (γs):</div>
+                <div class="resultado-valor">
+                  <input type="number" id="media-densidade-real" step="0.001" placeholder="0.000" readonly>
+                  <span class="resultado-unidade">g/cm³</span>
+                </div>
+              </div>
+              <div class="resultado-item">
+                <div class="resultado-label">Diferença:</div>
+                <div class="resultado-valor">
+                  <input type="number" id="diferenca-real" step="0.001" placeholder="0.000" readonly>
+                  <span class="resultado-unidade">g/cm³</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="form-row">
@@ -854,6 +912,32 @@
           <div class="form-group">
             <label for="gamad-min">γd mín (g/cm³):</label>
             <input type="number" id="gamad-min" step="0.001" placeholder="0.000" readonly>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resultados -->
+      <div class="form-section">
+        <h3>Resultados</h3>
+        <div class="resultados-cards-container">
+          <div class="card-resultado">
+            <h4>Densidades Finais</h4>
+            <div class="card-content">
+              <div class="resultado-item">
+                <div class="resultado-label">Densidade Máxima:</div>
+                <div class="resultado-valor">
+                  <input type="number" id="gamad-max" step="0.001" placeholder="0.000" readonly>
+                  <span class="resultado-unidade">g/cm³</span>
+                </div>
+              </div>
+              <div class="resultado-item">
+                <div class="resultado-label">Densidade Mínima:</div>
+                <div class="resultado-valor">
+                  <input type="number" id="gamad-min" step="0.001" placeholder="0.000" readonly>
+                  <span class="resultado-unidade">g/cm³</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
