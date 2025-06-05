@@ -641,14 +641,20 @@
         <h3>Resultados</h3>
         <div class="form-row">
           <div class="form-group">
-            <label for="diferenca-real">Diferença (%):</label>
-            <input type="number" id="diferenca-real" step="0.1" placeholder="0.0" readonly>
+            <label for="diferenca-real">Diferença (g/cm³):</label>
+            <input type="number" id="diferenca-real" step="0.001" placeholder="0.000" readonly>
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label for="media-densidade-real">Média Densidade Real (g/cm³):</label>
             <input type="number" id="media-densidade-real" step="0.001" placeholder="0.000" readonly>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="status-container">
+            <label>Status:</label>
+            <div id="status-ensaio" class="status-ensaio">AGUARDANDO CÁLCULO</div>
           </div>
         </div>
       </div>

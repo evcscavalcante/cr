@@ -336,8 +336,9 @@ window.calculadora.pdfGenerator = (() => {
         ctx.font = 'bold 14px Arial';
         ctx.fillText('RESULTADOS', 50, y); y += 25;
         ctx.font = '12px Arial';
-        ctx.fillText(`Diferença (%): ${formatValue(dados.diferenca, 1)}`, 50, y);
+        ctx.fillText(`Diferença (g/cm³): ${formatValue(dados.diferenca, 3)}`, 50, y);
         ctx.fillText(`Média Densidade Real (g/cm³): ${formatValue(dados.mediaDensidadeReal, 3)}`, 50, y + 20);
+        ctx.fillText(`Status: ${dados.status || 'N/A'}`, 300, y + 20);
     }
 
     // Desenhar densidade máxima e mínima

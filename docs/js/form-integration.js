@@ -483,8 +483,13 @@ window.calculadora.formIntegration = (function() {
             });
 
             // Resultados Finais Real
-            fillInput('#diferenca-real', resultados.diferenca, 1);
+            fillInput('#diferenca-real', resultados.diferenca, 3);
             fillInput('#media-densidade-real', resultados.mediaDensidadeReal, 3);
+
+            if (statusEl) {
+                statusEl.textContent = resultados.status || 'CALCULADO';
+                statusEl.className = resultados.status && resultados.status.includes('APROVADO') ? 'status-aprovado' : 'status-reprovado';
+            }
 
         } else if (tipo === 'max-min') {
             resultados.determinacoesMax?.forEach((det, i) => {
