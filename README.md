@@ -81,7 +81,7 @@ Execute `iniciar-servidor.bat` no diretório raiz do projeto para abrir o aplica
 1. Acesse o menu principal
 2. Selecione o tipo de ensaio desejado
 3. Preencha os dados de entrada
-4. Clique em "Calcular" para obter os resultados
+4. Os cálculos serão realizados automaticamente
 5. Salve o ensaio ou gere um relatório em PDF
 
 ## Execução Local

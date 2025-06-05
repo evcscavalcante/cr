@@ -970,3 +970,16 @@ body.sidebar-hidden footer {
 body.sidebar-hidden .sidebar {
     transform: translateX(-100%);
 }
+
+/* Oculta elementos de navegação e botões ao imprimir */
+@media print {
+    header,
+    footer,
+    nav.sidebar,
+    #toggle-sidebar,
+    .menu-principal,
+    .tabs,
+    .acoes {
+        display: none !important;
+    }
+}
