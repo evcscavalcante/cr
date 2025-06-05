@@ -519,7 +519,9 @@ window.calculadora.formIntegration = (function() {
 
             // Resultados Finais Max/Min
             fillInput('#gamad-max', resultados.mediaGamadMax, 3);
+            fillInput('#gamad-max-result', resultados.mediaGamadMax, 3);
             fillInput('#gamad-min', resultados.mediaGamadMin, 3);
+            fillInput('#gamad-min-result', resultados.mediaGamadMin, 3);
         }
     }
 
