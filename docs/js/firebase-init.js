@@ -13,6 +13,5 @@
     const app = firebase.initializeApp(firebaseConfig);
     window.firebaseAuth = firebase.auth();
     window.firebaseDB = firebase.firestore();
-    console.log('Firebase inicializado');
   }
 })();

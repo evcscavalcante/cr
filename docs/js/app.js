@@ -54,13 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
     inicializarApp();
 
     function inicializarApp() {
-        console.log('Inicializando aplicação...');
         configurarMenuPrincipal();
         configurarTabs();
         configurarBotoesGlobais(); // Configura listeners para botões de ação e voltar
         inicializarBancoDeDados();
         verificarHashNavegacao();
-        console.log('Aplicação inicializada');
     }
 
     function configurarMenuPrincipal() {
@@ -126,7 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!tipo) return; // Sai se não conseguir determinar o tipo
 
                 if (target.classList.contains('btn-calcular')) {
-                    console.log('Botão Calcular clicado');
                     if (window.calculadora.calculos?.calcularAutomaticamente) {
                          window.calculadora.calculos.calcularAutomaticamente(tipo);
                          window.showToast('Cálculos realizados com sucesso!', 'success');
@@ -135,7 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
                  else if (target.classList.contains('btn-salvar')) {
-                    console.log('Botão Salvar clicado');
                     const dados = window.calculadora.formIntegration?.obterDadosFormulario(tipo);
                     if (dados && dados.registro && window.calculadora.db?.salvarRegistro) {
                         try {
@@ -153,7 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
                  else if (target.classList.contains('btn-gerar-pdf')) {
-                    console.log('Botão Gerar PDF clicado');
                     const dados = window.calculadora.formIntegration?.obterDadosFormulario(tipo);
 
                     // Garante que as bibliotecas de geração de PDF estão carregadas
@@ -181,25 +176,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
                  else if (target.classList.contains('btn-limpar')) {
-                    console.log('Botão Limpar clicado');
                     window.calculadora.formIntegration?.limparFormulario();
                     // A notificação já é exibida dentro de limparFormulario
                 }
                  else if (target.classList.contains('btn-voltar')) {
                     // Botão Voltar DENTRO da calculadora (volta para a lista)
-                    console.log('Botão Voltar (calculadora) clicado');
                     document.querySelector('.tab-btn[data-tab="lista-ensaios"]')?.click();
                 }
             }
             // Botão Voltar FORA da calculadora (volta para o menu principal)
             else if (target.classList.contains('btn-voltar-menu-principal')) {
-                 console.log('Botão Voltar (menu principal) clicado');
                  voltarMenuPrincipal();
             }
             // Botões na Lista de Ensaios
             else if (listaEnsaiosContainer) {
                  if (target.classList.contains('btn-novo-ensaio')) {
-                    console.log('Botão Novo Ensaio clicado');
                     const tipo = window.location.hash.substring(1) || 'in-situ';
                     if (window.calculadora.formIntegration) {
                         window.calculadora.formIntegration.carregarFormulario(tipo);
@@ -208,7 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                  }
                  else if (target.classList.contains('btn-editar')) {
-                    console.log('Botão Editar clicado');
                     const item = target.closest('.registro-item');
                     const registroId = item?.dataset.registroId;
                     const tipo = item?.dataset.tipo;
@@ -226,7 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                  }
                  else if (target.classList.contains('btn-excluir')) {
-                    console.log('Botão Excluir clicado');
                     const item = target.closest('.registro-item');
                     const registroId = item?.dataset.registroId;
                     const tipo = item?.dataset.tipo;
@@ -246,7 +235,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                  }
                  else if (target.classList.contains('btn-filtro')) {
-                    console.log('Botão Filtrar clicado');
                     const tipo = window.location.hash.substring(1) || 'in-situ';
                     carregarListaEnsaios(tipo); // Recarrega a lista aplicando filtros
                  }
@@ -258,7 +246,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.calculadora.db) {
             window.calculadora.db.init()
                 .then(() => {
-                    console.log('Banco de dados inicializado');
                     // Carrega a lista inicial baseada no hash ou padrão
                     const tipoInicial = window.location.hash.substring(1);
                     if (['in-situ', 'real', 'max-min'].includes(tipoInicial)) {

@@ -325,7 +325,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
             }
             
-            console.log(`Validação configurada para formulário de ${tipo}`);
         });
         
         // API pública

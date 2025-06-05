@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.calculadora.eventIntegration = (() => {
         // Configurar eventos para cálculos automáticos
         function configurarEventosCalculoAutomatico() {
-            console.log('Configurando eventos para cálculos automáticos...');
             
             // Observar mudanças no DOM para detectar quando novos formulários são carregados
             const observer = new MutationObserver((mutations) => {
@@ -31,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                     }
                                     
                                     if (tipo) {
-                                        console.log(`Formulário detectado: ${tipo}`);
                                         configurarEventosFormulario(form, tipo);
                                     }
                                 }
@@ -57,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 if (tipo) {
-                    console.log(`Formulário existente detectado: ${tipo}`);
                     configurarEventosFormulario(form, tipo);
                 }
             });
@@ -65,7 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Configurar eventos para um formulário específico
         function configurarEventosFormulario(form, tipo) {
-            console.log(`Configurando eventos para formulário ${tipo}`);
             
             // Adicionar event listeners para inputs
             const inputs = form.querySelectorAll('input:not([readonly])');
@@ -215,7 +211,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Calcular automaticamente
         function calcularAutomaticamente(tipo) {
-            console.log(`Calculando automaticamente para ${tipo}`);
             
             if (!window.calculadora.calculos) {
                 console.error('Módulo de cálculos não disponível');
@@ -235,7 +230,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 
-                console.log('Dados obtidos:', dados);
                 
                 // Calcular resultados
                 let resultados;
@@ -254,7 +248,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         return;
                 }
                 
-                console.log('Resultados calculados:', resultados);
                 
                 // Preencher resultados no formulário
                 window.calculadora.formIntegration.preencherResultados(tipo, resultados);
@@ -265,7 +258,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Inicializar módulo
         function init() {
-            console.log('Inicializando módulo de integração de eventos...');
             configurarEventosCalculoAutomatico();
         }
         
