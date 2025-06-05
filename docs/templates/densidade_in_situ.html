@@ -1,2 +1,1335 @@
-<h2>Densidade In Situ</h2>
-<p>Formulário ou conteúdo de densidade in situ aqui.</p>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Densidade In Situ</title>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="/static/css/styles.css" />
+
+    <style>
+        .calculadora-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+
+            .form-section h3 {
+                margin-top: 0;
+                color: #3f51b5;
+                border-bottom: 1px solid #dee2e6;
+                padding-bottom: 10px;
+                margin-bottom: 15px;
+            }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px 15px;
+        }
+
+        .form-group {
+            flex: 0 0 calc(33.333% - 20px);
+            margin: 0 10px 10px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: 500;
+            }
+
+            .form-group input,
+            .form-group select {
+                width: 100%;
+                padding: 8px;
+                border: 1px solid #ced4da;
+                border-radius: 4px;
+            }
+
+                .form-group input:focus,
+                .form-group select:focus {
+                    border-color: #3f51b5;
+                    outline: none;
+                    box-shadow: 0 0 0 0.2rem rgba(63, 81, 181, 0.25);
+                }
+
+                .form-group input[readonly],
+                .form-group select[disabled] {
+                    background-color: #e9ecef;
+                    cursor: not-allowed;
+                }
+
+        .table-responsive {
+            overflow-x: auto;
+            margin-bottom: 15px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .data-table th,
+            .data-table td {
+                padding: 10px;
+                text-align: left;
+                border-bottom: 1px solid #dee2e6;
+            }
+
+            .data-table th {
+                background-color: #f8f9fa;
+                font-weight: 600;
+            }
+
+            .data-table input {
+                width: 100%;
+                padding: 8px;
+                border: 1px solid #ced4da;
+                border-radius: 4px;
+            }
+
+                .data-table input[readonly] {
+                    background-color: #e9ecef;
+                }
+
+        .media-row {
+            background-color: #e8f0fe;
+        }
+
+            .media-row td {
+                font-weight: 500;
+            }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #3f51b5;
+            color: white;
+        }
+
+            .btn-primary:hover {
+                background-color: #303f9f;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+            .btn-secondary:hover {
+                background-color: #5a6268;
+            }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+            .btn-success:hover {
+                background-color: #218838;
+            }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+            .btn-danger:hover {
+                background-color: #c82333;
+            }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+            .btn-info:hover {
+                background-color: #138496;
+            }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .status-aprovado {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-reprovado {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-calculado {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-aguardando {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+
+        /* Estilos modificados para os cards de resultados finais */
+        .resultados-cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card-resultado {
+            flex: 1 1 calc(33.333% - 20px);
+            min-width: 250px;
+            background-color: #f0f2f5;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden; /* Garante que o conteúdo não ultrapasse os limites */
+        }
+
+            .card-resultado h4 {
+                color: #3f51b5;
+                margin-top: 0;
+                margin-bottom: 15px;
+                border-bottom: 1px solid #dee2e6;
+                padding-bottom: 8px;
+                font-size: 1.1rem;
+                text-align: center;
+            }
+
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .resultado-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .resultado-label {
+            flex: 0 0 60%;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding-right: 5px;
+        }
+
+        .resultado-valor {
+            flex: 0 0 40%;
+            display: flex;
+            align-items: center;
+        }
+
+            .resultado-valor input {
+                width: 100%;
+                text-align: right;
+                padding: 6px;
+                border: 1px solid #ced4da;
+                border-radius: 4px;
+                background-color: #e9ecef;
+            }
+
+        .resultado-unidade {
+            margin-left: 5px;
+            font-size: 0.85em;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        .resultado-destaque {
+            background-color: #e8f0fe;
+            border-left: 3px solid #4285f4;
+            padding: 8px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        @media (max-width: 992px) {
+            .form-group {
+                flex: 0 0 calc(50% - 20px);
+            }
+
+            .card-resultado {
+                flex: 1 1 calc(50% - 20px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-group {
+                flex: 0 0 calc(100% - 20px);
+            }
+
+            .form-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+                .form-actions button {
+                    width: 100%;
+                }
+
+            .card-resultado {
+                flex: 1 1 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Densidade In Situ</h2>
+
+    <form class="calculadora-container">
+        <!-- Informações Gerais -->
+        <div class="form-section">
+            <h3>Informações Gerais</h3>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="registro">Número do Registro:</label>
+                    <input type="text"
+                           id="registro"
+                           name="registro"
+                           placeholder="Informe o número do registro" />
+                </div>
+
+                <div class="form-group">
+                    <label for="data">Data:</label>
+                    <input type="date" id="data" name="data" />
+                </div>
+
+                <div class="form-group">
+                    <label for="operador">Operador:</label>
+                    <input type="text"
+                           id="operador"
+                           name="operador"
+                           placeholder="Nome do operador" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="responsavel">Responsável:</label>
+                    <input type="text"
+                           id="responsavel"
+                           name="responsavel"
+                           placeholder="Nome do responsável" />
+                </div>
+
+                <div class="form-group">
+                    <label for="verificador">Verificador:</label>
+                    <input type="text"
+                           id="verificador"
+                           name="verificador"
+                           placeholder="Nome do verificador" />
+                </div>
+
+                <div class="form-group">
+                    <label for="material">Material:</label>
+                    <input type="text"
+                           id="material"
+                           name="material"
+                           placeholder="Descrição do material" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="origem">Origem:</label>
+                    <input type="text"
+                           id="origem"
+                           name="origem"
+                           placeholder="Origem do material" />
+                </div>
+
+                <div class="form-group">
+                    <label for="norte">Norte:</label>
+                    <input type="text"
+                           id="norte"
+                           name="norte"
+                           placeholder="Coordenada Norte" />
+                </div>
+
+                <div class="form-group">
+                    <label for="este">Este:</label>
+                    <input type="text"
+                           id="este"
+                           name="este"
+                           placeholder="Coordenada Este" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="cota">Cota:</label>
+                    <input type="text"
+                           id="cota"
+                           name="cota"
+                           placeholder="Cota" />
+                </div>
+
+                <div class="form-group">
+                    <label for="quadrante">Quadrante:</label>
+                    <input type="text"
+                           id="quadrante"
+                           name="quadrante"
+                           placeholder="Quadrante" />
+                </div>
+
+                <div class="form-group">
+                    <label for="camada">Camada:</label>
+                    <input type="text"
+                           id="camada"
+                           name="camada"
+                           placeholder="Camada" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="hora">Hora:</label>
+                    <input type="time" id="hora" name="hora" />
+                </div>
+
+                <div class="form-group">
+                    <label for="balanca">Balança:</label>
+                    <input type="text"
+                           id="balanca"
+                           name="balanca"
+                           placeholder="Identificação da balança" />
+                </div>
+
+                <div class="form-group">
+                    <label for="estufa">Estufa:</label>
+                    <input type="text"
+                           id="estufa"
+                           name="estufa"
+                           placeholder="Identificação da estufa" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Referências -->
+        <div class="form-section">
+            <h3>Referências</h3>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="registro-densidade-real">
+                        Registro de Densidade Real:
+                    </label>
+                    <select id="registro-densidade-real"
+                            name="registro-densidade-real">
+                        <option value="">Selecione um registro</option>
+                        <option value="2.65">DR-2025-001 (2.65 g/cm³)</option>
+                        <option value="2.70">DR-2025-002 (2.70 g/cm³)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="registro-densidade-max-min">
+                        Registro de Densidade Máx/Mín:
+                    </label>
+                    <select id="registro-densidade-max-min"
+                            name="registro-densidade-max-min">
+                        <option value="">Selecione um registro</option>
+                        <option value="1.8,1.2">
+                            MM-2025-001 (Máx: 1.8, Mín: 1.2 g/cm³)
+                        </option>
+                        <option value="1.9,1.3">
+                            MM-2025-002 (Máx: 1.9, Mín: 1.3 g/cm³)
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Densidade In Situ -->
+        <div class="form-section">
+            <h3>Densidade In Situ</h3>
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Determinação 1</th>
+                            <th>Determinação 2</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Número do Cilindro</td>
+                            <td>
+                                <input type="text"
+                                       id="numero-cilindro-1"
+                                       name="numero-cilindro-1"
+                                       placeholder="Nº" />
+                            </td>
+                            <td>
+                                <input type="text"
+                                       id="numero-cilindro-2"
+                                       name="numero-cilindro-2"
+                                       placeholder="Nº" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Molde + Solo (g)</td>
+                            <td>
+                                <input type="number"
+                                       id="molde-solo-1"
+                                       name="molde-solo-1"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="molde-solo-2"
+                                       name="molde-solo-2"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Molde (g)</td>
+                            <td>
+                                <input type="number"
+                                       id="molde-1"
+                                       name="molde-1"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="molde-2"
+                                       name="molde-2"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Solo (g)</td>
+                            <td>
+                                <input type="number"
+                                       id="solo-1"
+                                       name="solo-1"
+                                       step="0.01"
+                                       placeholder="0.00"
+                                       readonly />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="solo-2"
+                                       name="solo-2"
+                                       step="0.01"
+                                       placeholder="0.00"
+                                       readonly />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Volume (cm³)</td>
+                            <td>
+                                <input type="number"
+                                       id="volume-1"
+                                       name="volume-1"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="volume-2"
+                                       name="volume-2"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>γnat (g/cm³)</td>
+                            <td>
+                                <input type="number"
+                                       id="gama-nat-um-1"
+                                       name="gama-nat-um-1"
+                                       step="0.001"
+                                       placeholder="0.000"
+                                       readonly />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="gama-nat-um-2"
+                                       name="gama-nat-um-2"
+                                       step="0.001"
+                                       placeholder="0.000"
+                                       readonly />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>γs (g/cm³)</td>
+                            <td>
+                                <input type="number"
+                                       id="gama-nat-1"
+                                       name="gama-nat-1"
+                                       step="0.001"
+                                       placeholder="0.000"
+                                       readonly />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="gama-nat-2"
+                                       name="gama-nat-2"
+                                       step="0.001"
+                                       placeholder="0.000"
+                                       readonly />
+                            </td>
+                        </tr>
+                        <tr class="media-row">
+                            <td>γS (g/cm³) Média:</td>
+                            <td colspan="2">
+                                <input type="number"
+                                       id="gama-nat-m"
+                                       name="gama-nat-m"
+                                       step="0.001"
+                                       placeholder="0.000"
+                                       readonly />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Teor de Umidade Topo -->
+        <div class="form-section">
+            <h3>Teor de Umidade Topo</h3>
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Det. 1</th>
+                            <th>Det. 2</th>
+                            <th>Det. 3</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Cápsula Nº</td>
+                            <td>
+                                <input type="text"
+                                       id="capsula-topo-1"
+                                       name="capsula-topo-1"
+                                       placeholder="Nº" />
+                            </td>
+                            <td>
+                                <input type="text"
+                                       id="capsula-topo-2"
+                                       name="capsula-topo-2"
+                                       placeholder="Nº" />
+                            </td>
+                            <td>
+                                <input type="text"
+                                       id="capsula-topo-3"
+                                       name="capsula-topo-3"
+                                       placeholder="Nº" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Solo Úmido + Tara (g)</td>
+                            <td>
+                                <input type="number"
+                                       id="solo-umido-tara-topo-1"
+                                       name="solo-umido-tara-topo-1"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="solo-umido-tara-topo-2"
+                                       name="solo-umido-tara-topo-2"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="solo-umido-tara-topo-3"
+                                       name="solo-umido-tara-topo-3"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Solo Seco + Tara (g)</td>
+                            <td>
+                                <input type="number"
+                                       id="solo-seco-tara-topo-1"
+                                       name="solo-seco-tara-topo-1"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="solo-seco-tara-topo-2"
+                                       name="solo-seco-tara-topo-2"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="solo-seco-tara-topo-3"
+                                       name="solo-seco-tara-topo-3"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Tara (g)</td>
+                            <td>
+                                <input type="number"
+                                       id="tara-topo-1"
+                                       name="tara-topo-1"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="tara-topo-2"
+                                       name="tara-topo-2"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="tara-topo-3"
+                                       name="tara-topo-3"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Solo Seco (g)</td>
+                            <td>
+                                <input type="number"
+                                       id="solo-seco-topo-1"
+                                       name="solo-seco-topo-1"
+                                       step="0.01"
+                                       placeholder="0.00"
+                                       readonly />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="solo-seco-topo-2"
+                                       name="solo-seco-topo-2"
+                                       step="0.01"
+                                       placeholder="0.00"
+                                       readonly />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="solo-seco-topo-3"
+                                       name="solo-seco-topo-3"
+                                       step="0.01"
+                                       placeholder="0.00"
+                                       readonly />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Água (g)</td>
+                            <td>
+                                <input type="number"
+                                       id="agua-topo-1"
+                                       name="agua-topo-1"
+                                       step="0.01"
+                                       placeholder="0.00"
+                                       readonly />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="agua-topo-2"
+                                       name="agua-topo-2"
+                                       step="0.01"
+                                       placeholder="0.00"
+                                       readonly />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="agua-topo-3"
+                                       name="agua-topo-3"
+                                       step="0.01"
+                                       placeholder="0.00"
+                                       readonly />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Umidade (%)</td>
+                            <td>
+                                <input type="number"
+                                       id="umidade-topo-1"
+                                       name="umidade-topo-1"
+                                       step="0.1"
+                                       placeholder="0.0"
+                                       readonly />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="umidade-topo-2"
+                                       name="umidade-topo-2"
+                                       step="0.1"
+                                       placeholder="0.0"
+                                       readonly />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="umidade-topo-3"
+                                       name="umidade-topo-3"
+                                       step="0.1"
+                                       placeholder="0.0"
+                                       readonly />
+                            </td>
+                        </tr>
+                        <tr class="media-row">
+                            <td>Umidade Média (%):</td>
+                            <td colspan="3">
+                                <input type="number"
+                                       id="umidade-media-topo"
+                                       name="umidade-media-topo"
+                                       step="0.1"
+                                       placeholder="0.0"
+                                       readonly />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Teor de Umidade Base -->
+        <div class="form-section">
+            <h3>Teor de Umidade Base</h3>
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Det. 1</th>
+                            <th>Det. 2</th>
+                            <th>Det. 3</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Cápsula Nº</td>
+                            <td>
+                                <input type="text"
+                                       id="capsula-base-1"
+                                       name="capsula-base-1"
+                                       placeholder="Nº" />
+                            </td>
+                            <td>
+                                <input type="text"
+                                       id="capsula-base-2"
+                                       name="capsula-base-2"
+                                       placeholder="Nº" />
+                            </td>
+                            <td>
+                                <input type="text"
+                                       id="capsula-base-3"
+                                       name="capsula-base-3"
+                                       placeholder="Nº" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Solo Úmido + Tara (g)</td>
+                            <td>
+                                <input type="number"
+                                       id="solo-umido-tara-base-1"
+                                       name="solo-umido-tara-base-1"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="solo-umido-tara-base-2"
+                                       name="solo-umido-tara-base-2"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="solo-umido-tara-base-3"
+                                       name="solo-umido-tara-base-3"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Solo Seco + Tara (g)</td>
+                            <td>
+                                <input type="number"
+                                       id="solo-seco-tara-base-1"
+                                       name="solo-seco-tara-base-1"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="solo-seco-tara-base-2"
+                                       name="solo-seco-tara-base-2"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="solo-seco-tara-base-3"
+                                       name="solo-seco-tara-base-3"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Tara (g)</td>
+                            <td>
+                                <input type="number"
+                                       id="tara-base-1"
+                                       name="tara-base-1"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="tara-base-2"
+                                       name="tara-base-2"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="tara-base-3"
+                                       name="tara-base-3"
+                                       step="0.01"
+                                       placeholder="0.00" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Solo Seco (g)</td>
+                            <td>
+                                <input type="number"
+                                       id="solo-seco-base-1"
+                                       name="solo-seco-base-1"
+                                       step="0.01"
+                                       placeholder="0.00"
+                                       readonly />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="solo-seco-base-2"
+                                       name="solo-seco-base-2"
+                                       step="0.01"
+                                       placeholder="0.00"
+                                       readonly />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="solo-seco-base-3"
+                                       name="solo-seco-base-3"
+                                       step="0.01"
+                                       placeholder="0.00"
+                                       readonly />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Água (g)</td>
+                            <td>
+                                <input type="number"
+                                       id="agua-base-1"
+                                       name="agua-base-1"
+                                       step="0.01"
+                                       placeholder="0.00"
+                                       readonly />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="agua-base-2"
+                                       name="agua-base-2"
+                                       step="0.01"
+                                       placeholder="0.00"
+                                       readonly />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="agua-base-3"
+                                       name="agua-base-3"
+                                       step="0.01"
+                                       placeholder="0.00"
+                                       readonly />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Umidade (%)</td>
+                            <td>
+                                <input type="number"
+                                       id="umidade-base-1"
+                                       name="umidade-base-1"
+                                       step="0.1"
+                                       placeholder="0.0"
+                                       readonly />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="umidade-base-2"
+                                       name="umidade-base-2"
+                                       step="0.1"
+                                       placeholder="0.0"
+                                       readonly />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       id="umidade-base-3"
+                                       name="umidade-base-3"
+                                       step="0.1"
+                                       placeholder="0.0"
+                                       readonly />
+                            </td>
+                        </tr>
+                        <tr class="media-row">
+                            <td>Umidade Média (%):</td>
+                            <td colspan="3">
+                                <input type="number"
+                                       id="umidade-media-base"
+                                       name="umidade-media-base"
+                                       step="0.1"
+                                       placeholder="0.0"
+                                       readonly />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Resultados Finais - Reorganizado em Cards -->
+        <div class="form-section">
+            <h3>Resultados Finais</h3>
+
+            <div class="resultados-cards-container">
+                <!-- Card 1: Densidades de Referência -->
+                <div class="card-resultado">
+                    <h4>Densidades de Referência</h4>
+                    <div class="card-content">
+                        <div class="resultado-item">
+                            <div class="resultado-label">Densidade Real (γs):</div>
+                            <div class="resultado-valor">
+                                <input type="number"
+                                       id="densidade-real"
+                                       name="densidade-real"
+                                       step="0.001"
+                                       placeholder="0.000"
+                                       readonly />
+                                <span class="resultado-unidade">g/cm³</span>
+                            </div>
+                        </div>
+
+                        <div class="resultado-item">
+                            <div class="resultado-label">Densidade Máxima (γdmáx):</div>
+                            <div class="resultado-valor">
+                                <input type="number"
+                                       id="densidade-max"
+                                       name="densidade-max"
+                                       step="0.001"
+                                       placeholder="0.000"
+                                       readonly />
+                                <span class="resultado-unidade">g/cm³</span>
+                            </div>
+                        </div>
+
+                        <div class="resultado-item">
+                            <div class="resultado-label">Densidade Mínima (γdmín):</div>
+                            <div class="resultado-valor">
+                                <input type="number"
+                                       id="densidade-min"
+                                       name="densidade-min"
+                                       step="0.001"
+                                       placeholder="0.000"
+                                       readonly />
+                                <span class="resultado-unidade">g/cm³</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Compacidade Relativa -->
+                <div class="card-resultado">
+                    <h4>Compacidade Relativa (CR)</h4>
+                    <div class="card-content">
+                        <div class="resultado-item">
+                            <div class="resultado-label">CR Topo:</div>
+                            <div class="resultado-valor">
+                                <input type="number"
+                                       id="cr-topo"
+                                       name="cr-topo"
+                                       step="0.1"
+                                       placeholder="0.0"
+                                       readonly />
+                                <span class="resultado-unidade">%</span>
+                            </div>
+                        </div>
+
+                        <div class="resultado-item">
+                            <div class="resultado-label">CR Base:</div>
+                            <div class="resultado-valor">
+                                <input type="number"
+                                       id="cr-base"
+                                       name="cr-base"
+                                       step="0.1"
+                                       placeholder="0.0"
+                                       readonly />
+                                <span class="resultado-unidade">%</span>
+                            </div>
+                        </div>
+
+                        <div class="resultado-item resultado-destaque">
+                            <div class="resultado-label">CR Média:</div>
+                            <div class="resultado-valor">
+                                <input type="number"
+                                       id="cr-media"
+                                       name="cr-media"
+                                       step="0.1"
+                                       placeholder="0.0"
+                                       readonly />
+                                <span class="resultado-unidade">%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Índice de Vazios -->
+                <div class="card-resultado">
+                    <h4>Índice de Vazios (IV)</h4>
+                    <div class="card-content">
+                        <div class="resultado-item">
+                            <div class="resultado-label">IV Topo:</div>
+                            <div class="resultado-valor">
+                                <input type="number"
+                                       id="iv-topo"
+                                       name="iv-topo"
+                                       step="0.001"
+                                       placeholder="0.000"
+                                       readonly />
+                            </div>
+                        </div>
+
+                        <div class="resultado-item">
+                            <div class="resultado-label">IV Base:</div>
+                            <div class="resultado-valor">
+                                <input type="number"
+                                       id="iv-base"
+                                       name="iv-base"
+                                       step="0.001"
+                                       placeholder="0.000"
+                                       readonly />
+                            </div>
+                        </div>
+
+                        <div class="resultado-item resultado-destaque">
+                            <div class="resultado-label">IV Média:</div>
+                            <div class="resultado-valor">
+                                <input type="number"
+                                       id="iv-media"
+                                       name="iv-media"
+                                       step="0.001"
+                                       placeholder="0.000"
+                                       readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" class="btn btn-primary btn-calcular">
+                Calcular
+            </button>
+            <button type="button" class="btn btn-success btn-salvar">Salvar</button>
+            <button type="button" class="btn btn-info btn-gerar-pdf">
+                Gerar PDF
+            </button>
+            <button type="button" class="btn btn-danger btn-limpar">Limpar</button>
+        </div>
+    </form>
+
+    <!-- Script standalone que funciona independentemente da estrutura de pastas -->
+    <script src="../static/js/calculadora-standalone.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Verificar se há dados para edição
+            const dadosEdicao = JSON.parse(
+                localStorage.getItem("ensaio_edicao") || "null"
+            );
+            if (dadosEdicao) {
+                preencherFormularioComDados(dadosEdicao);
+            }
+
+            // Função para preencher o formulário com dados
+            function preencherFormularioComDados(dados) {
+                console.log("Preenchendo formulário com dados:", dados);
+
+                // Preencher campos de informações gerais
+                document.getElementById("registro").value = dados.registro || "";
+                document.getElementById("data").value = dados.data || "";
+                document.getElementById("operador").value = dados.operador || "";
+                document.getElementById("responsavel").value = dados.responsavel || "";
+                document.getElementById("verificador").value = dados.verificador || "";
+                document.getElementById("material").value = dados.material || "";
+                document.getElementById("origem").value = dados.origem || "";
+                document.getElementById("norte").value = dados.norte || "";
+                document.getElementById("este").value = dados.este || "";
+                document.getElementById("cota").value = dados.cota || "";
+                document.getElementById("quadrante").value = dados.quadrante || "";
+                document.getElementById("camada").value = dados.camada || "";
+                document.getElementById("hora").value = dados.hora || "";
+                document.getElementById("balanca").value = dados.balanca || "";
+                document.getElementById("estufa").value = dados.estufa || "";
+
+                // Preencher referências e desabilitar os selects se já foram salvos
+                const selectDensidadeReal = document.getElementById(
+                    "registro-densidade-real"
+                );
+                const selectDensidadeMaxMin = document.getElementById(
+                    "registro-densidade-max-min"
+                );
+
+                if (dados.registroDensidadeReal) {
+                    selectDensidadeReal.value = dados.registroDensidadeReal;
+                    selectDensidadeReal.disabled = true;
+                }
+
+                if (dados.registroDensidadeMaxMin) {
+                    selectDensidadeMaxMin.value = dados.registroDensidadeMaxMin;
+                    selectDensidadeMaxMin.disabled = true;
+                }
+
+                // Indicador visual de campos travados
+                if (selectDensidadeReal.disabled) {
+                    const label = document.querySelector(
+                        'label[for="registro-densidade-real"]'
+                    );
+                    if (label) {
+                        label.innerHTML += ' <span style="color: #dc3545;">(Travado)</span>';
+                    }
+                }
+
+                if (selectDensidadeMaxMin.disabled) {
+                    const label = document.querySelector(
+                        'label[for="registro-densidade-max-min"]'
+                    );
+                    if (label) {
+                        label.innerHTML += ' <span style="color: #dc3545;">(Travado)</span>';
+                    }
+                }
+
+                // Preencher densidade in situ
+                document.getElementById("numero-cilindro-1").value =
+                    dados.numeroCilindro1 || "";
+                document.getElementById("numero-cilindro-2").value =
+                    dados.numeroCilindro2 || "";
+                document.getElementById("molde-solo-1").value = dados.moldeSolo1 || "";
+                document.getElementById("molde-solo-2").value = dados.moldeSolo2 || "";
+                document.getElementById("molde-1").value = dados.molde1 || "";
+                document.getElementById("molde-2").value = dados.molde2 || "";
+                document.getElementById("volume-1").value = dados.volume1 || "";
+                document.getElementById("volume-2").value = dados.volume2 || "";
+
+                // Preencher umidade topo
+                for (let i = 1; i <= 3; i++) {
+                    document.getElementById(`capsula-topo-${i}`).value =
+                        dados[`capsulaTopo${i}`] || "";
+                    document.getElementById(`solo-umido-tara-topo-${i}`).value =
+                        dados[`soloUmidoTaraTopo${i}`] || "";
+                    document.getElementById(`solo-seco-tara-topo-${i}`).value =
+                        dados[`soloSecoTaraTopo${i}`] || "";
+                    document.getElementById(`tara-topo-${i}`).value =
+                        dados[`taraTopo${i}`] || "";
+                }
+
+                // Preencher umidade base
+                for (let i = 1; i <= 3; i++) {
+                    document.getElementById(`capsula-base-${i}`).value =
+                        dados[`capsulaBase${i}`] || "";
+                    document.getElementById(`solo-umido-tara-base-${i}`).value =
+                        dados[`soloUmidoTaraBase${i}`] || "";
+                    document.getElementById(`solo-seco-tara-base-${i}`).value =
+                        dados[`soloSecoTaraBase${i}`] || "";
+                    document.getElementById(`tara-base-${i}`).value =
+                        dados[`taraBase${i}`] || "";
+                }
+
+                // Preencher resultados finais
+                document.getElementById("densidade-real").value =
+                    dados.densidadeReal || "";
+                document.getElementById("densidade-max").value =
+                    dados.densidadeMax || "";
+                document.getElementById("densidade-min").value =
+                    dados.densidadeMin || "";
+                document.getElementById("cr-topo").value = dados.crTopo || "";
+                document.getElementById("cr-base").value = dados.crBase || "";
+                document.getElementById("cr-media").value = dados.crMedia || "";
+                document.getElementById("iv-topo").value = dados.ivTopo || "";
+                document.getElementById("iv-base").value = dados.ivBase || "";
+                document.getElementById("iv-media").value = dados.ivMedia || "";
+
+                // Chamar função para recalcular campos derivados
+                if (typeof calcularAutomaticamente === "function") {
+                    calcularAutomaticamente();
+                }
+
+                // Limpar dados de edição após preenchimento
+                localStorage.removeItem("ensaio_edicao");
+
+                // Marcar form como salvo, caso id exista
+                if (dados.id) {
+                    document
+                        .querySelector("form")
+                        .setAttribute("data-ensaio-id", dados.id);
+                    document
+                        .querySelector("form")
+                        .setAttribute("data-ensaio-salvo", "true");
+                }
+            }
+        });
+    </script>
+</body>
+</html>
