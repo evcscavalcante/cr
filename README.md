@@ -56,6 +56,14 @@ O projeto foi estruturado com uma arquitetura modular, utilizando HTML5, CSS3 e 
    - Layout adaptável para smartphones e tablets
    - Uso de CSS Grid e Flexbox para organização responsiva
 
+## Cabeçalhos dos Formulários
+
+| Calculadora                | Campos do Cabeçalho                                                                             |
+|----------------------------|------------------------------------------------------------------------------------------------|
+| Densidade In Situ          | Número do Registro, Data, Operador, Responsável, Verificador, Material, Origem, Norte, Este, Cota, Quadrante, Camada, Hora |
+| Densidade Real dos Grãos   | Número do Registro, Data, Operador, Material, Origem                                            |
+| Densidade Máxima e Mínima  | Número do Registro, Data, Operador, Material, Origem                                            |
+
 ## Tecnologias Utilizadas
 
 - HTML5

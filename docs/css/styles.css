@@ -784,6 +784,35 @@ footer {
     cursor: not-allowed;
 }
 
+/* Tabela para cabeçalho dos formulários */
+.header-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0.5rem;
+}
+
+.header-table td {
+    padding: 0.4rem;
+    vertical-align: top;
+}
+
+.header-table label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.header-table input,
+.header-table select {
+    width: 100%;
+    padding: 0.7rem;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-size: 0.95rem;
+}
+
 /* Botão de voltar ao menu principal */
 .btn-voltar-menu-principal {
     display: flex;
