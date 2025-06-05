@@ -90,7 +90,18 @@ window.calculadora.formIntegration = (function() {
             return;
         }
 
-        // Removido botão "Voltar para Lista" para simplificar a interface
+        // Adiciona um botão de voltar se não existir
+        if (!form.querySelector('.btn-voltar')) {
+            const btnVoltar = document.createElement('button');
+            btnVoltar.type = 'button';
+            btnVoltar.className = 'btn-voltar';
+            btnVoltar.innerHTML = '<i class="fas fa-arrow-left"></i> Voltar para Lista';
+            // Adiciona o botão antes das ações
+            const acoesDiv = form.querySelector('.acoes');
+            if (acoesDiv) {
+                form.insertBefore(btnVoltar, acoesDiv);
+            }
+        }
 
         // Carrega dados de referência se for 'in-situ'
         if (tipo === 'in-situ') {
@@ -453,26 +464,6 @@ window.calculadora.formIntegration = (function() {
                 fillInput('#cr-base', '', 1);
             }
 
-            // Novos campos de resultados
-            const dr = parseFloat(form.dataset.densidadeReal);
-            const dmax = parseFloat(form.dataset.densidadeMax);
-            const dmin = parseFloat(form.dataset.densidadeMin);
-            if (!isNaN(dr)) fillInput('#densidade-real', dr, 3);
-            if (!isNaN(dmax)) fillInput('#densidade-max', dmax, 3);
-            if (!isNaN(dmin)) fillInput('#densidade-min', dmin, 3);
-
-            if (typeof resultados.compacidadeRelativa?.topo === 'number' && typeof resultados.compacidadeRelativa?.base === 'number') {
-                fillInput('#cr-media', (resultados.compacidadeRelativa.topo + resultados.compacidadeRelativa.base) / 2, 1);
-            } else {
-                fillInput('#cr-media', '', 1);
-            }
-
-            if (typeof resultados.indiceVaziosTopo === 'number' && typeof resultados.indiceVaziosBase === 'number') {
-                fillInput('#iv-media', (resultados.indiceVaziosTopo + resultados.indiceVaziosBase) / 2, 3);
-            } else {
-                fillInput('#iv-media', '', 3);
-            }
-
             if (statusEl) {
                 statusEl.textContent = resultados.status || 'CALCULADO';
                 statusEl.className = resultados.status && resultados.status.includes('APROVADO') ? 'status-aprovado' : 'status-reprovado';
@@ -519,9 +510,7 @@ window.calculadora.formIntegration = (function() {
 
             // Resultados Finais Max/Min
             fillInput('#gamad-max', resultados.mediaGamadMax, 3);
-            fillInput('#gamad-max-result', resultados.mediaGamadMax, 3);
             fillInput('#gamad-min', resultados.mediaGamadMin, 3);
-            fillInput('#gamad-min-result', resultados.mediaGamadMin, 3);
         }
     }
 
@@ -602,6 +591,8 @@ window.calculadora.formIntegration = (function() {
         if (typeof window.showToast === 'function') {
             window.showToast(message, type, duration);
         } else {
+            // Fallback simples com console.log e alert para erros
+            console.log(`Notificação (${type}): ${message}`);
             if (type === 'error') {
                 alert(`ERRO: ${message}`);
             }
@@ -619,6 +610,7 @@ window.calculadora.formIntegration = (function() {
             return;
         }
 
+        console.log(`Carregando registro '${registroId}' do tipo '${tipo}' para edição...`);
         const listaEnsaios = document.querySelector('.lista-registros');
         if (listaEnsaios) listaEnsaios.classList.add('loading');
 
@@ -865,11 +857,7 @@ window.calculadora.formIntegration = (function() {
                  Object.assign(dados, ultimosResultados);
              }
 
-            // Mapeia nomes esperados pelo gerador de PDF
-            dados.densidadeRealRef = dados.refReal ?? dados.densidadeRealRef;
-            dados.gamadMaxRef = dados.refMax ?? dados.gamadMaxRef;
-            dados.gamadMinRef = dados.refMin ?? dados.gamadMinRef;
-
+            console.log("Dados para PDF:", dados);
             window.calculadora.pdfGenerator.gerarPDF(tipo, dados);
             exibirNotificacao('PDF gerado com sucesso!', 'success');
 

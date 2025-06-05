@@ -8,6 +8,7 @@ window.calculadora = window.calculadora || {};
 window.calculadora.pdfGenerator = (() => {
     // Gerar PDF
     function gerarPDF(tipo, dados) {
+        console.log(`Gerando PDF para ${tipo}:`, dados);
 
         return new Promise(async (resolve, reject) => {
             // PDF via html2pdf removido por problemas de compatibilidade

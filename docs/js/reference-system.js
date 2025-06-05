@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     selectElement.appendChild(option);
                 });
                 
+                console.log(`Registros de ${tipoDestino} carregados para seleção`);
             } catch (error) {
                 console.error('Erro ao carregar registros para seleção:', error);
             }
