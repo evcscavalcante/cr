@@ -877,38 +877,40 @@ footer {
     justify-content: center;
     align-items: center;
     padding: 2rem;
-    background-color: var(--primary-light);
+    background: linear-gradient(135deg, var(--primary-light) 0%, #ffffff 100%);
     min-height: 100vh;
 }
 
 #login-container .login-form {
-    background: white;
-    padding: 1rem;
+    background: #ffffff;
+    padding: 2rem 1.5rem;
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
     width: 100%;
-    max-width: 300px;
+    max-width: 340px;
 }
 
 #login-container input {
     width: 100%;
-    padding: 0.5rem;
-    margin: 0.5rem 0;
-    border: 1px solid var(--primary-color);
+    padding: 0.75rem;
+    margin: 0.6rem 0;
+    border: 1px solid #ccc;
     border-radius: var(--border-radius);
-    background-color: var(--secondary-color);
+    background-color: #fff;
     color: var(--text-color);
+    font-size: 1rem;
 }
 
 #login-container button {
     width: 100%;
-    padding: 0.5rem;
-    margin-top: 0.5rem;
-    border: 1px solid var(--primary-color);
+    padding: 0.75rem;
+    margin-top: 0.8rem;
+    border: none;
     border-radius: var(--border-radius);
     background-color: var(--primary-color);
     color: white;
     cursor: pointer;
+    font-size: 1rem;
     transition: var(--transition);
 }
 
@@ -918,7 +920,7 @@ footer {
 
 #login-container .login-form p {
     text-align: center;
-    margin-top: 0.5rem;
+    margin-top: 1rem;
 }
 
 /* Controle de visibilidade do menu lateral */

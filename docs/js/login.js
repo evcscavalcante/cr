@@ -32,7 +32,7 @@
 
   const auth = window.firebaseAuth;
 
-  document.getElementById('register-btn').addEventListener('click', () => {
+  function registrar() {
     const u = document.getElementById('register-username').value.trim();
     const p = document.getElementById('register-password').value;
     if (!u || !p) return alert('Preencha todos os campos');
@@ -42,21 +42,45 @@
         showForm(loginForm);
       })
       .catch(err => alert('Erro ao registrar: ' + err.message));
+  }
+
+  document.getElementById('register-btn').addEventListener('click', registrar);
+  registerForm.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      registrar();
+    }
   });
 
-  document.getElementById('login-btn').addEventListener('click', () => {
+  function logar() {
     const u = document.getElementById('login-username').value.trim();
     const p = document.getElementById('login-password').value;
     auth.signInWithEmailAndPassword(u, p)
       .catch(() => alert('Usuário ou senha inválidos'));
+  }
+
+  document.getElementById('login-btn').addEventListener('click', logar);
+  loginForm.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      logar();
+    }
   });
 
-  document.getElementById('recover-btn').addEventListener('click', () => {
+  function recuperar() {
     const u = document.getElementById('recover-username').value.trim();
     if (!u) return alert('Informe o e-mail');
     auth.sendPasswordResetEmail(u)
       .then(() => alert('Email de recuperação enviado'))
       .catch(err => alert('Erro: ' + err.message));
+  }
+
+  document.getElementById('recover-btn').addEventListener('click', recuperar);
+  recoverForm.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      recuperar();
+    }
   });
 
   logoutBtn.addEventListener('click', () => {
