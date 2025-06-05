@@ -12,26 +12,29 @@
 </head>
 <body>
   <div id="login-container" class="login-container">
-    <div id="login-form" class="login-form">
-      <h2>Login</h2>
+    <div class="login-wrapper">
+      <h1 class="app-title">Laboratório Ev.C.S</h1>
+      <div id="login-form" class="login-form">
+        <h2>Login</h2>
       <input type="email" id="login-username" placeholder="Usuário" autocomplete="username" autofocus>
       <input type="password" id="login-password" placeholder="Senha" autocomplete="current-password">
       <button id="login-btn">Entrar</button>
       <p><a href="#" id="show-register">Criar Conta</a> | <a href="#" id="show-recover">Recuperar Conta</a></p>
-    </div>
-    <div id="register-form" class="login-form" style="display:none;">
-      <h2>Criar Conta</h2>
+      </div>
+      <div id="register-form" class="login-form" style="display:none;">
+        <h2>Criar Conta</h2>
       <input type="email" id="register-username" placeholder="Usuário" autocomplete="username">
       <input type="password" id="register-password" placeholder="Senha">
       <button id="register-btn">Registrar</button>
       <p><a href="#" class="back-to-login">Voltar para Login</a></p>
-    </div>
-    <div id="recover-form" class="login-form" style="display:none;">
-      <h2>Recuperar Conta</h2>
+      </div>
+      <div id="recover-form" class="login-form" style="display:none;">
+        <h2>Recuperar Conta</h2>
       <input type="email" id="recover-username" placeholder="Usuário" autocomplete="username">
       <input type="password" id="recover-password" placeholder="Nova Senha">
       <button id="recover-btn">Alterar Senha</button>
-      <p><a href="#" class="back-to-login">Voltar para Login</a></p>
+        <p><a href="#" class="back-to-login">Voltar para Login</a></p>
+      </div>
     </div>
   </div>
   <header>
