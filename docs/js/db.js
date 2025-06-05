@@ -25,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 
-                console.log('Inicializando banco de dados...');
                 
                 const request = indexedDB.open(DB_NAME, DB_VERSION);
                 
@@ -36,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 request.onsuccess = (event) => {
                     db = event.target.result;
-                    console.log('Banco de dados inicializado com sucesso');
                     
                     // Configurar backup automático
                     configurarBackupAutomatico();
@@ -69,7 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         maxMinStore.createIndex('material', 'material', { unique: false });
                     }
                     
-                    console.log('Estrutura do banco de dados criada/atualizada');
                 };
             });
         }
@@ -80,7 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 exportarDados()
                     .then(dados => {
                         localStorage.setItem('calculadora_backup', JSON.stringify(dados));
-                        console.log('Backup automático realizado:', new Date().toLocaleString());
                     })
                     .catch(error => {
                         console.error('Erro ao realizar backup automático:', error);
@@ -108,7 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         const request = objectStore.put(dados);
                         
                         request.onsuccess = () => {
-                            console.log(`Registro salvo com sucesso: ${dados.registro}`);
                             salvarRegistroFirestore(tipo, dados);
                             resolve(dados);
                         };
@@ -140,10 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         request.onsuccess = (event) => {
                             const resultado = event.target.result;
                             if (resultado) {
-                                console.log(`Registro carregado: ${registro}`);
                                 resolve(resultado);
                             } else {
-                                console.log(`Registro não encontrado: ${registro}`);
                                 resolve(null);
                             }
                         };
@@ -174,7 +167,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         request.onsuccess = (event) => {
                             const registros = event.target.result;
-                            console.log(`${registros.length} registros encontrados para ${tipo}`);
                             resolve(registros);
                         };
                         
@@ -203,7 +195,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         const request = objectStore.delete(registro);
                         
                         request.onsuccess = () => {
-                            console.log(`Registro excluído: ${registro}`);
                             resolve(true);
                         };
                         
@@ -273,7 +264,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         Promise.all(promises)
                             .then(() => {
-                                console.log('Importação concluída com sucesso');
                                 resolve(true);
                             })
                             .catch(error => {
@@ -370,7 +360,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Inicializar banco de dados ao carregar a página
     window.calculadora.db.init()
         .then(() => {
-            console.log('Banco de dados inicializado e pronto para uso');
             
             // Disparar evento de banco de dados pronto
             const event = new CustomEvent('dbReady');

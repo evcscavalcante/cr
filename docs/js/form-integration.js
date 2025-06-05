@@ -602,8 +602,6 @@ window.calculadora.formIntegration = (function() {
         if (typeof window.showToast === 'function') {
             window.showToast(message, type, duration);
         } else {
-            // Fallback simples com console.log e alert para erros
-            console.log(`Notificação (${type}): ${message}`);
             if (type === 'error') {
                 alert(`ERRO: ${message}`);
             }
@@ -621,7 +619,6 @@ window.calculadora.formIntegration = (function() {
             return;
         }
 
-        console.log(`Carregando registro '${registroId}' do tipo '${tipo}' para edição...`);
         const listaEnsaios = document.querySelector('.lista-registros');
         if (listaEnsaios) listaEnsaios.classList.add('loading');
 
@@ -868,7 +865,11 @@ window.calculadora.formIntegration = (function() {
                  Object.assign(dados, ultimosResultados);
              }
 
-            console.log("Dados para PDF:", dados);
+            // Mapeia nomes esperados pelo gerador de PDF
+            dados.densidadeRealRef = dados.refReal ?? dados.densidadeRealRef;
+            dados.gamadMaxRef = dados.refMax ?? dados.gamadMaxRef;
+            dados.gamadMinRef = dados.refMin ?? dados.gamadMinRef;
+
             window.calculadora.pdfGenerator.gerarPDF(tipo, dados);
             exibirNotificacao('PDF gerado com sucesso!', 'success');
 
