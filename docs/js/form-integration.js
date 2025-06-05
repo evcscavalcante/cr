@@ -464,7 +464,10 @@ window.calculadora.formIntegration = (function() {
                 fillInput('#cr-base', '', 1);
             }
 
-            if (statusEl) statusEl.textContent = resultados.status || 'CALCULADO';
+            if (statusEl) {
+                statusEl.textContent = resultados.status || 'CALCULADO';
+                statusEl.className = resultados.status && resultados.status.includes('APROVADO') ? 'status-aprovado' : 'status-reprovado';
+            }
 
         } else if (tipo === 'real') {
             resultados.determinacoesUmidadeReal?.forEach((det, i) => {
