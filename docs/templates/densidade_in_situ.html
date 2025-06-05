@@ -317,129 +317,77 @@
         <div class="form-section">
             <h3>Informações Gerais</h3>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="registro">Número do Registro:</label>
-                    <input type="text"
-                           id="registro"
-                           name="registro"
-                           placeholder="Informe o número do registro" />
-                </div>
-
-                <div class="form-group">
-                    <label for="data">Data:</label>
-                    <input type="date" id="data" name="data" />
-                </div>
-
-                <div class="form-group">
-                    <label for="operador">Operador:</label>
-                    <input type="text"
-                           id="operador"
-                           name="operador"
-                           placeholder="Nome do operador" />
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="responsavel">Responsável:</label>
-                    <input type="text"
-                           id="responsavel"
-                           name="responsavel"
-                           placeholder="Nome do responsável" />
-                </div>
-
-                <div class="form-group">
-                    <label for="verificador">Verificador:</label>
-                    <input type="text"
-                           id="verificador"
-                           name="verificador"
-                           placeholder="Nome do verificador" />
-                </div>
-
-                <div class="form-group">
-                    <label for="material">Material:</label>
-                    <input type="text"
-                           id="material"
-                           name="material"
-                           placeholder="Descrição do material" />
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="origem">Origem:</label>
-                    <input type="text"
-                           id="origem"
-                           name="origem"
-                           placeholder="Origem do material" />
-                </div>
-
-                <div class="form-group">
-                    <label for="norte">Norte:</label>
-                    <input type="text"
-                           id="norte"
-                           name="norte"
-                           placeholder="Coordenada Norte" />
-                </div>
-
-                <div class="form-group">
-                    <label for="este">Este:</label>
-                    <input type="text"
-                           id="este"
-                           name="este"
-                           placeholder="Coordenada Este" />
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="cota">Cota:</label>
-                    <input type="text"
-                           id="cota"
-                           name="cota"
-                           placeholder="Cota" />
-                </div>
-
-                <div class="form-group">
-                    <label for="quadrante">Quadrante:</label>
-                    <input type="text"
-                           id="quadrante"
-                           name="quadrante"
-                           placeholder="Quadrante" />
-                </div>
-
-                <div class="form-group">
-                    <label for="camada">Camada:</label>
-                    <input type="text"
-                           id="camada"
-                           name="camada"
-                           placeholder="Camada" />
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="hora">Hora:</label>
-                    <input type="time" id="hora" name="hora" />
-                </div>
-
-                <div class="form-group">
-                    <label for="balanca">Balança:</label>
-                    <input type="text"
-                           id="balanca"
-                           name="balanca"
-                           placeholder="Identificação da balança" />
-                </div>
-
-                <div class="form-group">
-                    <label for="estufa">Estufa:</label>
-                    <input type="text"
-                           id="estufa"
-                           name="estufa"
-                           placeholder="Identificação da estufa" />
-                </div>
-            </div>
+            <table class="header-table">
+                <tr>
+                    <td>
+                        <label for="registro">Número do Registro:</label>
+                        <input type="text" id="registro" name="registro" placeholder="Informe o número do registro" />
+                    </td>
+                    <td>
+                        <label for="data">Data:</label>
+                        <input type="date" id="data" name="data" />
+                    </td>
+                    <td>
+                        <label for="operador">Operador:</label>
+                        <input type="text" id="operador" name="operador" placeholder="Nome do operador" />
+                    </td>
+                    <td>
+                        <label for="responsavel">Responsável:</label>
+                        <input type="text" id="responsavel" name="responsavel" placeholder="Nome do responsável" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="verificador">Verificador:</label>
+                        <input type="text" id="verificador" name="verificador" placeholder="Nome do verificador" />
+                    </td>
+                    <td>
+                        <label for="material">Material:</label>
+                        <input type="text" id="material" name="material" placeholder="Descrição do material" />
+                    </td>
+                    <td>
+                        <label for="origem">Origem:</label>
+                        <input type="text" id="origem" name="origem" placeholder="Origem do material" />
+                    </td>
+                    <td>
+                        <label for="norte">Norte:</label>
+                        <input type="text" id="norte" name="norte" placeholder="Coordenada Norte" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="este">Este:</label>
+                        <input type="text" id="este" name="este" placeholder="Coordenada Este" />
+                    </td>
+                    <td>
+                        <label for="cota">Cota:</label>
+                        <input type="text" id="cota" name="cota" placeholder="Cota" />
+                    </td>
+                    <td>
+                        <label for="quadrante">Quadrante:</label>
+                        <input type="text" id="quadrante" name="quadrante" placeholder="Quadrante" />
+                    </td>
+                    <td>
+                        <label for="camada">Camada:</label>
+                        <input type="text" id="camada" name="camada" placeholder="Camada" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="hora">Hora:</label>
+                        <input type="time" id="hora" name="hora" />
+                    </td>
+                    <td>
+                        <label for="balanca">Balança:</label>
+                        <input type="text" id="balanca" name="balanca" placeholder="Identificação da balança" />
+                    </td>
+                    <td>
+                        <label for="estufa">Estufa:</label>
+                        <input type="text" id="estufa" name="estufa" placeholder="Identificação da estufa" />
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
         </div>
 
         <!-- Referências -->
