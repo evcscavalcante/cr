@@ -7,7 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnConcreto = document.getElementById('btn-menu-concreto');
   const toggleBtn = document.getElementById('toggle-sidebar');
 
-  document.body.classList.add('sidebar-visible');
+  if (window.innerWidth < 768) {
+    document.body.classList.add('sidebar-hidden');
+  } else {
+    document.body.classList.add('sidebar-visible');
+  }
 
   toggleBtn?.addEventListener('click', () => {
     document.body.classList.toggle('sidebar-hidden');
