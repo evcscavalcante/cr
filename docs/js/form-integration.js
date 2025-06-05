@@ -464,6 +464,26 @@ window.calculadora.formIntegration = (function() {
                 fillInput('#cr-base', '', 1);
             }
 
+            // Novos campos de resultados
+            const dr = parseFloat(form.dataset.densidadeReal);
+            const dmax = parseFloat(form.dataset.densidadeMax);
+            const dmin = parseFloat(form.dataset.densidadeMin);
+            if (!isNaN(dr)) fillInput('#densidade-real', dr, 3);
+            if (!isNaN(dmax)) fillInput('#densidade-max', dmax, 3);
+            if (!isNaN(dmin)) fillInput('#densidade-min', dmin, 3);
+
+            if (typeof resultados.compacidadeRelativa?.topo === 'number' && typeof resultados.compacidadeRelativa?.base === 'number') {
+                fillInput('#cr-media', (resultados.compacidadeRelativa.topo + resultados.compacidadeRelativa.base) / 2, 1);
+            } else {
+                fillInput('#cr-media', '', 1);
+            }
+
+            if (typeof resultados.indiceVaziosTopo === 'number' && typeof resultados.indiceVaziosBase === 'number') {
+                fillInput('#iv-media', (resultados.indiceVaziosTopo + resultados.indiceVaziosBase) / 2, 3);
+            } else {
+                fillInput('#iv-media', '', 3);
+            }
+
             if (statusEl) {
                 statusEl.textContent = resultados.status || 'CALCULADO';
                 statusEl.className = resultados.status && resultados.status.includes('APROVADO') ? 'status-aprovado' : 'status-reprovado';
