@@ -90,18 +90,7 @@ window.calculadora.formIntegration = (function() {
             return;
         }
 
-        // Adiciona um botão de voltar se não existir
-        if (!form.querySelector('.btn-voltar')) {
-            const btnVoltar = document.createElement('button');
-            btnVoltar.type = 'button';
-            btnVoltar.className = 'btn-voltar';
-            btnVoltar.innerHTML = '<i class="fas fa-arrow-left"></i> Voltar para Lista';
-            // Adiciona o botão antes das ações
-            const acoesDiv = form.querySelector('.acoes');
-            if (acoesDiv) {
-                form.insertBefore(btnVoltar, acoesDiv);
-            }
-        }
+        // Removido botão "Voltar para Lista" para simplificar a interface
 
         // Carrega dados de referência se for 'in-situ'
         if (tipo === 'in-situ') {
