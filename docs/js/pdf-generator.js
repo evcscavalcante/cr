@@ -11,14 +11,7 @@ window.calculadora.pdfGenerator = (() => {
         console.log(`Gerando PDF para ${tipo}:`, dados);
 
         return new Promise(async (resolve, reject) => {
-            if (tipo === 'in-situ' && typeof html2pdf !== 'undefined') {
-                try {
-                    await gerarPDFInSituHTML(dados);
-                    return resolve(true);
-                } catch (err) {
-                    return reject(err);
-                }
-            }
+            // PDF via html2pdf removido por problemas de compatibilidade
 
             // Verificar pdf-lib
             if (typeof PDFLib === 'undefined' || typeof PDFLib.PDFDocument === 'undefined') {

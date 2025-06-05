@@ -159,9 +159,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Garante que as bibliotecas de geração de PDF estão carregadas
                     try {
                         await loadPdfLib();
-                        if (tipo === 'in-situ') {
-                            await loadHtml2Pdf();
-                        }
                     } catch (e) {
                         window.showToast(e.message, 'error');
                         return;
@@ -359,17 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function loadHtml2Pdf() {
-        if (typeof html2pdf === 'undefined') {
-            return new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = 'libs/html2pdf.bundle.min.js';
-                script.onload = resolve;
-                script.onerror = () => reject(new Error('Falha ao carregar html2pdf'));
-                document.body.appendChild(script);
-            });
-        }
-    }
+
 
 });
 
