@@ -9,6 +9,7 @@
   const footer = document.querySelector('footer');
   const sidebar = document.querySelector('.sidebar');
   const logoutBtn = document.getElementById('logout-btn');
+  const consentManager = new window.ConsentManager();
 
    function showForm(form) {
      loginForm.style.display = 'none';
@@ -101,6 +102,9 @@
       sidebar.style.display = 'block';
       main.style.display = 'block';
       footer.style.display = 'block';
+      if (!consentManager.hasConsent(consentManager.consentTypes.dataCollection)) {
+        consentManager.showConsentBanner();
+      }
     } else {
       header.style.display = 'none';
       sidebar.style.display = 'none';
