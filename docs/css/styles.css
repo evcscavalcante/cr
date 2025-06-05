@@ -924,17 +924,31 @@ footer {
     justify-content: center;
     align-items: center;
     padding: 2rem;
-    background: linear-gradient(135deg, var(--primary-light) 0%, #ffffff 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
     min-height: 100vh;
+    color: white;
+}
+
+.login-wrapper {
+    text-align: center;
+    width: 100%;
+}
+
+.login-wrapper .app-title {
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    font-weight: 600;
 }
 
 #login-container .login-form {
     background: #ffffff;
+    color: var(--text-color);
     padding: 2rem 1.5rem;
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
     width: 100%;
-    max-width: 340px;
+    max-width: 360px;
+    margin: 0 auto;
 }
 
 #login-container input {
