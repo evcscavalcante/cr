@@ -351,7 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof PDFLib === 'undefined') {
             return new Promise((resolve, reject) => {
                 const script = document.createElement('script');
-                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
+                script.src = 'libs/pdf-lib.min.js';
                 script.onload = resolve;
                 script.onerror = () => reject(new Error('Falha ao carregar pdf-lib'));
                 document.body.appendChild(script);
@@ -363,7 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof html2pdf === 'undefined') {
             return new Promise((resolve, reject) => {
                 const script = document.createElement('script');
-                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+                script.src = 'libs/html2pdf.bundle.min.js';
                 script.onload = resolve;
                 script.onerror = () => reject(new Error('Falha ao carregar html2pdf'));
                 document.body.appendChild(script);

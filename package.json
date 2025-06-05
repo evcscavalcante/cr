@@ -20,5 +20,9 @@
     "jest-environment-jsdom": "^30.0.0-beta.3",
     "jest-localstorage-mock": "^2.4.26",
     "http-server": "^14.1.1"
+  },
+  "dependencies": {
+    "html2pdf.js": "^0.10.3",
+    "pdf-lib": "^1.17.1"
   }
 }
