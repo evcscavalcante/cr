@@ -45,6 +45,11 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 60px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
 }
 
 header h1 {
@@ -79,6 +84,7 @@ header h1 {
 /* Layout com menu lateral */
 .app-container {
     display: flex;
+    margin-top: 60px;
 }
 
 .sidebar {
@@ -89,7 +95,7 @@ header h1 {
     flex-direction: column;
     min-height: 100vh;
     position: fixed;
-    top: 0;
+    top: 60px;
     left: 0;
     bottom: 0;
     overflow-y: auto;
@@ -953,14 +959,12 @@ footer {
 }
 
 /* Controle de visibilidade do menu lateral */
-body.sidebar-visible header,
 body.sidebar-visible main,
 body.sidebar-visible footer {
     padding-left: 180px;
     transition: padding-left 0.3s ease;
 }
 
-body.sidebar-hidden header,
 body.sidebar-hidden main,
 body.sidebar-hidden footer {
     padding-left: 0;
