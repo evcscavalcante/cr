@@ -30,64 +30,60 @@
      showForm(loginForm);
    }));
 
-   function getUsers() {
-     try { return JSON.parse(localStorage.getItem('users')) || {}; } catch { return {}; }
-   }
-   function saveUsers(users) {
-     localStorage.setItem('users', JSON.stringify(users));
-   }
+  const auth = window.firebaseAuth;
 
-   document.getElementById('register-btn').addEventListener('click', () => {
-     const u = document.getElementById('register-username').value.trim();
-     const p = document.getElementById('register-password').value;
-     if (!u || !p) return alert('Preencha todos os campos');
-     const users = getUsers();
-     if (users[u]) return alert('Usuário já existe');
-     users[u] = { password: btoa(p) };
-     saveUsers(users);
-     alert('Conta criada com sucesso');
-     showForm(loginForm);
-   });
+  document.getElementById('register-btn').addEventListener('click', () => {
+    const u = document.getElementById('register-username').value.trim();
+    const p = document.getElementById('register-password').value;
+    if (!u || !p) return alert('Preencha todos os campos');
+    auth.createUserWithEmailAndPassword(u, p)
+      .then(() => {
+        alert('Conta criada com sucesso');
+        showForm(loginForm);
+      })
+      .catch(err => alert('Erro ao registrar: ' + err.message));
+  });
 
-   document.getElementById('login-btn').addEventListener('click', () => {
-     const u = document.getElementById('login-username').value.trim();
-     const p = document.getElementById('login-password').value;
-     const users = getUsers();
-    if (users[u] && users[u].password === btoa(p)) {
-      loginContainer.style.display = 'none';
-      header.style.display = 'block';
-      sidebar.style.display = 'block';
-      main.style.display = 'block';
-      footer.style.display = 'block';
-     } else {
-       alert('Usuário ou senha inválidos');
-     }
-   });
+  document.getElementById('login-btn').addEventListener('click', () => {
+    const u = document.getElementById('login-username').value.trim();
+    const p = document.getElementById('login-password').value;
+    auth.signInWithEmailAndPassword(u, p)
+      .catch(() => alert('Usuário ou senha inválidos'));
+  });
 
   document.getElementById('recover-btn').addEventListener('click', () => {
     const u = document.getElementById('recover-username').value.trim();
-    const newP = document.getElementById('recover-password').value;
-     const users = getUsers();
-     if (!users[u]) return alert('Usuário não encontrado');
-     users[u].password = btoa(newP);
-     saveUsers(users);
-    alert('Senha atualizada');
-    showForm(loginForm);
+    if (!u) return alert('Informe o e-mail');
+    auth.sendPasswordResetEmail(u)
+      .then(() => alert('Email de recuperação enviado'))
+      .catch(err => alert('Erro: ' + err.message));
   });
 
   logoutBtn.addEventListener('click', () => {
-    header.style.display = 'none';
-    sidebar.style.display = 'none';
-    main.style.display = 'none';
-    footer.style.display = 'none';
-    loginContainer.style.display = 'flex';
-    showForm(loginForm);
+    auth.signOut();
   });
 
   header.style.display = 'none';
   sidebar.style.display = 'none';
   main.style.display = 'none';
   footer.style.display = 'none';
-   loginContainer.style.display = 'flex';
-   showForm(loginForm);
+  loginContainer.style.display = 'flex';
+  showForm(loginForm);
+
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      loginContainer.style.display = 'none';
+      header.style.display = 'block';
+      sidebar.style.display = 'block';
+      main.style.display = 'block';
+      footer.style.display = 'block';
+    } else {
+      header.style.display = 'none';
+      sidebar.style.display = 'none';
+      main.style.display = 'none';
+      footer.style.display = 'none';
+      loginContainer.style.display = 'flex';
+      showForm(loginForm);
+    }
+  });
  });

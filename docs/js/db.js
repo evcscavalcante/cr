@@ -109,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         request.onsuccess = () => {
                             console.log(`Registro salvo com sucesso: ${dados.registro}`);
+                            salvarRegistroFirestore(tipo, dados);
                             resolve(dados);
                         };
                         
@@ -316,6 +317,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     return STORES.MAX_MIN;
                 default:
                     return null;
+            }
+        }
+
+        function salvarRegistroFirestore(tipo, dados) {
+            if (!window.firebaseDB) return;
+            const store = getStoreByTipo(tipo);
+            if (!store) return;
+            try {
+                window.firebaseDB.collection(store).doc(String(dados.registro)).set(dados);
+            } catch (e) {
+                console.error('Erro ao salvar no Firestore:', e);
             }
         }
         
