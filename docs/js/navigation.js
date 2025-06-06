@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
       adicionarBotaoVoltarMenuPrincipal();
     }
 
-    function navegarParaCalculadora(tipo, ensaio = null) {
+    async function navegarParaCalculadora(tipo, ensaio = null) {
       if (typeof tipo !== 'string' || !['in-situ', 'real', 'max-min'].includes(tipo)) {
         console.warn('navegarParaCalculadora: tipo inválido, pulando navegação →', tipo);
         return;
@@ -79,11 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (secao) secao.style.display = 'block';
 
       ativarAba('calculadora');
-      carregarFormularioCalculadora(tipo, ensaio);
+      await carregarFormularioCalculadora(tipo, ensaio);
       adicionarBotaoVoltarMenuPrincipal();
     }
 
-    function voltar() {
+    async function voltar() {
       if (!historico.length) {
         return navegarParaMenu();
       }
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
           removerFiltrosDuplicados();
           carregarListaEnsaios(estadoAtual.tipo);
         } else {
-          carregarFormularioCalculadora(estadoAtual.tipo, estadoAtual.ensaio);
+          await carregarFormularioCalculadora(estadoAtual.tipo, estadoAtual.ensaio);
         }
         adicionarBotaoVoltarMenuPrincipal();
       }
@@ -148,33 +148,15 @@ document.addEventListener('DOMContentLoaded', () => {
       document.dispatchEvent(evt);
     }
 
-    function carregarFormularioCalculadora(tipo, ensaio) {
+    async function carregarFormularioCalculadora(tipo, ensaio) {
       if (!['in-situ', 'real', 'max-min'].includes(tipo)) {
         console.error('Tipo inválido:', tipo);
         return;
       }
+
+      await window.calculadora.formIntegration.carregarFormulario(tipo);
+
       const calc = elementos.calculadoraContent();
-      if (calc) calc.innerHTML = '';
-
-      const tplHtml = window.calculadora.templates && window.calculadora.templates[tipo];
-      if (!tplHtml) {
-        console.error('Template não encontrado:', tipo);
-        return;
-      }
-      const tpl = document.createElement('template');
-      tpl.innerHTML = tplHtml;
-      const node = tpl.content.cloneNode(true);
-
-      const formDiv = node.querySelector('.calculadora-container');
-      if (formDiv && !formDiv.querySelector('.btn-voltar')) {
-        const btn = document.createElement('button');
-        btn.className = 'btn-voltar';
-        btn.innerHTML = '<i class="fas fa-arrow-left"></i> Voltar';
-        btn.addEventListener('click', voltar);
-        formDiv.insertBefore(btn, formDiv.firstChild);
-      }
-
-      if (calc) calc.appendChild(node);
       document.dispatchEvent(new CustomEvent('formLoaded', {
         detail: { form: calc.querySelector('.calculadora-container'), tipo, ensaio }
       }));
