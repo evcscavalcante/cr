@@ -1049,6 +1049,13 @@ footer {
     font-size: 0.8rem;
     color: #888;
 }
+/* Documentos Legais */
+.legal-document {
+    padding: calc(var(--header-height) + 1rem) 1.5rem calc(var(--footer-height) + 1rem);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
 
 /* Controle de visibilidade do menu lateral */
 body.sidebar-visible main {
