@@ -10,6 +10,12 @@ window.calculadora.pdfGenerator = (() => {
     function gerarPDF(tipo, dados) {
         console.log(`Gerando PDF via HTML para ${tipo}:`, dados);
 
+        // Para o ensaio "in-situ" usamos um template dedicado para evitar
+        // quebra incorreta do cabeçalho no PDF.
+        if (tipo === 'in-situ') {
+            return gerarPDFInSituHTML(dados);
+        }
+
         return new Promise((resolve, reject) => {
             if (typeof html2pdf === 'undefined') {
                 return reject(new Error('html2pdf não carregado'));
@@ -477,7 +483,8 @@ window.calculadora.pdfGenerator = (() => {
                 filename:     `in-situ_${dados.registro || 'sem_registro'}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: 'css' }
             };
 
             html2pdf().set(opt).from(container).save().then(() => {
@@ -562,6 +569,7 @@ th,td{border:1px dashed #000;padding:4px 6px;text-align:center;font-size:11px}
 th{background:#eee;font-weight:bold}
 .table-caption{text-align:center;font-size:12px;font-weight:bold;margin-bottom:4px}
 .footer-text{font-size:9px;text-align:center;margin-top:20px}
+.pagebreak{page-break-before:always}
 </style></head><body>
 <div class="section">
 <div class="center"><h2>DETERMINAÇÃO DA COMPACTAÇÃO RELATIVA</h2><p style="font-size:10px;font-style:italic;">NBR 6457:2024 – NBR 9813:2016</p></div>
