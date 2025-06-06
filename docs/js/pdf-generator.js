@@ -6,15 +6,61 @@ window.calculadora = window.calculadora || {};
 
 // Módulo de geração de PDF
 window.calculadora.pdfGenerator = (() => {
-    // Gerar PDF
+    // === Nova geração de PDF utilizando o próprio HTML do formulário ===
     function gerarPDF(tipo, dados) {
-        console.log(`Gerando PDF para ${tipo}:`, dados);
+        console.log(`Gerando PDF via HTML para ${tipo}:`, dados);
 
-        return new Promise(async (resolve, reject) => {
-            // Verifica a biblioteca html2pdf
+        return new Promise((resolve, reject) => {
             if (typeof html2pdf === 'undefined') {
-                console.error('html2pdf não está carregado. Verifique a inclusão da biblioteca.');
-                return reject(new Error('html2pdf não está carregado'));
+                return reject(new Error('html2pdf não carregado'));
+            }
+
+            const form = document.querySelector('#calculadora .calculadora-container');
+            if (!form) {
+                return reject(new Error('Formulário não encontrado'));
+            }
+
+            const clone = form.cloneNode(true);
+
+            // Remove botões de ação
+            clone.querySelectorAll('button').forEach(b => b.remove());
+
+            // Congela campos de entrada para aparecerem como texto
+            clone.querySelectorAll('input, select, textarea').forEach(el => {
+                el.setAttribute('readonly', true);
+                el.style.border = 'none';
+                el.style.outline = 'none';
+                el.style.background = 'transparent';
+            });
+
+            const container = document.createElement('div');
+            container.style.position = 'fixed';
+            container.style.left = '-9999px';
+            container.appendChild(clone);
+            document.body.appendChild(container);
+
+            const opt = {
+                margin: 10,
+                filename: `${tipo}_${dados.registro || 'sem_registro'}.pdf`,
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(clone).save().then(() => {
+                document.body.removeChild(container);
+                resolve(true);
+            }).catch(err => {
+                document.body.removeChild(container);
+                reject(err);
+            });
+        });
+    }
+
+    // Mantém a versão antiga caso seja necessário utilizar o canvas
+    function gerarPDFAntigo(tipo, dados) {
+        return new Promise(async (resolve, reject) => {
+            if (typeof html2pdf === 'undefined') {
+                return reject(new Error('html2pdf não carregado'));
             }
 
             let canvas;
@@ -542,7 +588,8 @@ th{background:#eee;font-weight:bold}
 
     // API pública
     return {
-        gerarPDF
+        gerarPDF,
+        gerarPDFAntigo
     };
 })();
 
