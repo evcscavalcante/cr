@@ -1,12 +1,11 @@
 // Módulo de banco de dados usando IndexedDB para a Calculadora de Compacidade
 // Implementa funções para salvar, carregar, atualizar e excluir registros
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Namespace para calculadora
-    window.calculadora = window.calculadora || {};
-    
-    // Módulo de banco de dados
-    window.calculadora.db = (() => {
+// Namespace para calculadora
+window.calculadora = window.calculadora || {};
+
+// Módulo de banco de dados
+window.calculadora.db = (() => {
         const DB_NAME = 'CalculadoraCompacidadeDB';
         const DB_VERSION = 1;
         const STORES = {
@@ -367,16 +366,25 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     })();
     
-    // Inicializar banco de dados ao carregar a página
+// Inicializar banco de dados automaticamente somente fora de testes
+function autoInit() {
     window.calculadora.db.init()
         .then(() => {
             console.log('Banco de dados inicializado e pronto para uso');
-            
-            // Disparar evento de banco de dados pronto
             const event = new CustomEvent('dbReady');
             document.dispatchEvent(event);
         })
         .catch(error => {
             console.error('Falha ao inicializar banco de dados:', error);
         });
-});
+}
+
+if (!(typeof process !== 'undefined' && process.env.JEST_WORKER_ID)) {
+    if (typeof document !== 'undefined') {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', autoInit);
+        } else {
+            autoInit();
+        }
+    }
+}
