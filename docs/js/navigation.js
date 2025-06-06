@@ -2,9 +2,10 @@
 document.addEventListener('DOMContentLoaded', () => {
   window.calculadora = window.calculadora || {};
 
-  window.calculadora.navegacao = (() => {
-    const historico = [];
-    let estadoAtual = { tela: 'menu', tipo: null, aba: null };
+  function startNavigation() {
+    window.calculadora.navegacao = (() => {
+      const historico = [];
+      let estadoAtual = { tela: 'menu', tipo: null, aba: null };
 
     const elementos = {
       menuPrincipal:       () => document.querySelector('.menu-principal'),
@@ -155,14 +156,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const calc = elementos.calculadoraContent();
       if (calc) calc.innerHTML = '';
 
-      const tplId = tipo === 'in-situ'
-        ? 'template-densidade-in-situ'
-        : `template-densidade-${tipo}`;
-      const tpl = document.getElementById(tplId);
-      if (!tpl) {
+      const tplHtml = window.calculadora.templates && window.calculadora.templates[tipo];
+      if (!tplHtml) {
         console.error('Template não encontrado:', tipo);
         return;
       }
+      const tpl = document.createElement('template');
+      tpl.innerHTML = tplHtml;
       const node = tpl.content.cloneNode(true);
 
       const formDiv = node.querySelector('.calculadora-container');
@@ -231,5 +231,12 @@ document.addEventListener('DOMContentLoaded', () => {
       ativarAba,
       getEstadoAtual: () => ({ ...estadoAtual })
     };
-  })();
+    })();
+  }
+
+  if (window.calculadora.templatesLoaded) {
+    startNavigation();
+  } else {
+    document.addEventListener('templatesLoaded', startNavigation, { once: true });
+  }
 });
