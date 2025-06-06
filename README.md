@@ -100,6 +100,11 @@ Execute `iniciar-servidor.bat` no diretório raiz do projeto para abrir o aplica
 4. Os cálculos serão realizados automaticamente
 5. Salve o ensaio ou gere um relatório em PDF
 
+> **Atenção**: não abra `index.html` diretamente pelo navegador. As calculadoras
+são carregadas via `fetch` e, se o arquivo for acessado usando `file://`, os
+templates não serão encontrados e as páginas aparecerão em branco. Sempre utilize
+`npm start` ou outro servidor local para executar a aplicação.
+
 ## Execução Local
 
 Para servir a aplicação durante o desenvolvimento, utilize o script Node já incluído:
