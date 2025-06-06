@@ -289,26 +289,26 @@
             <table class="header-table">
                 <tr>
                     <td>
-                        <label for="registro">Número do Registro:</label>
-                        <input type="text" id="registro" name="registro" placeholder="Informe o número do registro">
+                        <label for="registro-real">Número do Registro:</label>
+                        <input type="text" id="registro-real" name="registro" placeholder="Informe o número do registro">
                     </td>
                     <td>
-                        <label for="data">Data:</label>
-                        <input type="date" id="data" name="data">
+                        <label for="data-real">Data:</label>
+                        <input type="date" id="data-real" name="data">
                     </td>
                     <td>
-                        <label for="operador">Operador:</label>
-                        <input type="text" id="operador" name="operador" placeholder="Nome do operador">
+                        <label for="operador-real">Operador:</label>
+                        <input type="text" id="operador-real" name="operador" placeholder="Nome do operador">
                     </td>
                     <td>
-                        <label for="material">Material:</label>
-                        <input type="text" id="material" name="material" placeholder="Descrição do material">
+                        <label for="material-real">Material:</label>
+                        <input type="text" id="material-real" name="material" placeholder="Descrição do material">
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <label for="origem">Origem:</label>
-                        <input type="text" id="origem" name="origem" placeholder="Origem do material">
+                        <label for="origem-real">Origem:</label>
+                        <input type="text" id="origem-real" name="origem" placeholder="Origem do material">
                     </td>
                     <td></td>
                     <td></td>
@@ -497,11 +497,11 @@
                 console.log('Preenchendo formulário com dados:', dados);
 
                 // Preencher campos de informações gerais
-                document.getElementById('registro').value = dados.registro || '';
-                document.getElementById('data').value = dados.data || '';
-                document.getElementById('operador').value = dados.operador || '';
-                document.getElementById('material').value = dados.material || '';
-                document.getElementById('origem').value = dados.origem || '';
+                document.getElementById('registro-real').value = dados.registro || '';
+                document.getElementById('data-real').value = dados.data || '';
+                document.getElementById('operador-real').value = dados.operador || '';
+                document.getElementById('material-real').value = dados.material || '';
+                document.getElementById('origem-real').value = dados.origem || '';
 
                 // Preencher determinações de umidade
                 for (let i = 1; i <= 3; i++) {
