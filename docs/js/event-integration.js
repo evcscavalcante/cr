@@ -148,8 +148,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             // Calcular inicialmente após um pequeno delay
+            // Garante que o formulário ainda esteja no DOM antes de prosseguir
             setTimeout(() => {
-                calcularAutomaticamente(tipo);
+                if (document.body.contains(form)) {
+                    calcularAutomaticamente(tipo);
+                }
             }, 500);
         }
         
