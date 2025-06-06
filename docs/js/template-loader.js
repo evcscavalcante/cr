@@ -22,6 +22,12 @@
         window.calculadora.templates[key] = await fetchTemplate(file);
       }catch(err){
         console.error('Erro ao carregar template', key, err);
+        const aviso = 'Falha ao carregar templates. Execute a aplicação via \"npm start\"';
+        if (typeof window.showToast === 'function') {
+          window.showToast(aviso, 'error', 5000);
+        } else {
+          alert(aviso);
+        }
       }
     }
     window.calculadora.templatesLoaded = true;
