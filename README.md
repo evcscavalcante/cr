@@ -24,6 +24,11 @@ O projeto foi estruturado com uma arquitetura modular, utilizando HTML5, CSS3 e 
   - `/js`: Scripts JavaScript
   - `/assets`: Recursos estáticos (imagens, ícones)
   - `index.html`: Página principal
+  - `/templates`: Formulários HTML carregados dinamicamente
+
+Os templates de cada calculadora ficam na pasta `/docs/templates` e
+são carregados em tempo de execução pelo script `template-loader.js`.
+Isso reduz o tamanho do `index.html` e facilita a manutenção dos formulários.
 
 ### Módulos JavaScript
 
