@@ -108,7 +108,11 @@
 
   auth.onAuthStateChanged(user => {
     if (user) {
-      window.location.href = 'dashboard.html';
+      loginContainer.style.display = 'none';
+      header.style.display = 'block';
+      sidebar.style.display = 'block';
+      main.style.display = 'block';
+      footer.style.display = 'block';
     } else {
       header.style.display = 'none';
       sidebar.style.display = 'none';
