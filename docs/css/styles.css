@@ -52,14 +52,6 @@ header h1 {
     font-size: 1.8rem;
 }
 
-.logo {
-    margin-bottom: 0.5rem;
-}
-
-header .logo img {
-  height: 60px;            /* altura da logo; width: auto mantém proporção */
-  width: auto;
-}
 
 /* se quiser controlar também o h1 */
 header h1 {
@@ -474,28 +466,6 @@ main {
     cursor: not-allowed;
 }
 
-.determinacao-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
-}
-
-.determinacao-header span {
-    flex: 1;
-    text-align: center;
-    font-weight: bold;
-    padding: 0.5rem;
-    background-color: var(--primary-light);
-    border-radius: var(--border-radius);
-}
-
-.determinacao-inputs {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.determinacao-inputs input {
-    flex: 1;
 }
 
 .status-container {
@@ -681,9 +651,6 @@ main {
     opacity: 1;
 }
 
-.toast-info {
-    background-color: var(--primary-color);
-}
 
 .toast-success {
     background-color: var(--success-color);
@@ -845,21 +812,6 @@ footer {
 #secao-lista-ensaios {
     position: relative;
     padding-top: 3rem;
-}
-
-/* Estilo para o logo "Made with Manus" */
-.made-with-manus {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 2rem;
-    color: var(--text-light);
-    font-size: 0.9rem;
-}
-
-.made-with-manus img {
-    height: 20px;
 }
 
 /* Responsividade */
