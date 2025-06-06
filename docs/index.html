@@ -12,26 +12,46 @@
 </head>
 <body>
   <div id="login-container" class="login-container">
-    <div id="login-form" class="login-form">
-      <h2>Login</h2>
-      <input type="email" id="login-username" placeholder="Usuário" autocomplete="username" autofocus>
-      <input type="password" id="login-password" placeholder="Senha" autocomplete="current-password">
-      <button id="login-btn">Entrar</button>
-      <p><a href="#" id="show-register">Criar Conta</a> | <a href="#" id="show-recover">Recuperar Conta</a></p>
-    </div>
-    <div id="register-form" class="login-form" style="display:none;">
-      <h2>Criar Conta</h2>
-      <input type="email" id="register-username" placeholder="Usuário" autocomplete="username">
-      <input type="password" id="register-password" placeholder="Senha">
-      <button id="register-btn">Registrar</button>
-      <p><a href="#" class="back-to-login">Voltar para Login</a></p>
-    </div>
-    <div id="recover-form" class="login-form" style="display:none;">
-      <h2>Recuperar Conta</h2>
-      <input type="email" id="recover-username" placeholder="Usuário" autocomplete="username">
-      <input type="password" id="recover-password" placeholder="Nova Senha">
-      <button id="recover-btn">Alterar Senha</button>
-      <p><a href="#" class="back-to-login">Voltar para Login</a></p>
+    <div class="login-card">
+      <div class="login-header">
+        <h1>Laboratório Ev.C.S.</h1>
+        <h2>Sistema de Calculadora de Compacidade</h2>
+      </div>
+      <nav class="login-tabs">
+        <a href="#" id="tab-login" class="active" data-target="login-form">Login</a>
+        <a href="#" id="tab-register" data-target="register-form">Registro</a>
+        <a href="#" id="tab-recover" data-target="recover-form">Recuperar Senha</a>
+      </nav>
+      <div class="login-content">
+        <form id="login-form" class="login-form active" onsubmit="return false">
+          <label for="login-username">Email</label>
+          <input type="email" id="login-username" placeholder="Seu email" autocomplete="username" autofocus>
+          <label for="login-password">Senha</label>
+          <input type="password" id="login-password" placeholder="Sua senha" autocomplete="current-password">
+          <div class="forgot-link"><a href="#" id="show-recover">Esqueceu a senha?</a></div>
+          <button id="login-btn" type="button">Entrar</button>
+          <p class="offline-link"><a href="#" id="offline-link">Continuar em modo offline</a></p>
+        </form>
+        <form id="register-form" class="login-form" onsubmit="return false">
+          <label for="register-username">Email</label>
+          <input type="email" id="register-username" placeholder="Seu email" autocomplete="username">
+          <label for="register-password">Senha</label>
+          <input type="password" id="register-password" placeholder="Sua senha">
+          <button id="register-btn" type="button">Registrar</button>
+          <p><a href="#" class="back-to-login">Voltar para Login</a></p>
+        </form>
+        <form id="recover-form" class="login-form" onsubmit="return false">
+          <label for="recover-username">Email</label>
+          <input type="email" id="recover-username" placeholder="Seu email" autocomplete="username">
+          <label for="recover-password">Nova Senha</label>
+          <input type="password" id="recover-password" placeholder="Sua senha">
+          <button id="recover-btn" type="button">Alterar Senha</button>
+          <p><a href="#" class="back-to-login">Voltar para Login</a></p>
+        </form>
+      </div>
+      <div class="login-footer">
+        Laboratório Ev.C.S. © 2025 - Todos os direitos reservados
+      </div>
     </div>
   </div>
   <header class="simple-header">
