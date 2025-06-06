@@ -108,7 +108,7 @@
 
   auth.onAuthStateChanged(user => {
     if (user) {
-      window.location.href = 'dashboard.html';
+      window.location.href = 'index.html';
     } else {
       header.style.display = 'none';
       sidebar.style.display = 'none';
