@@ -111,6 +111,22 @@ header {
   margin-left: 1rem;
 }
 
+/* Header simplificado da página principal */
+.simple-header {
+  justify-content: center;
+  position: relative;
+}
+
+.simple-header h1 {
+  flex: 1;
+  text-align: center;
+}
+
+.simple-header .toggle-sidebar {
+  position: absolute;
+  left: 1rem;
+}
+
 /* Layout com menu lateral */
 .app-container {
     display: flex;
@@ -1036,8 +1052,14 @@ footer {
 
 /* Controle de visibilidade do menu lateral */
 body.sidebar-visible main {
-    padding-left: 180px;
+    padding-left: 0;
     transition: padding-left 0.3s ease;
+}
+
+@media (min-width: 768px) {
+    body.sidebar-visible main {
+        padding-left: 180px;
+    }
 }
 
 body.sidebar-visible header,
