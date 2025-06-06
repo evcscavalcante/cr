@@ -44,12 +44,9 @@
       .catch(err => alert('Erro ao registrar: ' + err.message));
   }
 
-  document.getElementById('register-btn').addEventListener('click', registrar);
-  registerForm.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      registrar();
-    }
+  registerForm.addEventListener('submit', e => {
+    e.preventDefault();
+    registrar();
   });
 
   function logar() {
@@ -59,12 +56,9 @@
       .catch(() => alert('Usuário ou senha inválidos'));
   }
 
-  document.getElementById('login-btn').addEventListener('click', logar);
-  loginForm.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      logar();
-    }
+  loginForm.addEventListener('submit', e => {
+    e.preventDefault();
+    logar();
   });
 
   function recuperar() {
@@ -75,12 +69,9 @@
       .catch(err => alert('Erro: ' + err.message));
   }
 
-  document.getElementById('recover-btn').addEventListener('click', recuperar);
-  recoverForm.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      recuperar();
-    }
+  recoverForm.addEventListener('submit', e => {
+    e.preventDefault();
+    recuperar();
   });
 
   logoutBtn.addEventListener('click', () => {
