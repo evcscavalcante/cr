@@ -58,10 +58,31 @@ window.calculadora.formIntegration = (function() {
 
     // Se você definiu window.calculadora.templates = { 'in-situ': '...', 'real': '...', 'max-min': '...' }
     // ele será usado. Caso contrário, procuramos um <template id="template-in-situ">, etc.
-    function getTemplateHTML(tipo) {
+    async function getTemplateHTML(tipo) {
         if (window.calculadora.templates && window.calculadora.templates[tipo]) {
             return window.calculadora.templates[tipo];
         }
+
+        const mapping = {
+            'in-situ': 'densidade_in_situ.html',
+            'real': 'densidade_real.html',
+            'max-min': 'densidade_max_min.html'
+        };
+
+        const file = mapping[tipo];
+        if (file) {
+            try {
+                const resp = await fetch(`templates/${file}`);
+                const text = await resp.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text, 'text/html');
+                const form = doc.querySelector('.calculadora-container');
+                return form ? form.outerHTML : text;
+            } catch (err) {
+                console.error('Erro ao carregar template', tipo, err);
+            }
+        }
+
         const tpl = document.getElementById(`template-${tipo}`);
         return (tpl && tpl.innerHTML) ? tpl.innerHTML : null;
     }
@@ -70,14 +91,14 @@ window.calculadora.formIntegration = (function() {
      * Carrega o formulário da calculadora e dispara evento customizado
      * @param {'in-situ'|'real'|'max-min'} tipo
      */
-    function carregarFormulario(tipo) {
+    async function carregarFormulario(tipo) {
         const container = document.getElementById('calculadora');
         if (!container) {
             console.error(`Container da calculadora não encontrado para tipo '${tipo}'`);
             return;
         }
 
-        const html = getTemplateHTML(tipo);
+        const html = await getTemplateHTML(tipo);
         if (!html) {
             console.error(`Template para tipo '${tipo}' não encontrado.`);
             return;
@@ -623,7 +644,7 @@ window.calculadora.formIntegration = (function() {
             }
 
             // injeta o template/form adequado
-            window.calculadora.formIntegration.carregarFormulario(tipo);
+            await window.calculadora.formIntegration.carregarFormulario(tipo);
 
             // espera o form e os selects de referência ficarem disponíveis e habilitados
             await new Promise(resolve => {

@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('btn-densidade-max-min')?.addEventListener('click', () => carregarEnsaio('max-min'));
     }
 
-    function carregarEnsaio(tipo) {
+    async function carregarEnsaio(tipo) {
         window.location.hash = tipo;
         document.querySelector('.menu-principal')?.style.setProperty('display', 'none');
         const secaoListaEnsaios = document.getElementById('secao-lista-ensaios');
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         carregarListaEnsaios(tipo);
         if (window.calculadora.formIntegration) {
-            window.calculadora.formIntegration.carregarFormulario(tipo);
+            await window.calculadora.formIntegration.carregarFormulario(tipo);
         } else {
             console.error('Módulo de integração de formulários não disponível');
         }
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log('Botão Novo Ensaio clicado');
                     const tipo = window.location.hash.substring(1) || 'in-situ';
                     if (window.calculadora.formIntegration) {
-                        window.calculadora.formIntegration.carregarFormulario(tipo);
+                        await window.calculadora.formIntegration.carregarFormulario(tipo);
                         window.calculadora.formIntegration.limparFormulario(); // Garante que o form carregado esteja limpo
                         document.querySelector('.tab-btn[data-tab="calculadora"]')?.click();
                     }
