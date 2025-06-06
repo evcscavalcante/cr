@@ -90,8 +90,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             console.error('Módulo de integração de formulários não disponível');
         }
-        // Ativa a tab da lista por padrão ao carregar um ensaio
-        document.querySelector('.tab-btn[data-tab="lista-ensaios"]')?.click();
+        // Ativa a última aba selecionada ou lista por padrão
+        const savedTab = sessionStorage.getItem('activeTab') || 'lista-ensaios';
+        document.querySelector(`.tab-btn[data-tab="${savedTab}"]`)?.click();
     }
 
     function voltarMenuPrincipal() {
@@ -109,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 event.target.classList.add('active');
                 document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
                 document.getElementById(tabAlvo)?.classList.add('active');
+                sessionStorage.setItem('activeTab', tabAlvo);
             }
         });
     }
