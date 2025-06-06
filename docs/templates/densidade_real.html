@@ -447,26 +447,25 @@
         <!-- Resultados -->
         <div class="form-section">
             <h3>Resultados</h3>
-            <div class="resultados-cards-container">
-                <div class="card-resultado">
-                    <h4>Resultados Finais</h4>
-                    <div class="card-content">
-                        <div class="resultado-item resultado-destaque">
-                            <div class="resultado-label">Densidade Real (γs):</div>
-                            <div class="resultado-valor">
+            <div class="table-responsive">
+                <table class="data-table">
+                    <tbody>
+                        <tr>
+                            <td>Densidade Real (γs)</td>
+                            <td>
                                 <input type="number" id="densidade-real-final" name="densidade-real-final" step="0.001" placeholder="0.000" readonly>
                                 <span class="resultado-unidade">g/cm³</span>
-                            </div>
-                        </div>
-                        <div class="resultado-item">
-                            <div class="resultado-label">Diferença:</div>
-                            <div class="resultado-valor">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Diferença</td>
+                            <td>
                                 <input type="number" id="diferenca" name="diferenca" step="0.01" placeholder="0.00" readonly>
                                 <span class="resultado-unidade">%</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 

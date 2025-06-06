@@ -113,7 +113,7 @@ header {
 
 /* Header simplificado da página principal */
 .simple-header {
-  justify-content: center;
+  justify-content: space-between;
   position: relative;
 }
 

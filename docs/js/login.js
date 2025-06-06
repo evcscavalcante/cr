@@ -118,9 +118,9 @@
      }
    });
 
-   logoutBtn.addEventListener('click', () => {
-     auth.signOut();
-   });
+  logoutBtn.addEventListener('click', () => {
+    auth.signOut();
+  });
 
   header.style.display = 'none';
   sidebar.style.display = 'none';
@@ -129,20 +129,24 @@
   loginContainer.style.display = 'none';
   showForm(loginForm);
 
-   auth.onAuthStateChanged(user => {
-     if (user) {
-       header.style.display = '';
-       sidebar.style.display = '';
-       main.style.display = '';
-       footer.style.display = '';
-       loginContainer.style.display = 'none';
-     } else {
-       header.style.display = 'none';
-       sidebar.style.display = 'none';
-       main.style.display = 'none';
-       footer.style.display = 'none';
-       loginContainer.style.display = 'flex';
-       showForm(loginForm);
-     }
-   });
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      header.style.display = '';
+      sidebar.style.display = '';
+      main.style.display = '';
+      footer.style.display = '';
+      loginContainer.style.display = 'none';
+      const nameEl = document.getElementById('current-user-name');
+      if (nameEl) nameEl.textContent = user.email || user.displayName || 'Usuário';
+    } else {
+      header.style.display = 'none';
+      sidebar.style.display = 'none';
+      main.style.display = 'none';
+      footer.style.display = 'none';
+      loginContainer.style.display = 'flex';
+      showForm(loginForm);
+      const nameEl = document.getElementById('current-user-name');
+      if (nameEl) nameEl.textContent = '';
+    }
+  });
  });
