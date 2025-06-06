@@ -4,6 +4,10 @@
    const registerForm = document.getElementById('register-form');
    const recoverForm = document.getElementById('recover-form');
 
+   const loginTab = document.getElementById('tab-login');
+   const registerTab = document.getElementById('tab-register');
+   const recoverTab = document.getElementById('tab-recover');
+
    const header = document.querySelector('header');
    const main = document.querySelector('main');
    const footer = document.querySelector('footer');
@@ -11,15 +15,32 @@
    const logoutBtn = document.getElementById('logout-btn');
 
    function showForm(form) {
-     loginForm.style.display = 'none';
-     registerForm.style.display = 'none';
-     recoverForm.style.display = 'none';
-     form.style.display = 'block';
+     loginForm.classList.remove('active');
+     registerForm.classList.remove('active');
+     recoverForm.classList.remove('active');
+     form.classList.add('active');
+
+     loginTab.classList.remove('active');
+     registerTab.classList.remove('active');
+     recoverTab.classList.remove('active');
+     if (form === loginForm) loginTab.classList.add('active');
+     if (form === registerForm) registerTab.classList.add('active');
+     if (form === recoverForm) recoverTab.classList.add('active');
    }
 
-   document.getElementById('show-register').addEventListener('click', e => {
+   loginTab.addEventListener('click', e => {
+     e.preventDefault();
+     showForm(loginForm);
+   });
+
+   registerTab.addEventListener('click', e => {
      e.preventDefault();
      showForm(registerForm);
+   });
+
+   recoverTab.addEventListener('click', e => {
+     e.preventDefault();
+     showForm(recoverForm);
    });
 
    document.getElementById('show-recover').addEventListener('click', e => {
@@ -27,10 +48,22 @@
      showForm(recoverForm);
    });
 
-   document.querySelectorAll('.back-to-login').forEach(el => el.addEventListener('click', e => {
-     e.preventDefault();
-     showForm(loginForm);
-   }));
+  document.querySelectorAll('.back-to-login').forEach(el => el.addEventListener('click', e => {
+    e.preventDefault();
+    showForm(loginForm);
+  }));
+
+  const offlineLink = document.getElementById('offline-link');
+  if (offlineLink) {
+    offlineLink.addEventListener('click', e => {
+      e.preventDefault();
+      header.style.display = '';
+      sidebar.style.display = '';
+      main.style.display = '';
+      footer.style.display = '';
+      loginContainer.style.display = 'none';
+    });
+  }
 
    const auth = window.firebaseAuth;
 
