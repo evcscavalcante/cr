@@ -89,12 +89,12 @@
      auth.signOut();
    });
 
-   header.style.display = 'none';
-   sidebar.style.display = 'none';
-   main.style.display = 'none';
-   footer.style.display = 'none';
-   loginContainer.style.display = 'flex';
-   showForm(loginForm);
+  header.style.display = 'none';
+  sidebar.style.display = 'none';
+  main.style.display = 'none';
+  footer.style.display = 'none';
+  loginContainer.style.display = 'none';
+  showForm(loginForm);
 
    auth.onAuthStateChanged(user => {
      if (user) {
