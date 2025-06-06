@@ -131,7 +131,10 @@ Ao gerar relatórios o sistema utiliza a biblioteca **html2pdf**, que encapsula
 as dependências **html2canvas** e **jsPDF** para compor e salvar o arquivo PDF.
 Esse script é carregado automaticamente em tempo de execução caso ainda não
 esteja presente na página. É necessário conexão com a internet ou cópias locais
-dessas bibliotecas para que o processo funcione corretamente.
+dessas bibliotecas para que o processo funcione corretamente. Caso o PDF seja
+gerado em branco, certifique-se de estar executando a aplicação via servidor
+(por exemplo, com `npm start`) para evitar problemas de CORS durante a captura
+da página.
 
 ## Compatibilidade
 

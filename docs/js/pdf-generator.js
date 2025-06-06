@@ -48,7 +48,7 @@ window.calculadora.pdfGenerator = (() => {
             const opt = {
                 margin: 10,
                 filename: `${tipo}_${dados.registro || 'sem_registro'}.pdf`,
-                html2canvas: { scale: 2 },
+                html2canvas: { scale: 2, useCORS: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
@@ -482,9 +482,9 @@ window.calculadora.pdfGenerator = (() => {
                 margin:       0,
                 filename:     `in-situ_${dados.registro || 'sem_registro'}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
+                html2canvas:  { scale: 2, useCORS: true },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak:    { mode: 'css' }
+                pagebreak:    { mode: ['css', 'legacy'] }
             };
 
             html2pdf().set(opt).from(container).save().then(() => {
