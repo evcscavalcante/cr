@@ -127,10 +127,11 @@ Esse script possui o mesmo comportamento do arquivo `iniciar-servidor.bat` para 
 
 ## Geração de PDF
 
-Ao gerar relatórios o sistema utiliza as bibliotecas **pdf-lib** e **html2pdf**.
-Esses arquivos são carregados automaticamente em tempo de execução caso ainda
-não estejam presentes na página. É necessário conexão com a internet ou cópias
-locais dessas bibliotecas para que o processo funcione corretamente.
+Ao gerar relatórios o sistema utiliza a biblioteca **html2pdf**, que encapsula
+as dependências **html2canvas** e **jsPDF** para compor e salvar o arquivo PDF.
+Esse script é carregado automaticamente em tempo de execução caso ainda não
+esteja presente na página. É necessário conexão com a internet ou cópias locais
+dessas bibliotecas para que o processo funcione corretamente.
 
 ## Compatibilidade
 
