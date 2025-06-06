@@ -11,18 +11,18 @@ window.calculadora.pdfGenerator = (() => {
         console.log(`Gerando PDF para ${tipo}:`, dados);
 
         return new Promise(async (resolve, reject) => {
-            // PDF via html2pdf removido por problemas de compatibilidade
-
-            // Verificar pdf-lib
-            if (typeof PDFLib === 'undefined' || typeof PDFLib.PDFDocument === 'undefined') {
-                console.error("pdf-lib não está carregado. Verifique a inclusão da biblioteca.");
-                return reject(new Error("pdf-lib não está carregado."));
+            // Verifica a biblioteca html2pdf
+            if (typeof html2pdf === 'undefined') {
+                console.error('html2pdf não está carregado. Verifique a inclusão da biblioteca.');
+                return reject(new Error('html2pdf não está carregado'));
             }
 
+            let container;
+            let canvas;
             try {
                 // Criar elemento canvas para desenhar o PDF com maior resolução
                 const DPI = 150; // aumenta qualidade final
-                const canvas = document.createElement("canvas");
+                canvas = document.createElement("canvas");
                 canvas.width = Math.round(8.27 * DPI);  // largura A4 em polegadas
                 canvas.height = Math.round(11.69 * DPI); // altura A4 em polegadas
                 // Anexar ao body temporariamente pode ser necessário para alguns contextos de renderização
@@ -60,29 +60,21 @@ window.calculadora.pdfGenerator = (() => {
                 // Desenhar rodapé
                 desenharRodape(ctx, dados);
 
-                // Converter canvas para PDF
-                const imgData = canvas.toDataURL("image/png");
+                const container = document.createElement('div');
+                container.appendChild(canvas);
+                document.body.appendChild(container);
 
-                // Criar PDF usando pdf-lib
-                const { PDFDocument } = PDFLib;
-                const pdfDoc = await PDFDocument.create();
-                const page = pdfDoc.addPage([595.28, 841.89]); // A4 em pontos
-                const pngImage = await pdfDoc.embedPng(imgData);
-                page.drawImage(pngImage, {
-                    x: 0,
-                    y: 0,
-                    width: page.getWidth(),
-                    height: page.getHeight()
-                });
+                const opt = {
+                    margin: 0,
+                    filename: `${tipo}_${dados.registro || 'sem_registro'}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
 
-                const pdfBytes = await pdfDoc.save();
-                const nomeArquivo = `${tipo}_${dados.registro || "sem_registro"}.pdf`;
-                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = nomeArquivo;
-                link.click();
-                URL.revokeObjectURL(link.href);
+                await html2pdf().set(opt).from(container).save();
+
+                document.body.removeChild(container);
 
                 // Remover canvas
                 document.body.removeChild(canvas);
@@ -92,7 +84,9 @@ window.calculadora.pdfGenerator = (() => {
 
             } catch (error) {
                 console.error("Erro ao gerar PDF:", error);
-                // Tentar remover o canvas mesmo em caso de erro
+                if (container && container.parentNode === document.body) {
+                    document.body.removeChild(container);
+                }
                 if (canvas && canvas.parentNode === document.body) {
                     document.body.removeChild(canvas);
                 }

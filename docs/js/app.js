@@ -158,15 +158,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log('Botão Gerar PDF clicado');
                     const dados = window.calculadora.formIntegration?.obterDadosFormulario(tipo);
 
-                    // Garante que as bibliotecas de geração de PDF estão carregadas
+                    // Garante que a biblioteca de geração de PDF está carregada
                     try {
-                        await loadPdfLib();
+                        await loadHtml2Pdf();
                     } catch (e) {
                         window.showToast(e.message, 'error');
                         return;
                     }
 
-                    if (dados && dados.registro && window.calculadora.pdfGenerator?.gerarPDF && typeof PDFLib !== 'undefined') {
+                    if (dados && dados.registro && window.calculadora.pdfGenerator?.gerarPDF && typeof html2pdf !== 'undefined') {
                         try {
                             window.showToast('Gerando PDF...', 'info', 5000);
                             await window.calculadora.pdfGenerator.gerarPDF(tipo, dados);
@@ -344,15 +344,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Carrega bibliotecas necessárias para geração de PDF apenas quando
-    // ainda não estiverem disponíveis na página.
-    async function loadPdfLib() {
-        if (typeof PDFLib === 'undefined') {
+    // Carrega a biblioteca html2pdf apenas quando não estiver disponível
+    async function loadHtml2Pdf() {
+        if (typeof html2pdf === 'undefined') {
             return new Promise((resolve, reject) => {
                 const script = document.createElement('script');
-                script.src = 'libs/pdf-lib.min.js';
+                script.src = 'libs/html2pdf.bundle.min.js';
                 script.onload = resolve;
-                script.onerror = () => reject(new Error('Falha ao carregar pdf-lib'));
+                script.onerror = () => reject(new Error('Falha ao carregar html2pdf'));
                 document.body.appendChild(script);
             });
         }
