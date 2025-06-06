@@ -213,7 +213,7 @@ window.calculadora.formIntegration = (function() {
      * @returns {object|null}
      */
     function obterDadosFormulario(tipo) {
-        const form = document.querySelector('#calculadora form');
+        const form = document.querySelector('#calculadora .calculadora-container');
         if (!form) {
             console.error(`Formulário '${tipo}' não encontrado para obter dados.`);
             return null;
@@ -404,7 +404,7 @@ window.calculadora.formIntegration = (function() {
      * @param {object} resultados
      */
     function preencherResultados(tipo, resultados) {
-        const form = document.querySelector('#calculadora form');
+        const form = document.querySelector('#calculadora .calculadora-container');
         if (!form) return;
 
         // Função auxiliar para preencher input
@@ -539,7 +539,7 @@ window.calculadora.formIntegration = (function() {
      * Limpa todos os campos do formulário atual
      */
     function limparFormulario() {
-        const form = document.querySelector('#calculadora form');
+        const form = document.querySelector('#calculadora .calculadora-container');
         if (form) {
             const tipo = getTipoFormularioAtual();
             const registroInput = form.querySelector(`#registro${tipo === 'in-situ' ? '' : `-${tipo}`}`);
@@ -584,7 +584,7 @@ window.calculadora.formIntegration = (function() {
      * @returns {'in-situ'|'real'|'max-min'|null}
      */
     function getTipoFormularioAtual() {
-        const form = document.querySelector('#calculadora form');
+        const form = document.querySelector('#calculadora .calculadora-container');
         if (!form) return null;
         // Tenta identificar pelo ID de um campo chave
         if (form.querySelector('#registro')) return 'in-situ';
@@ -649,7 +649,7 @@ window.calculadora.formIntegration = (function() {
             // espera o form e os selects de referência ficarem disponíveis e habilitados
             await new Promise(resolve => {
                 const checkReady = () => {
-                    const form = document.querySelector("#calculadora form");
+                    const form = document.querySelector("#calculadora .calculadora-container");
                     if (!form) return setTimeout(checkReady, 50);
 
                     if (tipo !== "in-situ") return resolve();
@@ -663,7 +663,7 @@ window.calculadora.formIntegration = (function() {
                 checkReady();
             });
 
-            const form = document.querySelector('#calculadora form');
+            const form = document.querySelector('#calculadora .calculadora-container');
             if (!form) {
                 exibirNotificacao('Erro ao carregar o formulário para edição.', 'error');
                 return;
@@ -787,7 +787,7 @@ window.calculadora.formIntegration = (function() {
             exibirNotificacao('Erro: Módulo de banco de dados não disponível.', 'error');
             return;
         }
-        const form = document.querySelector('#calculadora form');
+        const form = document.querySelector('#calculadora .calculadora-container');
         if (!form) {
             exibirNotificacao('Erro: Formulário não encontrado.', 'error');
             return;
@@ -855,7 +855,7 @@ window.calculadora.formIntegration = (function() {
             return;
         }
 
-        const form = document.querySelector('#calculadora form');
+        const form = document.querySelector('#calculadora .calculadora-container');
         if (!form) {
             exibirNotificacao('Erro: Formulário não encontrado.', 'error');
             return;
