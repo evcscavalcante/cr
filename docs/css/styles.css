@@ -651,6 +651,10 @@ main {
     opacity: 1;
 }
 
+.toast-info {
+    background-color: var(--primary-color);
+}
+
 
 .toast-success {
     background-color: var(--success-color);
