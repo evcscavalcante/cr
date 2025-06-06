@@ -108,7 +108,11 @@
 
   auth.onAuthStateChanged(user => {
     if (user) {
-      window.location.href = 'index.html';
+      header.style.display = '';
+      sidebar.style.display = '';
+      main.style.display = '';
+      footer.style.display = '';
+      loginContainer.style.display = 'none';
     } else {
       header.style.display = 'none';
       sidebar.style.display = 'none';
