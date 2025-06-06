@@ -14,6 +14,8 @@
     --border-radius: 8px;
     --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     --transition: all 0.3s ease;
+    --header-height: 3.5rem;
+    --footer-height: 2.5rem;
 }
 
 .text-muted {
@@ -32,7 +34,7 @@ body {
     line-height: 1.6;
     color: var(--text-color);
     background-color: #f9f9f9;
-    padding-bottom: 70px; /* Aumentado para evitar sobreposição do footer */
+    padding-bottom: var(--footer-height);
     width: 100%;
     max-width: 100%;
     overflow-x: hidden;
@@ -48,6 +50,11 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: var(--header-height);
+    z-index: 1100;
 }
 
 .header-left {
@@ -116,11 +123,10 @@ header {
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
     position: fixed;
-    top: 0;
+    top: var(--header-height);
     left: 0;
-    bottom: 0;
+    bottom: var(--footer-height);
     overflow-y: auto;
     transform: translateX(0);
     transition: transform 0.3s ease;
@@ -168,10 +174,10 @@ header {
 /* Container principal */
 main {
     width: 100%;
-    padding: 2rem 1rem;
+    padding: calc(var(--header-height) + 1rem) 1rem calc(var(--footer-height) + 1rem);
     margin: 0;
     background-color: #f5f5f5;
-    min-height: calc(100vh - 120px);
+    min-height: calc(100vh - var(--header-height) - var(--footer-height));
 }
 
 /* Menu Principal */
@@ -747,8 +753,11 @@ footer {
     padding: 0.3rem 0; /* Reduzido de 1rem para 0.3rem */
     position: fixed;
     bottom: 0;
+    left: 0;
     width: 100%;
     font-size: 0.9rem;
+    height: var(--footer-height);
+    z-index: 1100;
 }
 
 /* Tabelas de dados */
@@ -910,9 +919,9 @@ footer {
     display: none;
     justify-content: center;
     align-items: center;
-    padding: 2rem;
+    padding: calc(var(--header-height) + 1rem) 2rem calc(var(--footer-height) + 1rem);
     background-color: #f0f0f0;
-    min-height: 100vh;
+    min-height: calc(100vh - var(--header-height) - var(--footer-height));
 }
 
 .login-card {
@@ -1026,10 +1035,14 @@ footer {
 }
 
 /* Controle de visibilidade do menu lateral */
-body.sidebar-visible header,
-body.sidebar-visible main,
-body.sidebar-visible footer {
+body.sidebar-visible main {
     padding-left: 180px;
+    transition: padding-left 0.3s ease;
+}
+
+body.sidebar-visible header,
+body.sidebar-visible footer {
+    padding-left: 0;
     transition: padding-left 0.3s ease;
 }
 
