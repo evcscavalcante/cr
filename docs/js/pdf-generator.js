@@ -17,7 +17,6 @@ window.calculadora.pdfGenerator = (() => {
                 return reject(new Error('html2pdf não está carregado'));
             }
 
-            let container;
             let canvas;
             try {
                 // Criar elemento canvas para desenhar o PDF com maior resolução
@@ -60,10 +59,6 @@ window.calculadora.pdfGenerator = (() => {
                 // Desenhar rodapé
                 desenharRodape(ctx, dados);
 
-                const container = document.createElement('div');
-                container.appendChild(canvas);
-                document.body.appendChild(container);
-
                 const opt = {
                     margin: 0,
                     filename: `${tipo}_${dados.registro || 'sem_registro'}.pdf`,
@@ -72,9 +67,7 @@ window.calculadora.pdfGenerator = (() => {
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
-                await html2pdf().set(opt).from(container).save();
-
-                document.body.removeChild(container);
+                await html2pdf().set(opt).from(canvas).save();
 
                 // Remover canvas
                 document.body.removeChild(canvas);
@@ -84,9 +77,6 @@ window.calculadora.pdfGenerator = (() => {
 
             } catch (error) {
                 console.error("Erro ao gerar PDF:", error);
-                if (container && container.parentNode === document.body) {
-                    document.body.removeChild(container);
-                }
                 if (canvas && canvas.parentNode === document.body) {
                     document.body.removeChild(canvas);
                 }
