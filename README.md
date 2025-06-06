@@ -105,6 +105,10 @@ são carregadas via `fetch` e, se o arquivo for acessado usando `file://`, os
 templates não serão encontrados e as páginas aparecerão em branco. Sempre utilize
 `npm start` ou outro servidor local para executar a aplicação.
 
+Ao publicar em serviços como **GitHub Pages**, defina a pasta `docs` como raiz do
+site. Os formulários são buscados em `./templates` e precisam estar acessíveis no
+mesmo caminho para que a aplicação funcione corretamente.
+
 ## Execução Local
 
 Para servir a aplicação durante o desenvolvimento, utilize o script Node já incluído:

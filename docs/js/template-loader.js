@@ -2,7 +2,7 @@
   window.calculadora = window.calculadora || {};
 
   async function fetchTemplate(file){
-    const resp = await fetch(`templates/${file}`);
+    const resp = await fetch(`./templates/${file}`);
     const text = await resp.text();
     const parser = new DOMParser();
     const doc = parser.parseFromString(text, 'text/html');
