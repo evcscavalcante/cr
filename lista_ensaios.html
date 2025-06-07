@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Ensaios</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .lista-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .lista-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .lista-header h3 {
+            margin: 0;
+            color: #3f51b5;
+        }
+        
+        .lista-filtros {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .filtro-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .filtro-grupo {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filtro-grupo label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .filtro-grupo input,
+        .filtro-grupo select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+        
+        .filtro-acoes {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .tabela-ensaios {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        .tabela-ensaios th,
+        .tabela-ensaios td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .tabela-ensaios th {
+            background-color: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+        }
+        
+        .tabela-ensaios tr:hover {
+            background-color: #f1f3f9;
+        }
+        
+        .tabela-ensaios .acoes {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .tabela-ensaios .acoes button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .status-aprovado {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-reprovado {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-calculado {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-aguardando {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+        
+        .status-pendente {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: #3f51b5;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #303f9f;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background-color: #138496;
+        }
+        
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.875rem;
+        }
+        
+        .sem-registros {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .filtro-row {
+                flex-direction: column;
+            }
+            
+            .filtro-grupo {
+                width: 100%;
+            }
+            
+            .tabela-ensaios {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="lista-container">
+        <div class="lista-header">
+            <h3 id="titulo-lista">Lista de Ensaios</h3>
+            <button class="btn btn-primary btn-novo-ensaio">
+                <i class="fas fa-plus"></i> Novo Ensaio
+            </button>
+        </div>
+        
+        <div class="lista-filtros">
+            <div class="filtro-row">
+                <div class="filtro-grupo">
+                    <label for="filtro-registro">Registro:</label>
+                    <input type="text" id="filtro-registro" placeholder="Número do registro">
+                </div>
+                <div class="filtro-grupo">
+                    <label for="filtro-data-inicio">Data Início:</label>
+                    <input type="date" id="filtro-data-inicio">
+                </div>
+                <div class="filtro-grupo">
+                    <label for="filtro-data-fim">Data Fim:</label>
+                    <input type="date" id="filtro-data-fim">
+                </div>
+            </div>
+            <div class="filtro-row">
+                <div class="filtro-grupo">
+                    <label for="filtro-operador">Operador:</label>
+                    <input type="text" id="filtro-operador" placeholder="Nome do operador">
+                </div>
+                <div class="filtro-grupo">
+                    <label for="filtro-material">Material:</label>
+                    <input type="text" id="filtro-material" placeholder="Descrição do material">
+                </div>
+                <div class="filtro-grupo">
+                    <label for="filtro-status">Status:</label>
+                    <select id="filtro-status">
+                        <option value="">Todos</option>
+                        <option value="APROVADO">Aprovado</option>
+                        <option value="REPROVADO">Reprovado</option>
+                        <option value="CALCULADO">Calculado</option>
+                        <option value="AGUARDANDO DADOS">Aguardando Dados</option>
+                        <option value="PENDENTE">Pendente Sincronização</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filtro-acoes">
+                <button class="btn btn-secondary btn-filtro">
+                    <i class="fas fa-filter"></i> Aplicar Filtros
+                </button>
+                <button class="btn btn-info btn-limpar-filtros">
+                    <i class="fas fa-broom"></i> Limpar Filtros
+                </button>
+            </div>
+        </div>
+        
+        <table class="tabela-ensaios">
+            <thead>
+                <tr>
+                    <th>Registro</th>
+                    <th>Data</th>
+                    <th>Material</th>
+                    <th>Operador</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-corpo">
+                <!-- Os dados serão carregados dinamicamente via JavaScript -->
+                <tr>
+                    <td colspan="6" class="sem-registros">Carregando ensaios...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Atualizar título da lista com base no tipo de ensaio atual
+            const tipoEnsaio = window.currentEnsaioType;
+            const tituloLista = document.getElementById('titulo-lista');
+            
+            if (tipoEnsaio) {
+                switch (tipoEnsaio) {
+                    case 'in-situ':
+                        tituloLista.textContent = 'Lista de Ensaios - Densidade In Situ';
+                        break;
+                    case 'real':
+                        tituloLista.textContent = 'Lista de Ensaios - Densidade Real';
+                        break;
+                    case 'max-min':
+                        tituloLista.textContent = 'Lista de Ensaios - Densidade Máxima e Mínima';
+                        break;
+                    default:
+                        tituloLista.textContent = 'Lista de Ensaios';
+                }
+            }
+            
+            // Carregar dados do localStorage para o tipo de ensaio atual
+            function carregarDados() {
+                if (!tipoEnsaio) {
+                    console.error('Tipo de ensaio não definido');
+                    return;
+                }
+                
+                console.log(`Carregando ensaios do tipo ${tipoEnsaio}...`);
+                
+                // Verificar se temos o módulo de armazenamento offline
+                if (window.calculadora && window.calculadora.offlineStorage) {
+                    // Usar o módulo offlineStorage
+                    window.calculadora.offlineStorage.buscarEnsaiosPorTipo(tipoEnsaio)
+                        .then(ensaios => {
+                            console.log(`${ensaios.length} ensaios encontrados no armazenamento offline`);
+                            atualizarTabela(ensaios);
+                        })
+                        .catch(error => {
+                            console.error('Erro ao buscar ensaios:', error);
+                            mostrarMensagemErro();
+                        });
+                } else {
+                    // Fallback para localStorage direto
+                    const chave = `lab_evcs_ensaios_${tipoEnsaio}`;
+                    try {
+                        const dados = localStorage.getItem(chave);
+                        const ensaios = dados ? JSON.parse(dados) : [];
+                        console.log(`${ensaios.length} ensaios encontrados no localStorage`);
+                        atualizarTabela(ensaios);
+                    } catch (error) {
+                        console.error('Erro ao buscar ensaios do localStorage:', error);
+                        mostrarMensagemErro();
+                    }
+                }
+            }
+            
+            // Atualizar tabela com os dados
+            function atualizarTabela(ensaios) {
+                const tabelaCorpo = document.getElementById('tabela-corpo');
+                
+                // Limpar tabela
+                tabelaCorpo.innerHTML = '';
+                
+                if (!ensaios || ensaios.length === 0) {
+                    // Mostrar mensagem se não houver registros
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td colspan="6" class="sem-registros">Nenhum registro encontrado</td>`;
+                    tabelaCorpo.appendChild(tr);
+                    return;
+                }
+                
+                // Preencher tabela com dados
+                ensaios.forEach(ensaio => {
+                    const tr = document.createElement('tr');
+                    
+                    // Determinar classe de status
+                    let statusClass = 'status-aguardando';
+                    let statusText = 'AGUARDANDO DADOS';
+                    
+                    if (ensaio.sincStatus === 'pending') {
+                        statusClass = 'status-pendente';
+                        statusText = 'PENDENTE SINCRONIZAÇÃO';
+                    } else if (ensaio.resultados && ensaio.resultados.status) {
+                        statusText = ensaio.resultados.status;
+                        switch (ensaio.resultados.status) {
+                            case 'APROVADO':
+                                statusClass = 'status-aprovado';
+                                break;
+                            case 'REPROVADO':
+                                statusClass = 'status-reprovado';
+                                break;
+                            case 'CALCULADO':
+                                statusClass = 'status-calculado';
+                                break;
+                        }
+                    }
+                    
+                    // Formatar data
+                    let dataFormatada = 'N/A';
+                    if (ensaio.data) {
+                        try {
+                            const data = new Date(ensaio.data);
+                            dataFormatada = data.toLocaleDateString('pt-BR');
+                        } catch (e) {
+                            console.warn('Erro ao formatar data:', e);
+                            dataFormatada = ensaio.data;
+                        }
+                    }
+                    
+                    tr.innerHTML = `
+                        <td>${ensaio.registro || ensaio.id || ''}</td>
+                        <td>${dataFormatada}</td>
+                        <td>${ensaio.material || 'N/A'}</td>
+                        <td>${ensaio.operador || 'N/A'}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td class="acoes">
+                            <button class="btn btn-info btn-sm btn-editar" data-id="${ensaio.id}">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="btn btn-danger btn-sm btn-excluir" data-id="${ensaio.id}">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>
+                        </td>
+                    `;
+                    
+                    tabelaCorpo.appendChild(tr);
+                });
+                
+                // Configurar eventos para botões de editar e excluir
+                configurarBotoesAcao();
+            }
+            
+            // Configurar eventos para botões de ação
+            function configurarBotoesAcao() {
+                document.querySelectorAll('.btn-editar').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        editarEnsaio(id);
+                    });
+                });
+                
+                document.querySelectorAll('.btn-excluir').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        excluirEnsaio(id);
+                    });
+                });
+            }
+            
+            // Função para editar ensaio
+            function editarEnsaio(id) {
+                if (!tipoEnsaio || !window.currentCalculadoraUrl) {
+                    console.error('Tipo de ensaio ou URL da calculadora não definidos');
+                    return;
+                }
+                
+                console.log(`Editando ensaio ${id} do tipo ${tipoEnsaio}`);
+                
+                // Verificar se temos o módulo de armazenamento offline
+                if (window.calculadora && window.calculadora.offlineStorage) {
+                    // Buscar ensaio do armazenamento offline
+                    const ensaio = window.calculadora.offlineStorage.buscarEnsaioPorId(id);
+                    
+                    if (ensaio) {
+                        console.log('Dados do ensaio encontrados:', ensaio);
+                        
+                        // Carregar calculadora com dados
+                        if (typeof window.loadContent === 'function') {
+                            window.loadContent(window.currentCalculadoraUrl, tipoEnsaio, ensaio);
+                        } else {
+                            console.error('Função loadContent não encontrada');
+                            alert('Erro ao carregar calculadora para edição');
+                        }
+                    } else {
+                        console.error(`Ensaio ${id} não encontrado`);
+                        alert(`Ensaio ${id} não encontrado`);
+                    }
+                } else {
+                    // Fallback para localStorage direto
+                    const chave = `lab_evcs_ensaios_${tipoEnsaio}`;
+                    try {
+                        const dados = localStorage.getItem(chave);
+                        const ensaios = dados ? JSON.parse(dados) : [];
+                        const ensaio = ensaios.find(e => e.id === id);
+                        
+                        if (ensaio) {
+                            console.log('Dados do ensaio encontrados:', ensaio);
+                            
+                            // Carregar calculadora com dados
+                            if (typeof window.loadContent === 'function') {
+                                window.loadContent(window.currentCalculadoraUrl, tipoEnsaio, ensaio);
+                            } else {
+                                console.error('Função loadContent não encontrada');
+                                alert('Erro ao carregar calculadora para edição');
+                            }
+                        } else {
+                            console.error(`Ensaio ${id} não encontrado`);
+                            alert(`Ensaio ${id} não encontrado`);
+                        }
+                    } catch (error) {
+                        console.error('Erro ao buscar ensaio do localStorage:', error);
+                        alert('Erro ao buscar dados do ensaio');
+                    }
+                }
+            }
+            
+            // Função para excluir ensaio
+            function excluirEnsaio(id) {
+                if (!tipoEnsaio) {
+                    console.error('Tipo de ensaio não definido');
+                    return;
+                }
+                
+                if (!confirm(`Tem certeza que deseja excluir o ensaio ${id}?`)) {
+                    return;
+                }
+                
+                console.log(`Excluindo ensaio ${id} do tipo ${tipoEnsaio}`);
+                
+                // Verificar se temos o módulo de armazenamento offline
+                if (window.calculadora && window.calculadora.offlineStorage) {
+                    // Excluir do armazenamento offline
+                    const resultado = window.calculadora.offlineStorage.excluirEnsaio(id);
+                    
+                    if (resultado) {
+                        console.log(`Ensaio ${id} excluído com sucesso`);
+                        // Recarregar dados
+                        carregarDados();
+                    } else {
+                        console.error(`Erro ao excluir ensaio ${id}`);
+                        alert(`Erro ao excluir ensaio ${id}`);
+                    }
+                } else {
+                    // Fallback para localStorage direto
+                    const chave = `lab_evcs_ensaios_${tipoEnsaio}`;
+                    try {
+                        const dados = localStorage.getItem(chave);
+                        let ensaios = dados ? JSON.parse(dados) : [];
+                        const index = ensaios.findIndex(e => e.id === id);
+                        
+                        if (index !== -1) {
+                            ensaios.splice(index, 1);
+                            localStorage.setItem(chave, JSON.stringify(ensaios));
+                            console.log(`Ensaio ${id} excluído com sucesso`);
+                            // Recarregar dados
+                            carregarDados();
+                        } else {
+                            console.error(`Ensaio ${id} não encontrado`);
+                            alert(`Ensaio ${id} não encontrado`);
+                        }
+                    } catch (error) {
+                        console.error('Erro ao excluir ensaio do localStorage:', error);
+                        alert('Erro ao excluir ensaio');
+                    }
+                }
+            }
+            
+            // Função para mostrar mensagem de erro
+            function mostrarMensagemErro() {
+                const tabelaCorpo = document.getElementById('tabela-corpo');
+                tabelaCorpo.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="sem-registros" style="color: #dc3545;">
+                            Erro ao carregar ensaios. Por favor, tente novamente.
+                        </td>
+                    </tr>
+                `;
+            }
+            
+            // Configurar filtros
+            document.querySelector('.btn-filtro').addEventListener('click', function() {
+                // Implementação futura para filtros
+                alert('Funcionalidade de filtros em desenvolvimento');
+            });
+            
+            document.querySelector('.btn-limpar-filtros').addEventListener('click', function() {
+                // Limpar campos de filtro
+                document.getElementById('filtro-registro').value = '';
+                document.getElementById('filtro-data-inicio').value = '';
+                document.getElementById('filtro-data-fim').value = '';
+                document.getElementById('filtro-operador').value = '';
+                document.getElementById('filtro-material').value = '';
+                document.getElementById('filtro-status').value = '';
+                
+                // Recarregar dados
+                carregarDados();
+            });
+            
+            // Carregar dados iniciais
+            carregarDados();
+        });
+    </script>
+</body>
+</html>

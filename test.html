@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Teste das Melhorias - Calculadora de Compacidade</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      color: #2c3e50;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+    }
+    h2 {
+      color: #2980b9;
+      margin-top: 20px;
+    }
+    .test-section {
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    .test-button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    .test-button:hover {
+      background-color: #2980b9;
+    }
+    .test-results {
+      background-color: #f0f0f0;
+      border-left: 4px solid #3498db;
+      padding: 10px;
+      margin-top: 10px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .success {
+      color: #27ae60;
+    }
+    .error {
+      color: #e74c3c;
+    }
+    .chart-container {
+      width: 100%;
+      max-width: 600px;
+      height: 300px;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Teste das Melhorias - Calculadora de Compacidade</h1>
+  
+  <div class="test-section">
+    <h2>1. Teste de Carregamento de Templates</h2>
+    <button id="test-templates" class="test-button">Testar Templates</button>
+    <div id="templates-results" class="test-results">Os resultados aparecerão aqui...</div>
+  </div>
+  
+  <div class="test-section">
+    <h2>2. Teste de Visualização de Dados</h2>
+    <button id="test-charts" class="test-button">Testar Gráficos</button>
+    <div class="chart-container">
+      <canvas id="chart-test"></canvas>
+    </div>
+    <div id="charts-results" class="test-results">Os resultados aparecerão aqui...</div>
+  </div>
+  
+  <div class="test-section">
+    <h2>3. Teste de Exportação de Dados</h2>
+    <button id="test-export-csv" class="test-button">Exportar CSV</button>
+    <button id="test-export-json" class="test-button">Exportar JSON</button>
+    <div id="export-results" class="test-results">Os resultados aparecerão aqui...</div>
+  </div>
+  
+  <div class="test-section">
+    <h2>4. Teste de Segurança</h2>
+    <button id="test-security" class="test-button">Testar Segurança</button>
+    <div id="security-results" class="test-results">Os resultados aparecerão aqui...</div>
+  </div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.5/purify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  
+  <script>
+    // Dados de teste
+    const testData = [
+      { id: 1, registro: 'CR-001', data: '2025-06-01', tipo: 'in-situ', valor: 2.45 },
+      { id: 2, registro: 'CR-002', data: '2025-06-02', tipo: 'real', valor: 1.78 },
+      { id: 3, registro: 'CR-003', data: '2025-06-03', tipo: 'max-min', valor: 3.21 },
+      { id: 4, registro: 'CR-004', data: '2025-06-04', tipo: 'in-situ', valor: 2.67 },
+      { id: 5, registro: 'CR-005', data: '2025-06-05', tipo: 'real', valor: 1.92 }
+    ];
+    
+    // Função para mostrar resultados
+    function showResult(elementId, message, isError = false) {
+      const element = document.getElementById(elementId);
+      const className = isError ? 'error' : 'success';
+      element.innerHTML += `<div class="${className}">${message}</div>`;
+    }
+    
+    // Teste de Templates
+    document.getElementById('test-templates').addEventListener('click', async () => {
+      const resultsElement = document.getElementById('templates-results');
+      resultsElement.innerHTML = 'Testando carregamento de templates...\n';
+      
+      const templates = [
+        'templates/densidade_in_situ.html',
+        'templates/densidade_real.html',
+        'templates/densidade_max_min.html'
+      ];
+      
+      for (const template of templates) {
+        try {
+          const response = await fetch(template);
+          if (!response.ok) {
+            throw new Error(`Erro ao carregar o template ${template}: ${response.status}`);
+          }
+          const html = await response.text();
+          showResult('templates-results', `✓ Template ${template} carregado com sucesso (${html.length} bytes)`);
+        } catch (error) {
+          showResult('templates-results', `✗ Erro no teste do template ${template}: ${error.message}`, true);
+        }
+      }
+    });
+    
+    // Teste de Visualização de Dados
+    document.getElementById('test-charts').addEventListener('click', () => {
+      const resultsElement = document.getElementById('charts-results');
+      resultsElement.innerHTML = 'Testando visualização de dados...\n';
+      
+      try {
+        const ctx = document.getElementById('chart-test').getContext('2d');
+        
+        // Destrói o gráfico existente, se houver
+        if (window.testChart) {
+          window.testChart.destroy();
+        }
+        
+        // Cria um novo gráfico
+        window.testChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: testData.map(item => item.registro),
+            datasets: [{
+              label: 'Valores de Teste',
+              data: testData.map(item => item.valor),
+              backgroundColor: 'rgba(54, 162, 235, 0.8)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'top',
+              },
+              title: {
+                display: true,
+                text: 'Gráfico de Teste'
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+        
+        showResult('charts-results', '✓ Gráfico criado com sucesso');
+      } catch (error) {
+        showResult('charts-results', `✗ Erro ao criar gráfico: ${error.message}`, true);
+      }
+    });
+    
+    // Teste de Exportação de Dados
+    document.getElementById('test-export-csv').addEventListener('click', () => {
+      const resultsElement = document.getElementById('export-results');
+      resultsElement.innerHTML = 'Testando exportação para CSV...\n';
+      
+      try {
+        // Cria o conteúdo CSV
+        const headers = Object.keys(testData[0]);
+        let csvContent = headers.join(',') + '\n';
+        
+        testData.forEach(item => {
+          const row = headers.map(header => {
+            const value = item[header] === null || item[header] === undefined ? '' : item[header];
+            const valueStr = String(value);
+            
+            if (valueStr.includes(',') || valueStr.includes('"') || valueStr.includes('\n')) {
+              return `"${valueStr.replace(/"/g, '""')}"`;
+            }
+            return valueStr;
+          }).join(',');
+          
+          csvContent += row + '\n';
+        });
+        
+        // Cria um Blob com o conteúdo CSV
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        
+        // Cria uma URL para o Blob
+        const url = URL.createObjectURL(blob);
+        
+        // Cria um link para download e simula o clique
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'dados_teste.csv');
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showResult('export-results', '✓ Dados exportados para CSV com sucesso');
+      } catch (error) {
+        showResult('export-results', `✗ Erro ao exportar para CSV: ${error.message}`, true);
+      }
+    });
+    
+    document.getElementById('test-export-json').addEventListener('click', () => {
+      const resultsElement = document.getElementById('export-results');
+      resultsElement.innerHTML = 'Testando exportação para JSON...\n';
+      
+      try {
+        // Converte os dados para string JSON formatada
+        const jsonContent = JSON.stringify(testData, null, 2);
+        
+        // Cria um Blob com o conteúdo JSON
+        const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
+        
+        // Cria uma URL para o Blob
+        const url = URL.createObjectURL(blob);
+        
+        // Cria um link para download e simula o clique
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'dados_teste.json');
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showResult('export-results', '✓ Dados exportados para JSON com sucesso');
+      } catch (error) {
+        showResult('export-results', `✗ Erro ao exportar para JSON: ${error.message}`, true);
+      }
+    });
+    
+    // Teste de Segurança
+    document.getElementById('test-security').addEventListener('click', () => {
+      const resultsElement = document.getElementById('security-results');
+      resultsElement.innerHTML = 'Testando funcionalidades de segurança...\n';
+      
+      // Teste de sanitização HTML
+      try {
+        const dirtyHTML = '<div>Texto normal <script>alert("XSS")</script><img src="x" onerror="alert(\'XSS\')">';
+        const cleanHTML = DOMPurify.sanitize(dirtyHTML);
+        
+        showResult('security-results', '✓ Sanitização HTML funcionando corretamente');
+        showResult('security-results', `HTML original: ${dirtyHTML}`);
+        showResult('security-results', `HTML sanitizado: ${cleanHTML}`);
+      } catch (error) {
+        showResult('security-results', `✗ Erro no teste de sanitização HTML: ${error.message}`, true);
+      }
+      
+      // Teste de validação de URL
+      try {
+        const urls = [
+          'https://example.com',
+          'http://localhost:8000',
+          'javascript:alert("XSS")',
+          'data:text/html,<script>alert("XSS")</script>'
+        ];
+        
+        showResult('security-results', '✓ Teste de validação de URL:');
+        
+        urls.forEach(url => {
+          try {
+            const parsedURL = new URL(url);
+            const isSafe = ['https:', 'http:'].includes(parsedURL.protocol);
+            showResult('security-results', `URL: ${url} - ${isSafe ? 'Segura' : 'Insegura'}`);
+          } catch (e) {
+            showResult('security-results', `URL: ${url} - Inválida`);
+          }
+        });
+      } catch (error) {
+        showResult('security-results', `✗ Erro no teste de validação de URL: ${error.message}`, true);
+      }
+    });
+  </script>
+</body>
+</html>
+

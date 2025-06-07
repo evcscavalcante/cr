@@ -1,44 +1,86 @@
-# Calculadora de Compacidade
+# Calculadora de Compacidade (Versão Melhorada)
 
 Aplicativo web para cálculos de ensaios geotécnicos conforme as normas NBR 6457:2024 e NBR 9813:2016.
 
+## Melhorias Implementadas
+
+Esta versão inclui diversas melhorias em relação à versão original:
+
+1. **Arquitetura Moderna**
+   - Sistema de build completo com Webpack
+   - Suporte para módulos ES (import/export)
+   - Bundling, minificação e otimizações
+   - Lazy loading para carregamento sob demanda
+
+2. **Segurança Aprimorada**
+   - Sanitização de HTML com DOMPurify
+   - Content Security Policy (CSP) implementada
+   - Validação robusta de dados de entrada
+   - Proteção contra ataques XSS
+
+3. **Novas Funcionalidades**
+   - Visualizações gráficas com Chart.js
+   - Exportação de dados em CSV e JSON
+   - Interface responsiva aprimorada
+   - Sistema de testes integrado
+
+4. **Otimizações de Desempenho**
+   - Consultas otimizadas ao IndexedDB
+   - Redução de manipulações desnecessárias do DOM
+   - Carregamento sob demanda de recursos
+
 ## Início Rápido
 
-Execute os comandos abaixo para instalar as dependências e rodar a suíte de testes:
+Execute os comandos abaixo para instalar as dependências e iniciar o projeto:
 
 ```bash
+# Instalar dependências
 npm install
-npm test
-```
 
-Caso o Jest não seja encontrado durante a execução dos testes, verifique se todas as dependências foram instaladas corretamente com `npm install`.
+# Executar testes
+npm test
+
+# Iniciar servidor de desenvolvimento
+npm start
+
+# Construir versão de produção
+npm run build
+```
 
 ## Estrutura do Projeto
 
-O projeto foi estruturado com uma arquitetura modular, utilizando HTML5, CSS3 e JavaScript puro para garantir compatibilidade e desempenho em diversos dispositivos.
+O projeto foi reestruturado com uma arquitetura modular mais robusta:
 
 ### Diretórios e Arquivos
 
-- `/docs`: Código-fonte do aplicativo
+- `/src`: Código-fonte do aplicativo
   - `/css`: Estilos CSS
-  - `/js`: Scripts JavaScript
-  - `/assets`: Recursos estáticos (imagens, ícones)
-  - `index.html`: Página principal
+  - `/js`: Scripts JavaScript modularizados
+  - `/img`: Recursos estáticos (imagens, ícones)
   - `/templates`: Formulários HTML carregados dinamicamente
-
-Os templates de cada calculadora ficam na pasta `/docs/templates` e
-são carregados em tempo de execução pelo script `template-loader.js`.
-Isso reduz o tamanho do `index.html` e facilita a manutenção dos formulários.
+  - `index.html`: Página principal
+  - `test.html`: Página de testes das melhorias
+- `/dist`: Código compilado e otimizado (gerado pelo Webpack)
+- `/docs`: Versão de produção para deploy
 
 ### Módulos JavaScript
 
-- `app.js`: Inicialização e navegação principal
-- `calculos.js`: Implementação das fórmulas normativas
-- `form-integration.js`: Integração entre formulários e cálculos
-- `reference-system.js`: Sistema de referência cruzada entre registros
-- `pdf-generator.js`: Geração de relatórios em PDF
+- **Módulos Originais Refatorados:**
+  - `app.js`: Inicialização e navegação principal
+  - `calculos.js`: Implementação das fórmulas normativas
+  - `form-integration.js`: Integração entre formulários e cálculos
+  - `reference-system.js`: Sistema de referência cruzada entre registros
+  - `pdf-generator.js`: Geração de relatórios em PDF
+
+- **Novos Módulos:**
+  - `data-visualization.js`: Visualizações gráficas com Chart.js
+  - `data-exporter.js`: Exportação de dados em diferentes formatos
+  - `security-manager.js`: Gerenciamento de segurança e CSP
+  - `testes.js`: Sistema de testes para verificar as modificações
 
 ## Funcionalidades Implementadas
+
+### Funcionalidades Originais
 
 1. **Menu Principal**
    - Navegação entre as três calculadoras principais
@@ -68,73 +110,71 @@ Isso reduz o tamanho do `index.html` e facilita a manutenção dos formulários.
    - Exportação em PDF formatada por tipo de ensaio
    - Inclusão de fórmulas, dados de entrada e resultados
 
-8. **Responsividade**
-   - Layout adaptável para smartphones e tablets
-   - Uso de CSS Grid e Flexbox para organização responsiva
+### Novas Funcionalidades
 
-## Cabeçalhos dos Formulários
+1. **Visualização de Dados**
+   - Gráficos de barras, linhas e dispersão
+   - Visualização interativa dos resultados
+   - Comparação visual entre diferentes ensaios
 
-| Calculadora                | Campos do Cabeçalho                                                                             |
-|----------------------------|------------------------------------------------------------------------------------------------|
-| Densidade In Situ          | Número do Registro, Data, Operador, Responsável, Verificador, Material, Origem, Norte, Este, Cota, Quadrante, Camada, Hora |
-| Densidade Real dos Grãos   | Número do Registro, Data, Operador, Material, Origem                                            |
-| Densidade Máxima e Mínima  | Número do Registro, Data, Operador, Material, Origem                                            |
+2. **Exportação de Dados**
+   - Exportação em formato CSV para uso em planilhas
+   - Exportação em formato JSON para integração com outros sistemas
+   - Opções de personalização da exportação
+
+3. **Segurança Aprimorada**
+   - Sanitização de HTML para prevenir ataques XSS
+   - Content Security Policy para prevenir injeção de código malicioso
+   - Validação robusta de dados de entrada
+   - Monitoramento de violações de segurança
+
+4. **Sistema de Testes**
+   - Testes automatizados para verificar funcionalidades
+   - Testes de carga de templates
+   - Testes de integração com o banco de dados
+   - Testes de segurança
 
 ## Tecnologias Utilizadas
 
 - HTML5
 - CSS3 (Grid e Flexbox)
 - JavaScript (ES6+)
-- LocalStorage para persistência de dados
-- Biblioteca para geração de PDF
+- Webpack (sistema de build)
+- Babel (transpilação)
+- Chart.js (visualização de dados)
+- DOMPurify (sanitização de HTML)
+- IndexedDB para persistência de dados
+- Jest para testes automatizados
 
 ## Servidor de Desenvolvimento
 
-Execute `iniciar-servidor.bat` no diretório raiz do projeto para abrir o aplicativo em `http://localhost:8000`. O script usa `http-server` com cache desabilitado para que as alterações apareçam imediatamente.
-
-## Instruções de Uso
-
-1. Acesse o menu principal
-2. Selecione o tipo de ensaio desejado
-3. Preencha os dados de entrada
-4. Os cálculos serão realizados automaticamente
-5. Salve o ensaio ou gere um relatório em PDF
-
-> **Atenção**: não abra `index.html` diretamente pelo navegador. As calculadoras
-são carregadas via `fetch` e, se o arquivo for acessado usando `file://`, os
-templates não serão encontrados e as páginas aparecerão em branco. Sempre utilize
-`npm start` ou outro servidor local para executar a aplicação.
-
-Ao publicar em serviços como **GitHub Pages**, defina a pasta `docs` como raiz do
-site. Os formulários são buscados em `./templates` e precisam estar acessíveis no
-mesmo caminho para que a aplicação funcione corretamente.
-
-## Execução Local
-
-Para servir a aplicação durante o desenvolvimento, utilize o script Node já incluído:
+O projeto agora inclui um servidor de desenvolvimento configurado com Webpack:
 
 ```bash
 npm start
 ```
 
-Ele executa `http-server` na pasta `docs` com cache desabilitado (opção `-c-1`) ouvindo a porta `8000`. Usuários Linux ou macOS também podem utilizar o script `start-server.sh`:
+Este comando inicia o servidor de desenvolvimento com hot-reload, permitindo que as alterações sejam refletidas automaticamente no navegador.
+
+## Build de Produção
+
+Para gerar uma versão otimizada para produção:
 
 ```bash
-./start-server.sh
+npm run build
 ```
 
-Esse script possui o mesmo comportamento do arquivo `iniciar-servidor.bat` para Windows.
+Este comando gera os arquivos otimizados na pasta `/dist`, prontos para deploy.
 
-## Geração de PDF
+## Testes
 
-Ao gerar relatórios o sistema utiliza a biblioteca **html2pdf**, que encapsula
-as dependências **html2canvas** e **jsPDF** para compor e salvar o arquivo PDF.
-Esse script é carregado automaticamente em tempo de execução caso ainda não
-esteja presente na página. É necessário conexão com a internet ou cópias locais
-dessas bibliotecas para que o processo funcione corretamente. Caso o PDF seja
-gerado em branco, certifique-se de estar executando a aplicação via servidor
-(por exemplo, com `npm start`) para evitar problemas de CORS durante a captura
-da página.
+Execute os testes automatizados com:
+
+```bash
+npm test
+```
+
+Além disso, uma página de testes interativa está disponível em `/test.html`, permitindo testar as novas funcionalidades diretamente no navegador.
 
 ## Compatibilidade
 
@@ -148,24 +188,43 @@ O aplicativo foi testado e é compatível com:
 
 ## Desenvolvimento
 
-1. Instale as dependências do projeto:
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/seu-usuario/calculadora-compacidade.git
+   cd calculadora-compacidade
+   ```
+
+2. Instale as dependências:
    ```bash
    npm install
    ```
-   Isso baixa as bibliotecas listadas em `package.json`.
 
-2. Rode a suíte de testes automatizados:
+3. Inicie o servidor de desenvolvimento:
+   ```bash
+   npm start
+   ```
+
+4. Execute os testes:
    ```bash
    npm test
    ```
-   O comando executa o Jest conforme configurado no script `test`.
 
-3. Inicie a aplicação localmente:
-   - **Windows:** execute `iniciar-servidor.bat` para abrir o navegador. O script chama `http-server` na pasta `docs` sem cache.
-   - **Outros sistemas:** rode `./start-server.sh` ou `npm start` para iniciar `http-server` na pasta `docs`.
+5. Gere a versão de produção:
+   ```bash
+   npm run build
+   ```
 
-## Próximos Passos
+## Contribuição
 
-- Hospedagem do aplicativo para testes do usuário
-- Coleta de feedback e ajustes finais
-- Implementação de melhorias conforme necessidade
+Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou enviar pull requests com melhorias.
+
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-funcionalidade`)
+3. Faça commit das suas alterações (`git commit -m 'Adiciona nova funcionalidade'`)
+4. Faça push para a branch (`git push origin feature/nova-funcionalidade`)
+5. Abra um Pull Request
+
+## Licença
+
+Este projeto está licenciado sob a licença ISC - veja o arquivo LICENSE para mais detalhes.
+
